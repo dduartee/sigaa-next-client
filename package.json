@@ -1,19 +1,23 @@
 {
   "name": "sigaa-next-client",
   "version": "0.1.0",
-  "private": true,
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
+  "repository": "https://github.com/dduartee/sigaa-next-client",
+  "author": "dduartee <gabrielkduarte234@gmail.com>",
+  "license": "MIT",
   "dependencies": {
-    "next": "10.2.3",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "next": "^10.2.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "@types/react": "17.0.9",
-    "typescript": "4.3.2"
+    "@types/node": "^15.12.1",
+    "@types/react": "^17.0.9",
+    "typescript": "^4.3.2"
   }
 }
