@@ -1,7 +1,7 @@
 {
   "name": "sigaa-next-client",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,9 +11,16 @@
   "author": "dduartee <gabrielkduarte234@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/react-select": "^4.0.15",
+    "cookie": "^0.4.1",
     "next": "^10.2.3",
+    "next-themes": "^0.0.14",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-collapsible": "^2.8.3",
+    "react-cookie": "^4.0.3",
+    "react-dom": "^17.0.2",
+    "react-select": "^4.3.1",
+    "socket.io-client": "^4.1.2"
   },
   "devDependencies": {
     "@types/node": "^15.12.1",

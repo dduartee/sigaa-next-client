@@ -1,0 +1,152 @@
+html,
+body {
+    background-color: var(--color-600);
+    font-weight: 500;
+    font-family: 'Nunito', sans-serif;
+    color: var(--color-font);
+}
+
+.btn {
+    background-color: var(--color-200);
+}
+
+.btn:hover {
+    background-color: var(--color-300);
+}
+/* label color */
+.input-field label {
+    color: var(--color-400) !important;
+}
+
+/* label focus color */
+.input-field input[type=text]:focus+label {
+    color: var(--color-400) !important;
+}
+
+/* label underline focus color  todos os input*/
+.input-field input:focus {
+    border-bottom: 1px solid var(--color-300) !important;
+    box-shadow: 0 1px 0 0 var(--color-300) !important;
+}
+
+
+/* icon prefix focus color */
+.input-field .prefix.active {
+    color: var(--color-300) !important;
+}
+
+[type="checkbox"].filled-in:checked+span:not(.lever):after {
+    background-color: var(--color-300) !important;
+    border: 2px solid var(--color-300) !important;
+}
+
+.dark {
+    color: var(--color-icons-dark)
+}
+/* Rules for sizing the icon. */
+.material-icons {
+    user-select: none;
+}
+.material-icons.md-18 {
+    font-size: 18px;
+}
+
+.material-icons.md-24 {
+    font-size: 24px;
+}
+
+.material-icons.md-36 {
+    font-size: 36px;
+}
+
+.material-icons.md-48 {
+    font-size: 48px;
+}
+
+.collapsible-header {
+    border: 0;
+}
+
+[data-theme='light-green'] {
+    --color-100: #171c19;
+    --color-150: #222a25;
+    --color-200: #184e2e;
+    --color-300: #2d6c46;
+    --color-400: #408c5e;
+    --color-500: #4bb475;
+    --color-600: #6fc391;
+    --color-650: #81ca9e;
+    --color-700: #93d2ac;
+    --color-800: #b7e1c8;
+
+    --color-font: #dbdbdb;
+    --color-font-dark: #1a1a1a;
+    --color-placeholder: #a1a1a1;
+    --color-icons: #ffffff;
+    --color-icons-inactive: #5c5c5c;
+}
+
+[data-theme='light-blue'] {
+    --color-100: hsl(193, 16%, 10%);
+    --color-150: hsl(193, 46%, 15%);
+    --color-200: hsl(193, 46%, 20%);
+    --color-300: hsl(191, 76%, 30%);
+    --color-400: hsl(191, 76%, 40%);
+    --color-500: hsl(187, 60%, 50%);
+    --color-600: hsl(187, 60%, 60%);
+    --color-650: hsl(187, 60%, 65%);
+    --color-700: hsl(196, 24%, 70%);
+    --color-800: hsl(196, 24%, 80%);
+
+    --white-80: hsl(0, 0%, 80%);
+    --white-100: hsl(0, 0%, 100%);
+
+    --color-font: rgb(219, 219, 219);
+    --color-font-dark: hsl(0, 0%, 10%);
+    --color-placeholder: rgb(161, 161, 161);
+    --color-icons: rgb(255, 255, 255);
+    --color-icons-inactive: rgb(92, 92, 92);
+}
+
+[data-theme='dark-black'] {
+    --color-100: hsl(0, 0%, 5%);
+    --color-150: hsl(0, 0%, 10%);
+    --color-200: hsl(0, 0%, 15%);
+    --color-300: hsl(0, 0%, 35%);
+    --color-400: hsl(0, 0%, 20%);
+    --color-500: hsl(0, 0%, 30%);
+    --color-600: hsl(0, 0%, 30%);
+    --color-650: hsl(0, 0%, 65%);
+    --color-700: hsl(0, 0%, 40%);
+    --color-800: hsl(0, 0%, 10%);
+
+    --white-80: hsl(0, 0%, 80%);
+    --white-100: hsl(0, 0%, 100%);
+
+    --color-font: rgb(219, 219, 219);
+    --color-font-dark: hsl(0, 0%, 90%);
+    --color-placeholder: rgb(161, 161, 161);
+    --color-icons: rgb(255, 255, 255);
+    --color-icons-inactive: rgb(92, 92, 92);
+}
+[data-theme='dark-blue'] {
+    --color-100: hsl(210, 37%, 5%);
+    --color-150: hsl(210, 37%, 10%);
+    --color-200: hsl(210, 37%, 15%);
+    --color-300: hsl(210, 37%, 25%);
+    --color-400: hsl(210, 37%, 20%);
+    --color-500: hsl(210, 37%, 30%);
+    --color-600: hsl(210, 37%, 30%);
+    --color-650: hsl(210, 37%, 55%);
+    --color-700: hsl(210, 37%, 40%);
+    --color-800: hsl(210, 37%, 10%);
+
+    --white-80: hsl(0, 0%, 80%);
+    --white-100: hsl(0, 0%, 100%);
+
+    --color-font: rgb(219, 219, 219);
+    --color-font-dark: hsl(0, 0%, 90%);
+    --color-placeholder: rgb(161, 161, 161);
+    --color-icons: rgb(255, 255, 255);
+    --color-icons-inactive: rgb(92, 92, 92);
+}
