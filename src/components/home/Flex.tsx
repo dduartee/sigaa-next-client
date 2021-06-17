@@ -2,8 +2,8 @@ import { NextPage } from "next";
 import styles from "@styles/page/page.module.css";
 import { Props } from "@types";
 
-const FlexBody: NextPage<Props> = ({ children }) => {
-  return <div className={styles.flexBody}>{children}</div>;
+const FlexBody: NextPage<Props> = ({ children, style }) => {
+  return <div className={styles.flexBody} style={style}>{children}</div>;
 };
 const FlexColumn: NextPage<Props> = ({ children }) => {
   return <div className={styles.flexColumn}>{children}</div>;

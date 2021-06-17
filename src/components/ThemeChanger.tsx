@@ -1,26 +1,31 @@
 import { useTheme } from "next-themes";
-const ThemeChanger = () => {
+import Dropdown, {Option, Group} from "react-dropdown";
+import "react-dropdown/style.css";
+function ThemeChanger() {
   const { theme, setTheme } = useTheme();
-  let themeName;
+  console.log(theme);
   const changeTheme = (evt: any) => {
     setTheme(evt.value);
-    themeName = theme;
   };
-  const optionsThemes = [
-    { value: "light-green", label: "light-green" },
-    { value: "dark-blue", label: "dark-blue" },
-    { value: "dark-black", label: "dark-black" },
-  ];
-  return (
-    <div className="input-field">
-    <select>
-      <option value="" disabled selected>Choose your option</option>
-      <option value="1">Option 1</option>
-      <option value="2">Option 2</option>
-      <option value="3">Option 3</option>
-    </select>
-  </div>
-  );
-};
+  
+  const optionsThemes: (string | Group | Option)[] = [
+    {
+      type: 'group',
+      name: 'Dark', 
+      items: [
+        { value: "dark-blue", label: "Blue" },
+        { value: "dark-black", label: "Black" },
+      ]
+    },
+    {
+      type: 'group',
+      name: 'Light', 
+      items: [
+        { value: "light-green", label: "Green" },
+      ]
+    },
+  ]
+  return <Dropdown options={optionsThemes} onChange={changeTheme} placeholder={theme??"Escolha um tema"}/>;
+}
 
 export { ThemeChanger };

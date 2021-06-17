@@ -52,6 +52,12 @@
 .cardBody button {
     align-self: stretch;
 }
+
 .cardItem {
     color: var(--white-80);
+}
+
+.customInput {
+    margin-bottom: "100px";
+    width: "192px"
 }

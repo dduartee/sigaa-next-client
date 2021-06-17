@@ -1,4 +1,10 @@
-import Document, { Html, Head, Main, NextScript, DocumentContext } from "next/document";
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+} from "next/document";
 
 export default class extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -10,16 +16,8 @@ export default class extends Document {
     return (
       <Html>
         <Head>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Material+Icons"
-            rel="stylesheet"
-          ></link>
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-          ></link>
           <meta charSet="UTF-8"></meta>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge"></meta>
         </Head>
         <body>
           <Main />
@@ -29,3 +27,11 @@ export default class extends Document {
     );
   }
 }
+/*<link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          />
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+          ></link>*/
