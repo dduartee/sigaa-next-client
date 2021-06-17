@@ -19,7 +19,7 @@ export default class extends Document {
             href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
           ></link>
           <meta charSet="UTF-8"></meta>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge"></meta>
         </Head>
         <body>
           <Main />
