@@ -22,7 +22,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-particles-js": "^3.4.1",
+    "react-tsparticles": "^1.29.2",
     "socket.io-client": "latest"
   },
   "devDependencies": {

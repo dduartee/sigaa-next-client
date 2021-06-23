@@ -19,7 +19,7 @@ export default function MyApp(props: AppProps) {
   };
   return (
     <CacheProvider value={cache}>
-      <ThemeProvider theme={isLight ? createTheme(light) : createTheme(dark)}>
+      <ThemeProvider theme={createTheme(dark)}>
         <CssBaseline />
         <Component {...pageProps} />
       </ThemeProvider>

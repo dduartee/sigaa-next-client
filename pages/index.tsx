@@ -16,6 +16,7 @@ import { makeStyles } from "@material-ui/styles";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import SendIcon from "@material-ui/icons/Send";
+import Particles from "react-tsparticles";
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -26,6 +27,7 @@ const useStyles = makeStyles({
     height: "100vh",
   },
   paperCard: {
+    position: "absolute",
     display: "flex",
     flexDirection: "column",
     alignContent: "center",
@@ -39,7 +41,9 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   loginCard: {
-    margin: "1rem",
+    marginLeft: "1rem",
+    marginRight: "1rem",
+    marginBottom: "1rem",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -53,7 +57,102 @@ export default function Index() {
   return (
     <NoSsr>
       <Grid className={styles.container}>
-        <Paper elevation={4} className={styles.paperCard}>
+        <div style={{ filter: "blur(5px)", width: "100vw" }}>
+          <Particles
+            id="tsparticles"
+            options={{
+              background: {
+                color: {
+                  value: "#212121",
+                },
+              },
+              fpsLimit: 60,
+              interactivity: {
+                detectsOn: "canvas",
+                events: {
+                  onClick: {
+                    enable: true,
+                    mode: "push",
+                  },
+                  onHover: {
+                    enable: true,
+                    mode: "grab",
+                    parallax: {
+                      enable: true,
+                      smooth: 700,
+                    },
+                  },
+                  resize: true,
+                },
+                modes: {
+                  grab: {
+                    distance: 250,
+                    lineLinked: {
+                      blink: true,
+                      color: "#25964a",
+                      consent: true,
+                      opacity: 1,
+                    },
+                  },
+                  repulse: {
+                    distance: 200,
+                    duration: 1,
+                  },
+                  push: {
+                    quantity: 5,
+                  },
+                },
+              },
+              particles: {
+                color: {
+                  value: "#74b88b",
+                },
+                links: {
+                  color: "#207e3f",
+                  distance: 150,
+                  enable: true,
+                  opacity: 0.7,
+                  width: 1,
+                },
+                collisions: {
+                  enable: true,
+                  mode: "bounce",
+                },
+                move: {
+                  direction: "none",
+                  enable: true,
+                  outMode: "bounce",
+                  random: false,
+                  speed: 3,
+                  straight: true,
+                },
+                number: {
+                  density: {
+                    enable: true,
+                    value_area: 1000,
+                  },
+                  value: 150,
+                },
+                opacity: {
+                  value: 1,
+                },
+                shape: {
+                  type: "circle",
+                },
+                size: {
+                  random: true,
+                  value: 7,
+                },
+              },
+              detectRetina: true,
+            }}
+          />
+        </div>
+        <Paper
+          elevation={4}
+          className={styles.paperCard}
+          sx={{ borderRadius: "10px" }}
+        >
           <div className={styles.topCard}>
             <img
               src="https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png"
@@ -64,9 +163,10 @@ export default function Index() {
                 objectFit: "cover",
                 borderRadius: "50%",
                 marginTop: "-50px",
+                userSelect: "none"
               }}
             />
-            <p style={{ fontWeight: "normal" }}>Nome</p>
+            <p style={{ fontSize: "1.25rem" }}>Nome</p>
           </div>
           <div className={styles.loginCard}>
             <Box
@@ -103,8 +203,8 @@ export default function Index() {
               control={
                 <Checkbox
                   sx={{ padding: "0px", margin: "0.25rem" }}
-                  icon={<CheckBoxIcon />}
-                  checkedIcon={<CheckBoxOutlineBlankIcon />}
+                  checkedIcon={<CheckBoxIcon color="primary" />}
+                  icon={<CheckBoxOutlineBlankIcon color="primary" />}
                 />
               }
             />
