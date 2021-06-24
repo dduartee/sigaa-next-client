@@ -17,6 +17,8 @@ import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import SendIcon from "@material-ui/icons/Send";
 import Particles from "react-tsparticles";
+import { io } from "socket.io-client";
+import { UserCredentials, UserInfo } from "@types";
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -51,9 +53,51 @@ const useStyles = makeStyles({
   inputCard: {
     marginBottom: "1rem",
   },
+  profilePicture: {
+    width: "100px",
+    height: "100px",
+    objectFit: "cover",
+    borderRadius: "50%",
+    marginTop: "-50px",
+    userSelect: "none",
+  },
 });
+
+const client = io("wss://sigaa-socket-api.herokuapp.com/");
+
 export default function Index() {
   const styles = useStyles();
+  const [user, setUser] = React.useState({
+    username: "",
+    fullName: "",
+    profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png",
+  } as UserInfo);
+  let credentials: any = { username: "", password: "" };
+  const updateInputValue = (evt: { target: any }) => {
+    credentials[evt.target.name] = evt.target.value;
+  };
+  const handleLogin = () => {
+    const { username, password } = credentials;
+    client.emit("user::login", { username, password, token: localStorage.getItem("token") });
+  };
+  client.on("auth::store", (token) => {
+    console.log(token);
+    localStorage.setItem("token", token);
+  });
+  client.on("user::login", (data) => {
+    const {logado} = JSON.parse(data)
+    if (logado) {
+      console.log(logado);
+      client.emit("user::info", {
+        token: localStorage.getItem("token"),
+      });
+    }
+  });
+  client.on("user::info", (data) => {
+    const { fullName, profilePictureURL } = JSON.parse(data);
+    setUser({ fullName, profilePictureURL });
+    console.log(data);
+  });
   return (
     <NoSsr>
       <Grid className={styles.container}>
@@ -155,18 +199,10 @@ export default function Index() {
         >
           <div className={styles.topCard}>
             <img
-              src="https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png"
-              alt=""
-              style={{
-                width: "100px",
-                height: "100px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                marginTop: "-50px",
-                userSelect: "none"
-              }}
+              src={user.profilePictureURL}
+              className={styles.profilePicture}
             />
-            <p style={{ fontSize: "1.25rem" }}>Nome</p>
+            <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
           </div>
           <div className={styles.loginCard}>
             <Box
@@ -181,6 +217,9 @@ export default function Index() {
                 id="input-with-icon-textfield"
                 label="Usuário"
                 variant="standard"
+                type="text"
+                name="username"
+                onChange={updateInputValue}
               />
             </Box>
 
@@ -194,6 +233,9 @@ export default function Index() {
                 id="input-with-icon-textfield"
                 label="Senha"
                 variant="standard"
+                type="password"
+                name="password"
+                onChange={updateInputValue}
               />
             </Box>
             <FormControlLabel
@@ -208,7 +250,11 @@ export default function Index() {
                 />
               }
             />
-            <Button variant="outlined" endIcon={<SendIcon />}>
+            <Button
+              variant="outlined"
+              endIcon={<SendIcon />}
+              onClick={handleLogin}
+            >
               Entrar
             </Button>
           </div>
