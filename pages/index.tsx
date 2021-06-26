@@ -154,7 +154,7 @@ export default function Index(): JSX.Element {
                 events: {
                   onClick: {
                     enable: true,
-                    mode: "push",
+                    mode: "repulse",
                   },
                   onHover: {
                     enable: true,
@@ -193,7 +193,7 @@ export default function Index(): JSX.Element {
                   color: "#207e3f",
                   distance: 150,
                   enable: true,
-                  opacity: 0.7,
+                  opacity: 1,
                   width: 1,
                 },
                 collisions: {
@@ -211,9 +211,9 @@ export default function Index(): JSX.Element {
                 number: {
                   density: {
                     enable: true,
-                    value_area: 1000,
+                    value_area: 100,
                   },
-                  value: 150,
+                  value: 5,
                 },
                 opacity: {
                   value: 1,
