@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  Box,
   Button,
   Checkbox,
   FormControlLabel,
   Grid,
-  InputAdornment,
   NoSsr,
   Paper,
   TextField,
@@ -23,7 +21,6 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import Particles from "react-tsparticles";
 import { UserCredentials, UserInfo, UserStatus } from "@types";
-import Alert from "@components/Alert";
 import { client } from "@services/api/client";
 import UserAPI from "@services/api/User";
 
@@ -84,7 +81,7 @@ const useStyles = makeStyles({
   box: { display: "flex", alignItems: "flex-end", marginBottom: "1rem" },
 });
 
-export default function Index() {
+export default function Index(): JSX.Element {
   const [status, setStatus] = useState<UserStatus>("Deslogado");
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
@@ -99,7 +96,9 @@ export default function Index() {
     target: HTMLTextAreaElement | HTMLInputElement;
   }) =>
     setCredentials({ ...credentials, [event.target.name]: event.target.value });
-  const User = new UserAPI(client);
+  const User = useMemo(() => {
+    return new UserAPI(client);
+  }, []);
 
   const handleLogin = () => {
     User.login(credentials);
@@ -128,8 +127,10 @@ export default function Index() {
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
-  }, []);
-  const handleAccess = () => {};
+  }, [User, credentials]);
+  const handleAccess = () => {
+    return true;
+  };
 
   const styles = useStyles();
   return (
