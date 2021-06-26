@@ -1,7 +1,6 @@
 import * as React from "react";
-import Head from "next/head";
 import { AppProps } from "next/app";
-import { ThemeProvider } from "@material-ui/core/styles";
+import { ThemeProvider,  } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
@@ -17,9 +16,10 @@ export default function MyApp(props: AppProps) {
   const toggleColor = () => {
     setIsLight(isLight ? false : true);
   };
+  const darkTheme = createTheme(dark)
   return (
     <CacheProvider value={cache}>
-      <ThemeProvider theme={createTheme(dark)}>
+      <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <Component {...pageProps} />
       </ThemeProvider>

@@ -1,5 +1,4 @@
-import * as React from "react";
-import Container from "@material-ui/core/Container";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,15 +9,24 @@ import {
   NoSsr,
   Paper,
   TextField,
+  CircularProgress,
+  Collapse,
+  Fade,
 } from "@material-ui/core";
-import { AccountCircle, Lock } from "@material-ui/icons";
+import {
+  AccountCircle,
+  Lock,
+  Send,
+  CheckBoxOutlineBlank,
+  CheckBox,
+} from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import SendIcon from "@material-ui/icons/Send";
 import Particles from "react-tsparticles";
-import { io } from "socket.io-client";
-import { UserCredentials, UserInfo } from "@types";
+import { UserCredentials, UserInfo, UserStatus } from "@types";
+import Alert from "@components/Alert";
+import { client } from "@services/api/client";
+import UserAPI from "@services/api/User";
+
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -43,12 +51,19 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   loginCard: {
-    marginLeft: "1rem",
+    marginTop: "1rem",
     marginRight: "1rem",
-    marginBottom: "1rem",
+    marginLeft: "1rem",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+  },
+  buttonCard: {
+    margin: "1rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignContent: "center",
   },
   inputCard: {
     marginBottom: "1rem",
@@ -61,49 +76,71 @@ const useStyles = makeStyles({
     marginTop: "-50px",
     userSelect: "none",
   },
+  particles: {
+    "& div": {
+      height: "100%",
+    },
+  },
+  box: { display: "flex", alignItems: "flex-end", marginBottom: "1rem" },
 });
 
-const client = io("wss://sigaa-socket-api.herokuapp.com/");
-
 export default function Index() {
-  const styles = useStyles();
-  const [user, setUser] = React.useState({
+  const [status, setStatus] = useState<UserStatus>("Deslogado");
+  const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
+    password: "",
+    token: "",
+  });
+  const [user, setUser] = useState<UserInfo>({
     fullName: "",
     profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png",
-  } as UserInfo);
-  let credentials: any = { username: "", password: "" };
-  const updateInputValue = (evt: { target: any }) => {
-    credentials[evt.target.name] = evt.target.value;
-  };
+  });
+  const handleChange = (event: {
+    target: HTMLTextAreaElement | HTMLInputElement;
+  }) =>
+    setCredentials({ ...credentials, [event.target.name]: event.target.value });
+  const User = new UserAPI(client);
+
   const handleLogin = () => {
-    const { username, password } = credentials;
-    client.emit("user::login", { username, password, token: localStorage.getItem("token") });
+    User.login(credentials);
+    setStatus("Logando");
   };
-  client.on("auth::store", (token) => {
-    console.log(token);
-    localStorage.setItem("token", token);
-  });
-  client.on("user::login", (data) => {
-    const {logado} = JSON.parse(data)
-    if (logado) {
+
+  useEffect(() => {
+    client.on("auth::store", (token) => {
+      console.log(token);
+      localStorage.setItem("token", token);
+      setCredentials({
+        ...credentials,
+        token,
+      } as UserCredentials);
+    });
+    client.on("user::login", (data) => {
+      const { logado } = JSON.parse(data);
       console.log(logado);
-      client.emit("user::info", {
-        token: localStorage.getItem("token"),
-      });
-    }
-  });
-  client.on("user::info", (data) => {
-    const { fullName, profilePictureURL } = JSON.parse(data);
-    setUser({ fullName, profilePictureURL });
-    console.log(data);
-  });
+      setStatus(logado ? "Logado" : "Deslogado");
+      if (logado) {
+        User.getInfo(localStorage.getItem("token") as string);
+      }
+    });
+    client.on("user::info", (data) => {
+      const { fullName, profilePictureURL } = JSON.parse(data);
+      setUser({ fullName, profilePictureURL });
+      console.log(data);
+    });
+  }, []);
+  const handleAccess = () => {};
+
+  const styles = useStyles();
   return (
     <NoSsr>
       <Grid className={styles.container}>
-        <div style={{ filter: "blur(5px)", width: "100vw" }}>
+        <div
+          style={{ width: "100%", height: "100%" }}
+          className={styles.particles}
+        >
           <Particles
-            id="tsparticles"
+            style={{ height: "100%" }}
             options={{
               background: {
                 color: {
@@ -192,71 +229,92 @@ export default function Index() {
             }}
           />
         </div>
+
         <Paper
           elevation={4}
           className={styles.paperCard}
-          sx={{ borderRadius: "10px" }}
+          style={{ borderRadius: "10px" }}
         >
-          <div className={styles.topCard}>
-            <img
-              src={user.profilePictureURL}
-              className={styles.profilePicture}
-            />
-            <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
-          </div>
-          <div className={styles.loginCard}>
-            <Box
-              sx={{ display: "flex", alignItems: "flex-end" }}
-              className={styles.inputCard}
-            >
-              <AccountCircle
-                sx={{ color: "action.active", margin: "0.25rem" }}
-              />
-              <TextField
-                fullWidth
-                id="input-with-icon-textfield"
-                label="Usuário"
-                variant="standard"
-                type="text"
-                name="username"
-                onChange={updateInputValue}
-              />
-            </Box>
-
-            <Box
-              sx={{ display: "flex", alignItems: "flex-end" }}
-              className={styles.inputCard}
-            >
-              <Lock sx={{ color: "action.active", margin: "0.25rem" }} />
-              <TextField
-                fullWidth
-                id="input-with-icon-textfield"
-                label="Senha"
-                variant="standard"
-                type="password"
-                name="password"
-                onChange={updateInputValue}
-              />
-            </Box>
-            <FormControlLabel
-              className={styles.inputCard}
-              sx={{ marginLeft: "0px" }}
-              label="Lembrar de mim"
-              control={
-                <Checkbox
-                  sx={{ padding: "0px", margin: "0.25rem" }}
-                  checkedIcon={<CheckBoxIcon color="primary" />}
-                  icon={<CheckBoxOutlineBlankIcon color="primary" />}
-                />
+          <Fade in={user.fullName ? true : false}>
+            <Collapse
+              in={user.fullName ? true : false}
+              sx={
+                user.fullName ? { overflow: "visible" } : { overflow: "hidden" }
               }
-            />
-            <Button
-              variant="outlined"
-              endIcon={<SendIcon />}
-              onClick={handleLogin}
             >
-              Entrar
-            </Button>
+              <div className={styles.topCard}>
+                <img
+                  src={user.profilePictureURL}
+                  className={styles.profilePicture}
+                />
+                <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
+              </div>
+            </Collapse>
+          </Fade>
+
+          <Collapse in={status === "Deslogado"}>
+            <div className={styles.loginCard}>
+              <div className={styles.box}>
+                <AccountCircle
+                  style={{ color: "action.active", margin: "0.25rem" }}
+                />
+                <TextField
+                  fullWidth
+                  id="input-with-icon-textfield"
+                  label="Usuário"
+                  variant="standard"
+                  type="text"
+                  name="username"
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className={styles.box}>
+                <Lock style={{ color: "action.active", margin: "0.25rem" }} />
+                <TextField
+                  fullWidth
+                  id="input-with-icon-textfield"
+                  label="Senha"
+                  variant="standard"
+                  type="password"
+                  name="password"
+                  onChange={handleChange}
+                />
+              </div>
+              <FormControlLabel
+                className={styles.inputCard}
+                style={{ marginLeft: "0px", marginBottom: "0" }}
+                label="Lembrar de mim"
+                control={
+                  <Checkbox
+                    style={{ padding: "0px", margin: "0.25rem" }}
+                    checkedIcon={<CheckBox color="primary" />}
+                    icon={<CheckBoxOutlineBlank color="primary" />}
+                  />
+                }
+              />
+            </div>
+          </Collapse>
+          <div className={styles.buttonCard}>
+            {status == "Logando" ? (
+              <CircularProgress style={{ alignSelf: "center" }} />
+            ) : status === "Logado" ? (
+              <Button
+                variant="contained"
+                endIcon={<Send />}
+                onClick={handleAccess}
+              >
+                Acessar
+              </Button>
+            ) : status === "Deslogado" ? (
+              <Button
+                variant="outlined"
+                endIcon={<Send />}
+                onClick={handleLogin}
+              >
+                Login
+              </Button>
+            ) : null}
           </div>
         </Paper>
       </Grid>

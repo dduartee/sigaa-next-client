@@ -1,4 +1,4 @@
-import { createTheme, ThemeOptions } from "@material-ui/core/styles";
+import { ThemeOptions } from "@material-ui/core/styles";
 const light: ThemeOptions = {
   palette: {
     mode: "light",

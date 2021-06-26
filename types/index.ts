@@ -4,7 +4,7 @@ export type UserCredentials = {
     token?: string
 }
 export type UserInfo = {
-    username?: string,
     fullName?: string,
     profilePictureURL?: string
 }
+export type UserStatus = 'Logado' | 'Deslogado' | 'Logando' | 'Deslogando'
