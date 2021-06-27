@@ -1,8 +1,8 @@
 import { io, Socket } from 'socket.io-client';
 let socket: Socket;
 export const initiateSocket = () => {
-  socket = io("wss://sigaa-socket-api-stage.herokuapp.com/"); // stage
-  //socket = io("wss://sigaa-socket-api.herokuapp.com/"); // main
+  //socket = io("wss://sigaa-socket-api-stage.herokuapp.com/"); // stage
+  socket = io("wss://sigaa-socket-api.herokuapp.com/"); // main
   console.log("Connecting to server...");
 }
 
