@@ -21,7 +21,12 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import Particles from "react-tsparticles";
 import { UserCredentials, UserInfo, UserStatus } from "@types";
-import { client } from "@services/api/client";
+import {
+  subscribeEvent,
+  sendEvent,
+  initiateSocket,
+  subscribeAllEvents,
+} from "@services/api/socket";
 import UserAPI from "@services/api/User";
 
 const useStyles = makeStyles({
@@ -94,38 +99,47 @@ export default function Index(): JSX.Element {
   });
   const handleChange = (event: {
     target: HTMLTextAreaElement | HTMLInputElement;
-  }) =>
-    setCredentials({ ...credentials, [event.target.name]: event.target.value });
-  const User = useMemo(() => {
-    return new UserAPI(client);
-  }, []);
+  }) => setCredentialsMerge(event.target);
 
+  const setCredentialsMerge = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: any;
+  }) => {
+    setCredentials({ ...credentials, [name]: value } as UserCredentials);
+  };
   const handleLogin = () => {
-    User.login(credentials);
-    setStatus("Logando");
+    sendEvent("user::login", credentials); // loga pela "primeira vez" sem o cache
   };
 
   useEffect(() => {
-    client.onAny((...args: any[]) => {
-      console.log(args)
-    })
-    client.on("auth::store", (token) => {
-      console.log(token);
-      localStorage.setItem("token", token);
-      setCredentials({
-        ...credentials,
-        token,
-      } as UserCredentials);
+    initiateSocket();
+    setCredentialsMerge({
+      name: "token",
+      value: localStorage.getItem("token"),
     });
-    client.on("user::login", (data) => {
+    sendEvent("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo cache
+    subscribeAllEvents((...args: any[]) => {
+      console.log(args);
+    });
+    subscribeEvent("user::status", (status: UserStatus) => {
+      setStatus(status);
+      console.log(status);
+    });
+    subscribeEvent("auth::store", (token: string) => {
+      localStorage.setItem("token", token);
+      setCredentialsMerge({ name: "token", value: token });
+    });
+    subscribeEvent("user::login", (data: any) => {
       const { logado } = JSON.parse(data);
       console.log(logado);
-      setStatus(logado ? "Logado" : "Deslogado");
       if (logado) {
-        User.getInfo(localStorage.getItem("token") as string);
+        sendEvent("user::info", { token: localStorage.getItem("token") });
       }
     });
-    client.on("user::info", (data) => {
+    subscribeEvent("user::info", (data: any) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
       setUser({ fullName, profilePictureURL });
       console.log(data);
