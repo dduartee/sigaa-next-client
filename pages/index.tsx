@@ -106,6 +106,9 @@ export default function Index(): JSX.Element {
   };
 
   useEffect(() => {
+    client.onAny((...args: any[]) => {
+      console.log(args)
+    })
     client.on("auth::store", (token) => {
       console.log(token);
       localStorage.setItem("token", token);
@@ -127,7 +130,7 @@ export default function Index(): JSX.Element {
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
-  }, [User, credentials]);
+  }, []);
   const handleAccess = () => {
     return true;
   };
