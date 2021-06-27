@@ -106,6 +106,9 @@ export default function Index(): JSX.Element {
   };
 
   useEffect(() => {
+    client.onAny((...args: any[]) => {
+      console.log(args)
+    })
     client.on("auth::store", (token) => {
       console.log(token);
       localStorage.setItem("token", token);
@@ -127,7 +130,7 @@ export default function Index(): JSX.Element {
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
-  }, [User, credentials]);
+  }, []);
   const handleAccess = () => {
     return true;
   };
@@ -135,190 +138,191 @@ export default function Index(): JSX.Element {
   const styles = useStyles();
   return (
     <NoSsr>
-      <Grid className={styles.container}>
-        <div
-          style={{ width: "100%", height: "100%" }}
-          className={styles.particles}
-        >
-          <Particles
-            style={{ height: "100%" }}
-            options={{
-              background: {
-                color: {
-                  value: "#212121",
-                },
-              },
-              fpsLimit: 60,
-              interactivity: {
-                detectsOn: "canvas",
-                events: {
-                  onClick: {
-                    enable: true,
-                    mode: "push",
+      <Fade in={true} timeout={1000}>
+        <Grid className={styles.container}>
+          <div
+            style={{ width: "100%", height: "100%" }}
+            className={styles.particles}
+          >
+            <Particles
+              style={{ height: "100%" }}
+              options={{
+                background: {
+                  color: {
+                    value: "#212121",
                   },
-                  onHover: {
-                    enable: true,
-                    mode: "grab",
-                    parallax: {
+                },
+                fpsLimit: 45,
+                interactivity: {
+                  detectsOn: "window",
+                  events: {
+                    onClick: {
                       enable: true,
-                      smooth: 700,
+                      mode: "repulse",
+                    },
+                    onHover: {
+                      enable: true,
+                      mode: "grab",
+                      parallax: {
+                        enable: true,
+                        smooth: 100,
+                      },
+                    },
+                    resize: true,
+                  },
+                  modes: {
+                    grab: {
+                      distance: 200,
+                      lineLinked: {
+                        blink: true,
+                        color: "#25964a",
+                        consent: true,
+                        opacity: 1,
+                      },
+                    },
+                    repulse: {
+                      distance: 500,
+                      duration: 1,
                     },
                   },
-                  resize: true,
                 },
-                modes: {
-                  grab: {
-                    distance: 250,
-                    lineLinked: {
-                      blink: true,
-                      color: "#25964a",
-                      consent: true,
-                      opacity: 1,
-                    },
+                particles: {
+                  color: {
+                    value: "#74b88b",
                   },
-                  repulse: {
-                    distance: 200,
-                    duration: 1,
-                  },
-                  push: {
-                    quantity: 5,
-                  },
-                },
-              },
-              particles: {
-                color: {
-                  value: "#74b88b",
-                },
-                links: {
-                  color: "#207e3f",
-                  distance: 150,
-                  enable: true,
-                  opacity: 0.7,
-                  width: 1,
-                },
-                collisions: {
-                  enable: true,
-                  mode: "bounce",
-                },
-                move: {
-                  direction: "none",
-                  enable: true,
-                  outMode: "bounce",
-                  random: false,
-                  speed: 3,
-                  straight: true,
-                },
-                number: {
-                  density: {
+                  links: {
+                    color: "#207e3f",
+                    distance: 150,
                     enable: true,
-                    value_area: 1000,
+                    opacity: 1,
+                    width: 1,
                   },
-                  value: 150,
+                  collisions: {
+                    enable: true,
+                    mode: "bounce",
+                  },
+                  move: {
+                    direction: "none",
+                    enable: true,
+                    outMode: "bounce",
+                    random: false,
+                    speed: 3,
+                    straight: true,
+                  },
+                  number: {
+                    density: {
+                      enable: true,
+                      value_area: 100,
+                    },
+                    value: 5,
+                  },
+                  opacity: {
+                    value: 1,
+                  },
+                  shape: {
+                    type: "circle",
+                  },
+                  size: {
+                    random: true,
+                    value: 7,
+                  },
                 },
-                opacity: {
-                  value: 1,
-                },
-                shape: {
-                  type: "circle",
-                },
-                size: {
-                  random: true,
-                  value: 7,
-                },
-              },
-              detectRetina: true,
-            }}
-          />
-        </div>
+                detectRetina: true,
+              }}
+            />
+          </div>
 
-        <Paper
-          elevation={4}
-          className={styles.paperCard}
-          style={{ borderRadius: "10px" }}
-        >
-          <Fade in={user.fullName ? true : false}>
-            <Collapse
-              in={user.fullName ? true : false}
-              sx={
-                user.fullName ? { overflow: "visible" } : { overflow: "hidden" }
-              }
-            >
-              <div className={styles.topCard}>
-                <img
-                  src={user.profilePictureURL}
-                  className={styles.profilePicture}
+          <Paper
+            elevation={4}
+            className={styles.paperCard}
+            style={{ borderRadius: "10px" }}
+          >
+            <Fade in={user.fullName ? true : false}>
+              <Collapse
+                in={user.fullName ? true : false}
+                sx={
+                  user.fullName
+                    ? { overflow: "visible" }
+                    : { overflow: "hidden" }
+                }
+              >
+                <div className={styles.topCard}>
+                  <img
+                    src={user.profilePictureURL}
+                    className={styles.profilePicture}
+                  />
+                  <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
+                </div>
+              </Collapse>
+            </Fade>
+
+            <Collapse in={status === "Deslogado"}>
+              <div className={styles.loginCard}>
+                <div className={styles.box}>
+                  <AccountCircle
+                    style={{ color: "action.active", margin: "0.25rem" }}
+                  />
+                  <TextField
+                    fullWidth
+                    id="input-with-icon-textfield"
+                    label="Usuário"
+                    variant="standard"
+                    type="text"
+                    name="username"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className={styles.box}>
+                  <Lock style={{ color: "action.active", margin: "0.25rem" }} />
+                  <TextField
+                    fullWidth
+                    id="input-with-icon-textfield"
+                    label="Senha"
+                    variant="standard"
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                  />
+                </div>
+                <FormControlLabel
+                  className={styles.inputCard}
+                  style={{ marginLeft: "0px", marginBottom: "0" }}
+                  label="Lembrar de mim"
+                  control={
+                    <Checkbox
+                      style={{ padding: "0px", margin: "0.25rem" }}
+                      checkedIcon={<CheckBox color="primary" />}
+                      icon={<CheckBoxOutlineBlank color="primary" />}
+                    />
+                  }
                 />
-                <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
               </div>
             </Collapse>
-          </Fade>
-
-          <Collapse in={status === "Deslogado"}>
-            <div className={styles.loginCard}>
-              <div className={styles.box}>
-                <AccountCircle
-                  style={{ color: "action.active", margin: "0.25rem" }}
-                />
-                <TextField
-                  fullWidth
-                  id="input-with-icon-textfield"
-                  label="Usuário"
-                  variant="standard"
-                  type="text"
-                  name="username"
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className={styles.box}>
-                <Lock style={{ color: "action.active", margin: "0.25rem" }} />
-                <TextField
-                  fullWidth
-                  id="input-with-icon-textfield"
-                  label="Senha"
-                  variant="standard"
-                  type="password"
-                  name="password"
-                  onChange={handleChange}
-                />
-              </div>
-              <FormControlLabel
-                className={styles.inputCard}
-                style={{ marginLeft: "0px", marginBottom: "0" }}
-                label="Lembrar de mim"
-                control={
-                  <Checkbox
-                    style={{ padding: "0px", margin: "0.25rem" }}
-                    checkedIcon={<CheckBox color="primary" />}
-                    icon={<CheckBoxOutlineBlank color="primary" />}
-                  />
-                }
-              />
+            <div className={styles.buttonCard}>
+              {status == "Logando" ? (
+                <CircularProgress style={{ alignSelf: "center" }} />
+              ) : status === "Logado" ? (
+                <Button
+                  variant="contained"
+                  endIcon={<Send />}
+                  onClick={handleAccess}
+                >
+                  Acessar
+                </Button>
+              ) : status === "Deslogado" ? (
+                <Button
+                  variant="outlined"
+                  endIcon={<Send />}
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
+              ) : null}
             </div>
-          </Collapse>
-          <div className={styles.buttonCard}>
-            {status == "Logando" ? (
-              <CircularProgress style={{ alignSelf: "center" }} />
-            ) : status === "Logado" ? (
-              <Button
-                variant="contained"
-                endIcon={<Send />}
-                onClick={handleAccess}
-              >
-                Acessar
-              </Button>
-            ) : status === "Deslogado" ? (
-              <Button
-                variant="outlined"
-                endIcon={<Send />}
-                onClick={handleLogin}
-              >
-                Login
-              </Button>
-            ) : null}
-          </div>
-        </Paper>
-      </Grid>
+          </Paper>
+        </Grid>
+      </Fade>
     </NoSsr>
   );
 }
