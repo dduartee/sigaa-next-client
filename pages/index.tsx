@@ -30,7 +30,7 @@ import {
   initiateSocket,
   subscribeAllEvents,
 } from "@services/api/socket";
-import Link from 'next/link'
+import Link from "next/link";
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -89,6 +89,7 @@ const useStyles = makeStyles({
 });
 
 export default function Index(): JSX.Element {
+  let window;
   const [status, setStatus] = useState<UserStatus>("Deslogado");
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
@@ -132,11 +133,19 @@ export default function Index(): JSX.Element {
 
   useEffect(() => {
     initiateSocket();
-    setCredentialsMerge({
-      name: "token",
-      value: localStorage.getItem("token"),
+    sendEvent("auth::valid", { token: localStorage.getItem("token") });
+    subscribeEvent("auth::valid", (valid: boolean) => {
+      if (valid) {
+        setCredentialsMerge({
+          name: "token",
+          value: localStorage.getItem("token"),
+        });
+        return sendEvent("user::login", {
+          token: localStorage.getItem("token"),
+        }); // tenta logar pelo cache
+      }
     });
-    sendEvent("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo cache
+
     subscribeAllEvents((...args: any[]) => {
       console.log(args);
     });
@@ -382,7 +391,7 @@ export default function Index(): JSX.Element {
               {status === "Logando" ? (
                 <CircularProgress style={{ alignSelf: "center" }} />
               ) : status === "Logado" ? (
-                <Link href="/home">
+                <Link href={`/bond/${encodeURIComponent(vinculo)}`}>
                   <Button
                     variant="contained"
                     endIcon={<Send />}
