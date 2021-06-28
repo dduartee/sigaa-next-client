@@ -11,7 +11,7 @@ export type UserStatus = 'Logado' | 'Deslogado' | 'Logando' | 'Deslogando'
 
 export type Bond = {
     program: string,
-    registration: string
+    registration: string,
     courses: Course[]
 }
 export type Course = {
