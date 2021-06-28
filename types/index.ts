@@ -8,3 +8,9 @@ export type UserInfo = {
     profilePictureURL?: string
 }
 export type UserStatus = 'Logado' | 'Deslogado' | 'Logando' | 'Deslogando'
+
+export type Bond = {
+    program: string,
+    registration: string
+    courses: any[]
+}
