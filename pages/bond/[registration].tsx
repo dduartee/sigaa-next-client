@@ -23,8 +23,6 @@ const Page = ({ registration }: any) => {
           registration,
           token: localStorage.getItem("token"),
         });
-      } else {
-        localStorage.removeItem("token");
       }
     });
   }, []);
