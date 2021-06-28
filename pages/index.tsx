@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -10,6 +10,9 @@ import {
   CircularProgress,
   Collapse,
   Fade,
+  ToggleButton,
+  ToggleButtonGroup,
+  Grow,
 } from "@material-ui/core";
 import {
   AccountCircle,
@@ -20,15 +23,14 @@ import {
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import Particles from "react-tsparticles";
-import { UserCredentials, UserInfo, UserStatus } from "@types";
+import { Bond, UserCredentials, UserInfo, UserStatus } from "@types";
 import {
   subscribeEvent,
   sendEvent,
   initiateSocket,
   subscribeAllEvents,
 } from "@services/api/socket";
-import UserAPI from "@services/api/User";
-
+import Link from 'next/link'
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -97,6 +99,20 @@ export default function Index(): JSX.Element {
     fullName: "",
     profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png",
   });
+  const [data, setData] = useState<Bond[]>([
+    {
+      program: "",
+      registration: "",
+      courses: [],
+    },
+  ]);
+  const [vinculo, setVinculo] = useState("");
+  const handleChangeVinculo = (
+    event: React.MouseEvent<HTMLElement>,
+    nextVinculo: string
+  ) => {
+    setVinculo(nextVinculo);
+  };
   const handleChange = (event: {
     target: HTMLTextAreaElement | HTMLInputElement;
   }) => setCredentialsMerge(event.target);
@@ -132,19 +148,30 @@ export default function Index(): JSX.Element {
       localStorage.setItem("token", token);
       setCredentialsMerge({ name: "token", value: token });
     });
-    subscribeEvent("user::login", (data: any) => {
+    subscribeEvent("user::login", (data: string) => {
       const { logado } = JSON.parse(data);
       console.log(logado);
       if (logado) {
         sendEvent("user::info", { token: localStorage.getItem("token") });
+        sendEvent("bonds::list", {
+          token: localStorage.getItem("token"),
+          inactive: true,
+        });
       }
     });
-    subscribeEvent("user::info", (data: any) => {
+    subscribeEvent("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
+    subscribeEvent("bonds::list", (data: string) => {
+      const bondsJSON = JSON.parse(data);
+      setData(bondsJSON);
+    });
   }, []);
+  useEffect(() => {
+    setVinculo(data[0].registration);
+  }, [data]);
   const handleAccess = () => {
     return true;
   };
@@ -195,8 +222,8 @@ export default function Index(): JSX.Element {
                       },
                     },
                     repulse: {
-                      distance: 500,
-                      duration: 1,
+                      distance: 250,
+                      duration: 2,
                     },
                   },
                 },
@@ -313,17 +340,57 @@ export default function Index(): JSX.Element {
                 />
               </div>
             </Collapse>
+            <Collapse in={data[0].program ? true : false}>
+              <Grow in={data[0].program ? true : false} timeout={500}>
+                <div>
+                  <p style={{ textAlign: "center" }}>
+                    Escolha um vínculo para acessar
+                  </p>
+                  <Grow in={data[0].program ? true : false} timeout={750}>
+                    <ToggleButtonGroup
+                      exclusive
+                      aria-label=""
+                      value={vinculo}
+                      onChange={handleChangeVinculo}
+                      orientation="vertical"
+                    >
+                      {data?.map((value, index) => {
+                        return (
+                          <ToggleButton
+                            key={index}
+                            value={value.registration}
+                            style={{
+                              marginTop: ".5rem",
+                              marginLeft: "1rem",
+                              marginRight: "1rem",
+                              marginBottom: ".5rem",
+                              border: "1px solid rgba(255, 255, 255, 0.12)",
+                              borderRadius: "4px",
+                              color: "#fff",
+                            }}
+                          >
+                            {value.program}
+                          </ToggleButton>
+                        );
+                      })}
+                    </ToggleButtonGroup>
+                  </Grow>
+                </div>
+              </Grow>
+            </Collapse>
             <div className={styles.buttonCard}>
-              {status == "Logando" ? (
+              {status === "Logando" ? (
                 <CircularProgress style={{ alignSelf: "center" }} />
               ) : status === "Logado" ? (
-                <Button
-                  variant="contained"
-                  endIcon={<Send />}
-                  onClick={handleAccess}
-                >
-                  Acessar
-                </Button>
+                <Link href="/home">
+                  <Button
+                    variant="contained"
+                    endIcon={<Send />}
+                    onClick={handleAccess}
+                  >
+                    Acessar
+                  </Button>
+                </Link>
               ) : status === "Deslogado" ? (
                 <Button
                   variant="outlined"
