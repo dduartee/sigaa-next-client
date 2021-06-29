@@ -89,7 +89,6 @@ const useStyles = makeStyles({
 });
 
 export default function Index(): JSX.Element {
-  let window;
   const [status, setStatus] = useState<UserStatus>("Deslogado");
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
