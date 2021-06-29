@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Box } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import AccordionCourse from "@components/AccordionCourse";
 import { Paper } from "@material-ui/core";
 import CustomDrawer from "@components/CustomDrawer";
 import CustomNavBar from "@components/CustomNavBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Bond, UserInfo } from "@types";
-import {
-  initiateSocket,
-  sendEvent,
-  subscribeEvent,
-} from "@services/api/socket";
-import { useRouter } from "next/router";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 export default function HomeTemplate({

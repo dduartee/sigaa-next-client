@@ -1,5 +1,3 @@
-import NavBar from "@components/CustomNavBar";
-import { Paper, Grid } from "@material-ui/core";
 import {
   initiateSocket,
   sendEvent,
