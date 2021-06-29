@@ -170,6 +170,10 @@ export default function Index(): JSX.Element {
     });
     subscribeEvent("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ fullName, profilePictureURL })
+      );
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });

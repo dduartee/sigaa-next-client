@@ -16,7 +16,7 @@
     "@emotion/server": "latest",
     "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^5.0.0-alpha.38",
-    "@material-ui/icons": "^4.11.2",
+    "@material-ui/icons": "^5.0.0-alpha.37",
     "@material-ui/styles": "^4.11.4",
     "clsx": "latest",
     "eslint-config-prettier": "^8.3.0",
