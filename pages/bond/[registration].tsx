@@ -5,7 +5,7 @@ import {
 } from "@services/api/socket";
 import { Bond, UserInfo } from "@types";
 import React, { useEffect, useState } from "react";
-import Home from "@pages/_home";
+import Home from "@templates/_home";
 import { useRouter } from "next/router";
 const Page = ({ registration }: any) => {
   const router = useRouter();
