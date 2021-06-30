@@ -262,10 +262,10 @@
     react-is "^17.0.0"
     react-transition-group "^4.4.0"
 
-"@material-ui/icons@^4.11.2":
-  version "4.11.2"
-  resolved "https://registry.npmjs.org/@material-ui/icons/-/icons-4.11.2.tgz"
-  integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
+"@material-ui/icons@^5.0.0-alpha.37":
+  version "5.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-5.0.0-alpha.37.tgz#8579986e0a3b4586dc7fbf23234d8bfe909b6c3c"
+  integrity sha512-VlUYYCvHyMGTrZB1pxdDIEqCeKle6STys8p+DMbzGbUQ/CuuVqRkA06a73FQaMdAUBgc5VMKrsUg2hwj1UkTfQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
 

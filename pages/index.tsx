@@ -89,7 +89,6 @@ const useStyles = makeStyles({
 });
 
 export default function Index(): JSX.Element {
-  let window;
   const [status, setStatus] = useState<UserStatus>("Deslogado");
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
@@ -170,6 +169,10 @@ export default function Index(): JSX.Element {
     });
     subscribeEvent("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ fullName, profilePictureURL })
+      );
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
