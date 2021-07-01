@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
-  Checkbox,
-  FormControlLabel,
   Grid,
   NoSsr,
   Paper,
@@ -18,19 +16,13 @@ import {
   AccountCircle,
   Lock,
   Send,
-  CheckBoxOutlineBlank,
-  CheckBox,
+  Logout,
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
-import Particles from "react-tsparticles";
 import { Bond, UserCredentials, UserInfo, UserStatus } from "@types";
-import {
-  subscribeEvent,
-  sendEvent,
-  initiateSocket,
-  subscribeAllEvents,
-} from "@services/api/socket";
 import Link from "next/link";
+import Particulas from "@components/Particles";
+import { SocketContext } from "@context/socket";
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -65,7 +57,7 @@ const useStyles = makeStyles({
   buttonCard: {
     margin: "1rem",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     alignContent: "center",
   },
@@ -80,11 +72,7 @@ const useStyles = makeStyles({
     marginTop: "-50px",
     userSelect: "none",
   },
-  particles: {
-    "& div": {
-      height: "100%",
-    },
-  },
+
   box: { display: "flex", alignItems: "flex-end", marginBottom: "1rem" },
 });
 
@@ -127,47 +115,46 @@ export default function Index(): JSX.Element {
     setCredentials({ ...credentials, [name]: value } as UserCredentials);
   };
   const handleLogin = () => {
-    sendEvent("user::login", credentials); // loga pela "primeira vez" sem o cache
+    socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
   };
-
+  const socket = useContext(SocketContext);
   useEffect(() => {
-    initiateSocket();
-    sendEvent("auth::valid", { token: localStorage.getItem("token") });
-    subscribeEvent("auth::valid", (valid: boolean) => {
+    socket.emit("auth::valid", { token: localStorage.getItem("token") });
+    socket.on("auth::valid", (valid: boolean) => {
       if (valid) {
         setCredentialsMerge({
           name: "token",
           value: localStorage.getItem("token"),
         });
-        return sendEvent("user::login", {
+        return socket.emit("user::login", {
           token: localStorage.getItem("token"),
         }); // tenta logar pelo cache
       }
     });
 
-    subscribeAllEvents((...args: any[]) => {
+    socket.onAny((...args: any[]) => {
       console.log(args);
     });
-    subscribeEvent("user::status", (status: UserStatus) => {
+    socket.on("user::status", (status: UserStatus) => {
       setStatus(status);
       console.log(status);
     });
-    subscribeEvent("auth::store", (token: string) => {
+    socket.on("auth::store", (token: string) => {
       localStorage.setItem("token", token);
       setCredentialsMerge({ name: "token", value: token });
     });
-    subscribeEvent("user::login", (data: string) => {
+    socket.on("user::login", (data: string) => {
       const { logado } = JSON.parse(data);
       console.log(logado);
       if (logado) {
-        sendEvent("user::info", { token: localStorage.getItem("token") });
-        sendEvent("bonds::list", {
+        socket.emit("user::info", { token: localStorage.getItem("token") });
+        socket.emit("bonds::list", {
           token: localStorage.getItem("token"),
           inactive: true,
         });
       }
     });
-    subscribeEvent("user::info", (data: string) => {
+    socket.on("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
       localStorage.setItem(
         "user",
@@ -176,7 +163,7 @@ export default function Index(): JSX.Element {
       setUser({ fullName, profilePictureURL });
       console.log(data);
     });
-    subscribeEvent("bonds::list", (data: string) => {
+    socket.on("bonds::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
       setData(bondsJSON);
     });
@@ -184,115 +171,32 @@ export default function Index(): JSX.Element {
   useEffect(() => {
     setVinculo(data[0].registration);
   }, [data]);
-  const handleAccess = () => {
-    return true;
+  const handleLogout = () => {
+    socket.emit("user::logoff", { token: localStorage.getItem("token") });
   };
 
   const styles = useStyles();
+  const conditionals = {
+    willLogout: status === "Deslogando",
+    willLogin: status === "Logando",
+    isLoggedIn: status === "Logado",
+    isLoggedOut: status === "Deslogado",
+    hasFullName: user.fullName ? true : false,
+    hasBond: data[0].program ? true : false,
+  };
   return (
     <NoSsr>
       <Fade in={true} timeout={1000}>
         <Grid className={styles.container}>
-          <div
-            style={{ width: "100%", height: "100%" }}
-            className={styles.particles}
-          >
-            <Particles
-              style={{ height: "100%" }}
-              options={{
-                background: {
-                  color: {
-                    value: "#212121",
-                  },
-                },
-                fpsLimit: 45,
-                interactivity: {
-                  detectsOn: "window",
-                  events: {
-                    onClick: {
-                      enable: true,
-                      mode: "repulse",
-                    },
-                    onHover: {
-                      enable: true,
-                      mode: "grab",
-                      parallax: {
-                        enable: true,
-                        smooth: 100,
-                      },
-                    },
-                    resize: true,
-                  },
-                  modes: {
-                    grab: {
-                      distance: 200,
-                      lineLinked: {
-                        blink: true,
-                        color: "#25964a",
-                        consent: true,
-                        opacity: 1,
-                      },
-                    },
-                    repulse: {
-                      distance: 250,
-                      duration: 2,
-                    },
-                  },
-                },
-                particles: {
-                  color: {
-                    value: "#74b88b",
-                  },
-                  links: {
-                    color: "#207e3f",
-                    distance: 150,
-                    enable: true,
-                    opacity: 1,
-                    width: 1,
-                  },
-                  collisions: {
-                    enable: true,
-                    mode: "bounce",
-                  },
-                  move: {
-                    direction: "none",
-                    enable: true,
-                    outMode: "bounce",
-                    random: false,
-                    speed: 3,
-                    straight: true,
-                  },
-                  number: {
-                    density: {
-                      enable: true,
-                      value_area: 100,
-                    },
-                    value: 5,
-                  },
-                  opacity: {
-                    value: 1,
-                  },
-                  shape: {
-                    type: "circle",
-                  },
-                  size: {
-                    random: true,
-                    value: 7,
-                  },
-                },
-                detectRetina: true,
-              }}
-            />
-          </div>
-
+          <Particulas />
           <Paper
             elevation={4}
             className={styles.paperCard}
             style={{ borderRadius: "10px" }}
           >
-            <Fade in={user.fullName ? true : false}>
+            <Fade in={conditionals.hasFullName && conditionals.isLoggedIn}>
               <Collapse
-                in={user.fullName ? true : false}
+                in={conditionals.hasFullName && conditionals.isLoggedIn}
                 sx={
                   user.fullName
                     ? { overflow: "visible" }
@@ -309,7 +213,7 @@ export default function Index(): JSX.Element {
               </Collapse>
             </Fade>
 
-            <Collapse in={status === "Deslogado"}>
+            <Collapse in={conditionals.isLoggedOut}>
               <div className={styles.loginCard}>
                 <div className={styles.box}>
                   <AccountCircle
@@ -338,27 +242,21 @@ export default function Index(): JSX.Element {
                     onChange={handleChange}
                   />
                 </div>
-                <FormControlLabel
-                  className={styles.inputCard}
-                  style={{ marginLeft: "0px", marginBottom: "0" }}
-                  label="Lembrar de mim"
-                  control={
-                    <Checkbox
-                      style={{ padding: "0px", margin: "0.25rem" }}
-                      checkedIcon={<CheckBox color="primary" />}
-                      icon={<CheckBoxOutlineBlank color="primary" />}
-                    />
-                  }
-                />
               </div>
             </Collapse>
-            <Collapse in={data[0].program ? true : false}>
-              <Grow in={data[0].program ? true : false} timeout={500}>
+            <Collapse in={conditionals.hasBond && conditionals.isLoggedIn}>
+              <Grow
+                in={conditionals.hasBond && conditionals.isLoggedIn}
+                timeout={500}
+              >
                 <div>
                   <p style={{ textAlign: "center" }}>
                     Escolha um vínculo para acessar
                   </p>
-                  <Grow in={data[0].program ? true : false} timeout={750}>
+                  <Grow
+                    in={conditionals.hasBond && conditionals.isLoggedIn}
+                    timeout={750}
+                  >
                     <ToggleButtonGroup
                       exclusive
                       aria-label=""
@@ -391,23 +289,47 @@ export default function Index(): JSX.Element {
               </Grow>
             </Collapse>
             <div className={styles.buttonCard}>
-              {status === "Logando" ? (
+              {conditionals.willLogin || conditionals.willLogout ? (
                 <CircularProgress style={{ alignSelf: "center" }} />
-              ) : status === "Logado" ? (
-                <Link href={`/bond/${encodeURIComponent(vinculo)}`}>
+              ) : conditionals.isLoggedIn ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignContent: "center",
+                  }}
+                >
                   <Button
                     variant="contained"
-                    endIcon={<Send />}
-                    onClick={handleAccess}
+                    endIcon={<Logout />}
+                    onClick={handleLogout}
+                    fullWidth
+                    sx={{ margin: ".25rem" }}
                   >
-                    Acessar
+                    Sair
                   </Button>
-                </Link>
-              ) : status === "Deslogado" ? (
+                  <Link
+                    href={`/${encodeURIComponent(vinculo)}`}
+                    prefetch={true}
+                    as={`/bond/${encodeURIComponent(vinculo)}`}
+                  >
+                    <Button
+                      variant="contained"
+                      endIcon={<Send />}
+                      fullWidth
+                      sx={{ margin: ".25rem" }}
+                    >
+                      Acessar
+                    </Button>
+                  </Link>
+                </div>
+              ) : conditionals.isLoggedOut ? (
                 <Button
                   variant="outlined"
                   endIcon={<Send />}
                   onClick={handleLogin}
+                  fullWidth
                 >
                   Login
                 </Button>

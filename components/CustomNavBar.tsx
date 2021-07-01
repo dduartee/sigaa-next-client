@@ -18,12 +18,10 @@ const useStyles = makeStyles({
 });
 function ResponsiveDrawer({
   handler,
-  open,
   width,
   profilePictureURL,
 }: {
   handler: () => void;
-  open: boolean;
   width: number;
   profilePictureURL: string | undefined;
 }) {

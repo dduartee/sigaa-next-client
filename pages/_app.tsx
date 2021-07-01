@@ -7,6 +7,8 @@ import createCache from "@emotion/cache";
 import { dark } from "@styles/themes";
 import { createTheme } from "@material-ui/core";
 import "@styles/global.css";
+import { SocketContext, socketInstance } from "@context/socket";
+
 const cache = createCache({ key: "css", prepend: true });
 cache.compat = true;
 
@@ -16,8 +18,10 @@ export default function MyApp(props: AppProps): JSX.Element {
   return (
     <CacheProvider value={cache}>
       <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <Component {...pageProps} />
+        <SocketContext.Provider value={socketInstance}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </SocketContext.Provider>
       </ThemeProvider>
     </CacheProvider>
   );
