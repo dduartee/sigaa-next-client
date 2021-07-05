@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box } from "@material-ui/core";
 import AccordionCourse from "@components/AccordionCourse";
 import { Paper } from "@material-ui/core";
@@ -8,16 +8,17 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { Bond, UserInfo } from "@types";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
-export default function HomeTemplate({
-  data,
-  user,
-}: {
-  data: Bond[];
-  user: UserInfo;
-}) {
+import { DataContext } from "@context/data";
+import { UserContext } from "@context/user";
+import { useRouter } from "next/router";
+export default function HomeTemplate() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(true);
+  const data = useContext(DataContext);
+  const user = useContext(UserContext);
+
   useEffect(() => {
     if (user.profilePictureURL) {
       if (data[0].courses[0]) {
@@ -34,6 +35,7 @@ export default function HomeTemplate({
     setMobileOpen(!mobileOpen);
   };
   const drawerWidth = 100;
+
   return (
     <>
       <Backdrop

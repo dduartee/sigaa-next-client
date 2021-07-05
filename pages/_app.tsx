@@ -12,7 +12,7 @@ import { SocketContext, socketInstance } from "@context/socket";
 const cache = createCache({ key: "css", prepend: true });
 cache.compat = true;
 
-export default function MyApp(props: AppProps): JSX.Element {
+function MyApp(props: AppProps): JSX.Element {
   const { Component, pageProps } = props;
   const darkTheme = createTheme(dark);
   return (
@@ -26,3 +26,5 @@ export default function MyApp(props: AppProps): JSX.Element {
     </CacheProvider>
   );
 }
+
+export default MyApp;

@@ -24,3 +24,10 @@ export type Course = {
     homeworks: any[],
     grades: any[],
 }
+
+export type SlugParams = {
+    registration: string | null;
+    actionPrimary: "news" | "homeworks" | "grades" | "course" | null;
+    code: string | null;
+    actionSecondary: "grades" | "homeworks" | "news" | "details" | null;
+}
