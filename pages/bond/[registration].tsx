@@ -1,13 +1,10 @@
-import {
-  initiateSocket,
-  sendEvent,
-  subscribeEvent,
-} from "@services/api/socket";
 import { Bond, UserInfo } from "@types";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Home from "@templates/_home";
 import { useRouter } from "next/router";
-const Page = ({ registration }: any) => {
+import { SocketContext } from "@context/socket";
+function Page({ registration }: any) {
+  const socket = useContext(SocketContext);
   const router = useRouter();
 
   const [user, setUser] = useState<UserInfo>({
@@ -22,23 +19,22 @@ const Page = ({ registration }: any) => {
     },
   ]);
   useEffect(() => {
-    initiateSocket();
-    sendEvent("auth::valid", { token: localStorage.getItem("token") });
+    socket.emit("auth::valid", { token: localStorage.getItem("token") });
 
-    subscribeEvent("auth::valid", (valid: boolean) => {
+    socket.on("auth::valid", (valid: boolean) => {
       if (!valid) {
-        localStorage.setItem("user", "")
+        localStorage.setItem("user", "");
         return router.push("/");
       } else {
         const userInfo = localStorage.getItem("user");
         if (userInfo) {
           setUser(JSON.parse(userInfo as string));
         } else {
-          sendEvent("user::info", { token: localStorage.getItem("token") });
+          socket.emit("user::info", { token: localStorage.getItem("token") });
         }
         const coursesList = localStorage.getItem("json");
         if (!coursesList) {
-          sendEvent("courses::list", {
+          socket.emit("courses::list", {
             token: localStorage.getItem("token"),
             registration,
           });
@@ -47,11 +43,10 @@ const Page = ({ registration }: any) => {
         }
       }
     });
-    subscribeEvent("courses::list", (received: string) => {
-      localStorage.setItem("json", received);
+    socket.on("courses::list", (received: string) => {
       setData(JSON.parse(received));
     });
-    subscribeEvent("user::info", (received: string) => {
+    socket.on("user::info", (received: string) => {
       const { fullName, profilePictureURL } = JSON.parse(received);
       localStorage.setItem(
         "user",
@@ -61,8 +56,7 @@ const Page = ({ registration }: any) => {
     });
   }, []);
   return <Home data={data} user={user} />;
-};
-
+}
 export async function getServerSideProps(context: any) {
   const { registration } = context.query;
   return {

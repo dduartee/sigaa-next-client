@@ -18,7 +18,6 @@ export default function HomeTemplate({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(true);
-  console.log(data[0].courses[0] ? true : false);
   useEffect(() => {
     if (user.profilePictureURL) {
       if (data[0].courses[0]) {
@@ -27,7 +26,6 @@ export default function HomeTemplate({
         setLoading(true);
       }
     }
-    console.log(data[0].courses);
   }, [data, user]);
   const tabChanger = (event: any, newValue: number) => {
     setTab(newValue);
@@ -47,7 +45,6 @@ export default function HomeTemplate({
       <Box sx={{ display: "flex" }}>
         <CustomNavBar
           handler={handleDrawerToggle}
-          open={mobileOpen}
           width={drawerWidth}
           profilePictureURL={user.profilePictureURL}
         />
