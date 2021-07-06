@@ -38,7 +38,7 @@ function ResponsiveDrawer({
           value={tab}
           onChange={tabChanger}
         >
-          <Tab label="Inicio" icon={<Home />} />
+          <Tab label="Inicio" icon={<Home />}  />
           <Tab label="Turmas" icon={<GroupsIcon />} />
           <Tab label="Horários" icon={<CalendarTodayIcon />} />
           <Tab label="Desempenho" icon={<EqualizerIcon />} />

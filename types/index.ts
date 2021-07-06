@@ -27,7 +27,7 @@ export type Course = {
 
 export type SlugParams = {
     registration: string | null;
-    actionPrimary: "news" | "homeworks" | "grades" | "course" | null;
+    actionPrimary: "news" | "homeworks" | "grades" | "course" | "schedules" | null;
     code: string | null;
     actionSecondary: "grades" | "homeworks" | "news" | "details" | null;
 }

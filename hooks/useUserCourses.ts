@@ -17,12 +17,11 @@ function useUserCourses() {
   useEffect( () => {
     socket.on( "courses::list", ( data: string ) => {
       const bondsJSON = JSON.parse( data );
-      localStorage.setItem( "json", data )
-      console.log(bondsJSON)
+      localStorage.setItem( "json", data );
       setData( bondsJSON );
     } );
   }, [] );
-  return { data };
+  return { data, setData };
 }
 
 export default useUserCourses
