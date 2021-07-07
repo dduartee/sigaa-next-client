@@ -1,6 +1,6 @@
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
+import React from "react";
 function Loading({loading}: {loading: boolean}) {
     return (
         <Backdrop
