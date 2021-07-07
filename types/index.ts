@@ -31,3 +31,10 @@ export type SlugParams = {
     code: string | null;
     actionSecondary: "grades" | "homeworks" | "news" | "details" | null;
 }
+
+export type SchedulerData = {
+    id: string
+    title: string
+    startDate: Date
+    endDate: Date
+}

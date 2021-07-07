@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
+    
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -26,7 +28,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/home/[...slug].tsx"  ],
+, "pages/home/[...slug].tsx", "formatSchedule.js", "formatSchedule.js", "formatSchedule.js"  ],
   "exclude": [
     "node_modules"
   ]

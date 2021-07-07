@@ -30,6 +30,10 @@ import { CardBottom, CardHeader } from "@components/Index/Card";
 import useValidToken from "@hooks/useValidToken";
 import useUserLogin from "@hooks/useUserLogin";
 import useUserBonds from "@hooks/useUserBonds";
+import { useRouter } from "next/router";
+import Loading from "@components/Loading";
+
+
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -58,12 +62,14 @@ const useStyles = makeStyles({
 });
 
 function Index(): JSX.Element {
+  const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
     password: "",
     token: "",
   });
   const [vinculo, setVinculo] = useState("");
+
   const handleChangeVinculo = (
     event: React.MouseEvent<HTMLElement>,
     nextVinculo: string
@@ -86,7 +92,7 @@ function Index(): JSX.Element {
   };
   const socket = useContext(SocketContext);
   const tokenIsValid = useValidToken();
-  const { status, user } = useUserLogin();
+  const { status, user, setStatus } = useUserLogin();
   const { data } = useUserBonds();
   useEffect(() => {
     if (tokenIsValid) {
@@ -113,6 +119,10 @@ function Index(): JSX.Element {
   useEffect(() => {
     setVinculo(data[0].registration);
   }, [data]);
+  const handleAccess = () => {
+    setStatus("Logando");
+    router.push(`/home/${encodeURIComponent(vinculo)}`, undefined, { shallow: true });
+  }
   const handleLogout = () => {
     socket.emit("user::logoff", { token: localStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
@@ -139,7 +149,6 @@ function Index(): JSX.Element {
     hasBondAndIsLoggedIn: data[0].program && status === "Logado" ? true : false,
     userIsWaiting: status === "Logando" || status === "Deslogando",
   };
-
   return (
     <NoSsr>
       <Fade in={true} timeout={1000}>
@@ -260,20 +269,15 @@ function Index(): JSX.Element {
                   >
                     Sair
                   </Button>
-                  <Link
-                    href={`/${encodeURIComponent(vinculo)}`}
-                    prefetch={true}
-                    as={`/home/${encodeURIComponent(vinculo)}`}
+                  <Button
+                    variant="contained"
+                    endIcon={<Send />}
+                    fullWidth
+                    sx={{ margin: ".25rem" }}
+                    onClick={handleAccess}
                   >
-                    <Button
-                      variant="contained"
-                      endIcon={<Send />}
-                      fullWidth
-                      sx={{ margin: ".25rem" }}
-                    >
-                      Acessar
-                    </Button>
-                  </Link>
+                    Acessar
+                  </Button>
                 </Grid>
               ) : conditionals.isLoggedOut ? ( // usuario esta deslogado
                 <Button

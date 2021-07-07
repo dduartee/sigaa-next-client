@@ -5,12 +5,10 @@ import CustomDrawer from "@components/CustomDrawer";
 import CustomNavBar from "@components/CustomNavBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Bond, UserInfo } from "@types";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { DataContext } from "@context/data";
 import { UserContext } from "@context/user";
 import { useRouter } from "next/router";
-
+import Loading from "@components/Loading";
 export default function HomeTemplate({
   children,
   tab,
@@ -36,12 +34,7 @@ export default function HomeTemplate({
 
   return (
     <>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="primary" />
-      </Backdrop>
+      <Loading loading={loading} />
       <Box sx={{ display: "flex" }}>
         <CustomNavBar
           handler={handleDrawerToggle}

@@ -35,7 +35,7 @@ function useUserLogin() {
       setUser( { fullName, profilePictureURL } );
     } );
   }, [] );
-  return { user, status, setUser };
+  return { user, status, setUser, setStatus };
 }
 
 export default useUserLogin

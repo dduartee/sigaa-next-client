@@ -1,4 +1,3 @@
-import { Bond, UserInfo } from "@types";
 import React, { useContext, useEffect, useState } from "react";
 import Home from "@templates/_home";
 import { useRouter } from "next/router";
@@ -12,18 +11,13 @@ import parseSlugPattern from "@util/parseSlugPattern";
 import { DataContext } from "@context/data";
 import getAction from "@util/getAction";
 import Courses from "@components/Home/Courses";
-import { useDebugValue } from "react";
 import Schedules from "@components/Home/Schedules";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 function Page({ slug }: { slug: string[] }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const valid = useValidToken();
   const { user, setUser } = useUserLogin();
-  const { data } = useUserCourses();
-  const [action, setAction] = useState<string | undefined>();
-  const [tab, setTab] = useState(-1);
-  const [children, setChildren] = useState(<div></div>);
   const [loading, setLoading] = useState(true);
 
   const { registration, actionPrimary, code, actionSecondary } =
@@ -35,6 +29,7 @@ function Page({ slug }: { slug: string[] }) {
     actionSecondary,
   });
 
+  const valid = useValidToken();
   useEffect(() => {
     setLoading(true);
     const userInfo = JSON.parse(localStorage.getItem("user") as string);
@@ -43,6 +38,7 @@ function Page({ slug }: { slug: string[] }) {
     } else router.push("/");
   }, [valid]);
 
+  const [tab, setTab] = useState(-1);
   useEffect(() => {
     switch (actionSlug) {
       case "getCourses":
@@ -59,7 +55,10 @@ function Page({ slug }: { slug: string[] }) {
       default:
         break;
     }
-  }, [actionSlug]);
+  }, [actionSlug, registration]);
+
+  const { data } = useUserCourses();
+  const [children, setChildren] = useState(<div></div>);
   useEffect(() => {
     let redirectURL = `/home/${registration}`;
     setLoading(true);
@@ -81,9 +80,11 @@ function Page({ slug }: { slug: string[] }) {
     console.log(`Redirecionando para ${redirectURL}`);
     router.push(redirectURL);
   }, [tab, data]);
+
   useEffect(() => {
     setLoading(false);
-  }, [data])
+  }, [data]);
+
   return (
     <UserContext.Provider value={user}>
       <DataContext.Provider value={data}>
@@ -96,7 +97,7 @@ function Page({ slug }: { slug: string[] }) {
     </UserContext.Provider>
   );
 }
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetServerSidePropsContext)  {
   const { slug } = context.query;
   return {
     props: { slug },
