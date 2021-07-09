@@ -4,7 +4,7 @@ import { Bond, UserInfo, UserStatus } from '@types'
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 
-function useUserCourses() {
+export default function useBondsHandler() {
   const [data, setData] = useState<Bond[]>( [
     {
       program: "",
@@ -15,15 +15,13 @@ function useUserCourses() {
   const socket = useContext( SocketContext );
 
   useEffect( () => {
-    socket.on( "courses::list", ( data: string ) => {
+    socket.on( "bonds::list", ( data: string ) => {
       const bondsJSON = JSON.parse( data );
       localStorage.setItem( "json", data )
-      console.log(bondsJSON)
       setData( bondsJSON );
     } );
   }, [] );
   return { data };
 }
 
-export default useUserCourses
 

@@ -10,7 +10,7 @@ export default function AccordionCourse({
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <Accordion>
@@ -21,6 +21,7 @@ export default function AccordionCourse({
         color="primary"
       >
         <Typography>{title}</Typography>
+
       </AccordionSummary>
       <AccordionDetails color="primary">{children}</AccordionDetails>
     </Accordion>

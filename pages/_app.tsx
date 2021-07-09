@@ -8,6 +8,8 @@ import { dark } from "@styles/themes";
 import { createTheme } from "@material-ui/core";
 import "@styles/global.css";
 import { SocketContext, socketInstance } from "@context/socket";
+import Moment from 'react-moment';
+import 'moment-timezone';
 
 const cache = createCache({ key: "css", prepend: true });
 cache.compat = true;

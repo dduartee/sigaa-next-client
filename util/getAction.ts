@@ -2,24 +2,26 @@ import { SlugParams } from "@types";
 
 function getAction( { registration, actionPrimary, code, actionSecondary }: SlugParams ) {
   const conditionals = {
-    getCourses: registration && !actionPrimary && !code && !actionSecondary, // /home/REGISTRATION/
+    getBonds: !registration && !actionPrimary && !code && !actionSecondary,
+    getCourses: registration && !actionPrimary && !code && !actionSecondary,
 
-    getNewsOfBond: registration && actionPrimary === "news" && !code && !actionSecondary, // /home/REGISTRATION/news/
-    getHomeworksOfBond: registration && actionPrimary === "homeworks" && !code && !actionSecondary, // /home/REGISTRATION/homeworks/
-    getGradesOfBond: registration && actionPrimary === "grades" && !code && !actionSecondary, // /home/REGISTRATION/grades
+    getSchedulesOfBond: registration && actionPrimary === "schedules" && !code && !actionSecondary,
+    getNewsOfBond: registration && actionPrimary === "news" && !code && !actionSecondary,
+    getHomeworksOfBond: registration && actionPrimary === "homeworks" && !code && !actionSecondary,
+    getGradesOfBond: registration && actionPrimary === "grades" && !code && !actionSecondary,
 
 
-    getCourseDetails: registration && actionPrimary === "course" && code && ( actionSecondary === "details" || !actionSecondary ),// /home/REGISTRATION/course/CODE/ OR /home/REGISTRATION/course/CODE/details
+    getCourseDetails: registration && actionPrimary === "course" && code && ( actionSecondary === "details" || !actionSecondary ),
 
-    getCourseGrades: registration && actionPrimary === "course" && code && actionSecondary === "grades",// /home/REGISTRATION/course/CODE/grades
-    getCourseHomeworks: registration && actionPrimary === "course" && code && actionSecondary === "homeworks", // /home/REGISTRATION/course/CODE/homeworks
+    getCourseGrades: registration && actionPrimary === "course" && code && actionSecondary === "grades",
+    getCourseHomeworks: registration && actionPrimary === "course" && code && actionSecondary === "homeworks",
     getCourseNews: registration && actionPrimary === "course" && code && actionSecondary === "news", // // /home/REGISTRATION/course/CODE/news
-  } as any
+  } as unknown as Array<any>
+  
   for ( const key in conditionals ) {
     if ( Object.prototype.hasOwnProperty.call( conditionals, key ) ) {
       const conditional = conditionals[key] as boolean;
       if ( conditional ) {
-        console.log(key)
         return key
       }
     }
