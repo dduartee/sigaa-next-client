@@ -4,7 +4,7 @@ import { Bond, UserInfo, UserStatus } from '@types'
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 
-function useUserBonds() {
+export default function useBondsHandler() {
   const [data, setData] = useState<Bond[]>( [
     {
       program: "",
@@ -24,5 +24,4 @@ function useUserBonds() {
   return { data };
 }
 
-export default useUserBonds
 

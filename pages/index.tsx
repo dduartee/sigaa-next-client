@@ -27,9 +27,9 @@ import { SocketContext } from "@context/socket";
 import { Input, InputBox } from "@components/Index/Input";
 import LoginBox from "@components/Index/LoginBox";
 import { CardBottom, CardHeader } from "@components/Index/Card";
-import useValidToken from "@hooks/useValidToken";
-import useUserLogin from "@hooks/useUserLogin";
-import useUserBonds from "@hooks/useUserBonds";
+import useTokenHandler from "@hooks/useTokenHandler";
+import useUserHandler from "@hooks/useUserHandler";
+import useBondsHandler from "@hooks/useBondsHandler";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 
@@ -91,11 +91,11 @@ function Index(): JSX.Element {
     socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
   };
   const socket = useContext(SocketContext);
-  const tokenIsValid = useValidToken();
-  const { status, user, setStatus } = useUserLogin();
-  const { data } = useUserBonds();
+  const valid = useTokenHandler();
+  const { status, user, setStatus } = useUserHandler({ valid });
+  const { data } = useBondsHandler();
   useEffect(() => {
-    if (tokenIsValid) {
+    if (valid) {
       setCredentialsMerge({
         name: "token",
         value: localStorage.getItem("token"),
@@ -106,7 +106,7 @@ function Index(): JSX.Element {
         password: "",
       }); // tenta logar pelo cache
     }
-  }, [tokenIsValid]);
+  }, [valid]);
   useEffect(() => {
     socket.onAny((...args: any[]) => {
       console.log(args);
