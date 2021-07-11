@@ -18,7 +18,6 @@ export default function useSlugHandler({ slug, setTab }: { slug: string[], setTa
             case "getCourses":
                 setTab(0);
                 socket.emit("courses::list", { token: localStorage.getItem("token"), registration })
-                console.log("courses::list")
                 break;
             case "getSchedulesOfBond":
                 setTab(1);
