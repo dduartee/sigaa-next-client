@@ -35,6 +35,6 @@ export type SlugParams = {
 export type SchedulerData = {
     id: string
     title: string
-    startDate: Date
-    endDate: Date
+    startDate: any
+    endDate: any
 }

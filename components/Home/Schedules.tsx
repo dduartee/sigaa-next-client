@@ -4,14 +4,16 @@ import parseSchedule from "@util/formatSchedule";
 import moment from "moment";
 import 'moment/locale/pt-br';
 import { capitalizeFirstLetter } from "@util/capitalizeFirstLetter";
+// TO-DO: Adicionar calendario de eventos
 export default function Schedules({ data }: { data: Bond[] }) {
     const schedulerData = [] as SchedulerData[];
     data.map(({ courses }) => {
         courses.map(course => {
             const { startDate, endDate } = parseSchedule(course.schedule);
+            console.log({startDate, endDate})
             schedulerData.push({
-                startDate: new Date(startDate),
-                endDate: new Date(endDate),
+                startDate: startDate,
+                endDate: endDate,
                 title: course.title,
                 id: course.id,
             })

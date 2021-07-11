@@ -12,8 +12,8 @@ export default function parseSchedule(schedule: string) {
     for (const horario of horarios) horarioList.push(periodo === "T" ? horariosT[horario] : horariosM[horario])
 
     const dayMonthYear = moment().weekday(diaSemana).format('DD/MM/YYYY');
-    const startDate = moment(new Date(`${dayMonthYear} ${horarioList[0][0]}`)).format('DD-MM-YYYY HH:mm:ss');
+    const startDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`);
     horarioList.reverse()[0].reverse();
-    const endDate = moment(new Date(`${dayMonthYear} ${horarioList[0][0]}`)).format('DD-MM-YYYY HH:mm:ss');
+    const endDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`)
     return { startDate, endDate };
 }
