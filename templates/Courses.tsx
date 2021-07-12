@@ -1,6 +1,6 @@
 import { Bond } from "@types";
 import React from "react";
-import AccordionCourse from "../AccordionCourse";
+import AccordionCourse from "../components/Home/AccordionCourse";
 
 export default function Courses({ data }: { data: Bond[] }) {
   return (

@@ -15,15 +15,14 @@ export default function AccordionCourse({
   return (
     <Accordion>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon color="primary"/>}
+        expandIcon={<ExpandMoreIcon color="primary" />}
         aria-controls="panel1a-content"
         id="panel1a-header"
         color="primary"
       >
         <Typography>{title}</Typography>
-
       </AccordionSummary>
-      <AccordionDetails color="primary">{children}</AccordionDetails>
+      <AccordionDetails>{children}</AccordionDetails>
     </Accordion>
   );
 }

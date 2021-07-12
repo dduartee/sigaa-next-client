@@ -22,9 +22,22 @@ export type Course = {
     schedule: string,
     news: any[],
     homeworks: any[],
-    grades: any[],
+    grades: GradeGroup[],
 }
 
+
+export type GradeGroup = {
+    name: string;
+    value: number;
+    grades: Grade[];
+    type: 'only-average' | 'sum-of-grades' | 'weighted-average';
+}
+export type Grade = {
+    name: string;
+    code: string;
+    weight: number;
+    value: number;
+}
 export type SlugParams = {
     registration: string | null;
     actionPrimary: "news" | "homeworks" | "grades" | "course" | "schedules" | null;

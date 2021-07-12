@@ -22,7 +22,7 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import { UserCredentials } from "@types";
 import Link from "next/link";
-import Particulas from "@components/Particles";
+import Particulas from "@components/Index/Particles";
 import { SocketContext } from "@context/socket";
 import { Input, InputBox } from "@components/Index/Input";
 import LoginBox from "@components/Index/LoginBox";
