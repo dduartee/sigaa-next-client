@@ -13,7 +13,7 @@ export default function AccordionCourse({
   children?: React.ReactNode;
 }) {
   return (
-    <Accordion>
+    <Accordion sx={{marginBottom: "1rem", border: 0}}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon color="primary" />}
         aria-controls="panel1a-content"

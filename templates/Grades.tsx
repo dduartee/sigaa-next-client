@@ -1,7 +1,7 @@
 import AccordionCourse from "@components/Home/AccordionCourse";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Bond, Course, GradeGroup } from "@types";
-import React from "react";
+import React, { useEffect } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell, { tableCellClasses } from "@material-ui/core/TableCell";
@@ -35,7 +35,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     //backgroundColor: theme.palette.primary.main,
     backgroundColor: theme.palette.grey[900],
-
   },
   width: "100%",
 
@@ -45,6 +44,34 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+function formatGradesIndex(data: Bond[]) {
+  const gradesIndex: string[] = [];
+  data?.map(({ courses }) =>
+    courses?.map((course, key) =>
+      course.grades?.map((gradeGroup) => {
+        const exists = gradesIndex.includes(gradeGroup.name);
+        if (!exists) gradesIndex.push(gradeGroup.name);
+      })
+    )
+  );
+  const gradesIndexSorted = [
+    ...gradesIndex.sort((a, b) => {
+      if (a === "Resultado Final") {
+        return 1;
+      } else if (b === "Resultado Final") {
+        return -1;
+      } else if (a === "Recuperação") {
+        return 2;
+      } else if (b === "Recuperação") {
+        return -2;
+      } else {
+        return a < b ? -1 : 1;
+      }
+    }),
+  ];
+  return gradesIndexSorted;
+}
+
 export default function Grades({
   data,
   partialLoading,
@@ -52,6 +79,8 @@ export default function Grades({
   data: Bond[];
   partialLoading: boolean;
 }) {
+  const gradesIndex = formatGradesIndex(data);
+
   return (
     <React.Fragment>
       <CollapsibleTable>
@@ -59,29 +88,38 @@ export default function Grades({
           <StyledTableRow>
             <StyledTableCell />
             <StyledTableCell>Matéria</StyledTableCell>
-            {data?.map(({ courses }) =>
-              courses[0]?.grades?.map((gradeGroup, key) => (
-                <StyledTableCell key={key}>{gradeGroup.name}</StyledTableCell>
-              ))
-            )}
+            {gradesIndex.map((index) => (
+              <StyledTableCell>{index}</StyledTableCell>
+            ))}
           </StyledTableRow>
         </TableHead>
         <TableBody>
           {data?.map(({ courses }) =>
-            courses?.map((course, key) => <Row course={course} key={key} />)
+            courses?.map((course, key) => (
+              <Row course={course} key={key} gradesIndex={gradesIndex} />
+            ))
           )}
         </TableBody>
       </CollapsibleTable>
       {partialLoading ? (
-        <CircularProgress style={{ alignSelf: "center" , margin: "1rem" }} />
+        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
       ) : (
-        <p>Notas não são atualizadas em tempo real e podem estarem em ordem errada</p>
+        <p>
+          Notas não são atualizadas em tempo real e podem estarem em ordem
+          errada
+        </p>
       )}
     </React.Fragment>
   );
 }
 
-function Row({ course }: { course: Course }) {
+function Row({
+  course,
+  gradesIndex,
+}: {
+  course: Course;
+  gradesIndex: string[];
+}) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -99,15 +137,21 @@ function Row({ course }: { course: Course }) {
         <StyledTableCell component="th" scope="row">
           {course.title}
         </StyledTableCell>
-        {course?.grades?.map((gradeGroup, key) => (
-          <StyledTableCell align="left" key={key}>
-            {gradeGroup.value}
-          </StyledTableCell>
-        ))}
+        {gradesIndex.map((index, key) => {
+          let realIndex = course?.grades?.find(
+            (gradeGroup) => gradeGroup.name === index
+          );
+          console.log(realIndex);
+          return (
+            <StyledTableCell align="left">
+              <span style={{fontSize: "1.0rem"}}>{realIndex ? (realIndex?.value)?.toPrecision(2) : " "}</span>
+            </StyledTableCell>
+          );
+        })}
       </StyledTableRow>
       <StyledTableRow>
         <StyledTableCell
-          style={{ paddingBottom: 0, paddingTop: 0 }}
+          style={{ paddingBottom: 0, paddingTop: 0, border: 0 }}
           colSpan={6}
         >
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -121,7 +165,7 @@ function Row({ course }: { course: Course }) {
                     {course?.grades?.map((gradeGroup, key) =>
                       gradeGroup.grades?.map((grade, key) => (
                         <StyledTableCell key={key}>
-                          {grade.name}
+                          {grade?.name}
                         </StyledTableCell>
                       ))
                     )}
@@ -132,7 +176,7 @@ function Row({ course }: { course: Course }) {
                     {course?.grades?.map((gradeGroup, key) =>
                       gradeGroup.grades?.map((grade, key) => (
                         <StyledTableCell key={key}>
-                          {grade.value}
+                          {(grade.value)?.toPrecision(2)}
                         </StyledTableCell>
                       ))
                     )}

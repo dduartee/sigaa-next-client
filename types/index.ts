@@ -26,18 +26,43 @@ export type Course = {
 }
 
 
-export type GradeGroup = {
+export interface Grade {
     name: string;
-    value: number;
-    grades: Grade[];
-    type: 'only-average' | 'sum-of-grades' | 'weighted-average';
-}
-export type Grade = {
-    name: string;
+    value?: number;
+  }
+  
+  export interface SubGrade extends Grade {
     code: string;
-    weight: number;
-    value: number;
-}
+  }
+  
+  export interface SubGradeSumOfGrades extends SubGrade {
+    maxValue?: number;
+  }
+  
+  export interface SubGradeWeightedAverage extends SubGrade {
+    weight?: number;
+  }
+  
+  export interface GradeGroupOnlyAverage extends Grade {
+    type: "only-average";
+    grades: null;
+  }
+  
+  export interface GradeGroupWeightedAverage extends Grade {
+    grades: SubGradeWeightedAverage[];
+    type: "weighted-average";
+  }
+  
+  export interface GradeGroupSumOfGrades extends Grade {
+    grades: SubGradeSumOfGrades[];
+    type: "sum-of-grades";
+  }
+  
+  export declare type GradeGroup =
+    | GradeGroupSumOfGrades
+    | GradeGroupOnlyAverage
+    | GradeGroupWeightedAverage;
+  
 export type SlugParams = {
     registration: string | null;
     actionPrimary: "news" | "homeworks" | "grades" | "course" | "schedules" | null;
