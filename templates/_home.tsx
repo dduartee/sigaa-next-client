@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box } from "@material-ui/core";
+import { Box, styled } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import CustomDrawer from "@components/Home/CustomDrawer";
 import CustomNavBar from "@components/Home/CustomNavBar";
@@ -10,6 +10,14 @@ import { UserContext } from "@context/user";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import { LoadingContext } from "@context/loading";
+
+const StyledContent = styled(Box)(({theme}) => ({
+  width: "80%",
+  [theme.breakpoints.down(1024)] : {
+    width: "100%"
+  }
+}))
+
 export default function HomeTemplate({
   children,
   tab,
@@ -46,12 +54,12 @@ export default function HomeTemplate({
           width={drawerWidth}
         />
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-          <div style={{ width: "80%" }}>
+          <StyledContent>
             <Toolbar />
             <Paper sx={{ margin: "1rem", marginTop: "2.7rem" }}>
               {children}
             </Paper>
-          </div>
+          </StyledContent>
         </Box>
       </Box>
     </>

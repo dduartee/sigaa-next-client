@@ -23,20 +23,16 @@ export default function useCoursesHandler({ valid }: { valid: boolean }) {
 
     socket.on("grades::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
-      console.log(bondsJSON);
       setPartialLoading(false);
       setData(bondsJSON);
     });
     socket.on("grades::listPartial", (data: string) => {
       const bondsJSON = JSON.parse(data);
-      console.log("PARTIAL");
       setPartialLoading(true);
       setData(bondsJSON);
     });
 
-    return () => {
-      console.log("DESMONTADO")
-    };
+    return () => {};
   }, [valid, setData]);
 
   return { data, setData, partialLoading, setPartialLoading };

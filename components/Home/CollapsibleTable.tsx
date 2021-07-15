@@ -14,7 +14,7 @@ import Paper from "@material-ui/core/Paper";
 export default function CollapsibleTable({ children }: { children: React.ReactNode }) {
   return (
     <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">{children}</Table>
+      <Table aria-label="collapsible table" sx={{overflowX: "auto"}}>{children}</Table>
     </TableContainer>
   );
 }

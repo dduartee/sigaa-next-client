@@ -76,3 +76,5 @@ export type SchedulerData = {
     startDate: any
     endDate: any
 }
+
+export type Error = "SIGAA: Invalid credentials." 

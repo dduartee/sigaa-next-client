@@ -18,7 +18,8 @@ import { LoadingContext } from "@context/loading";
 function Page({ slug }: { slug: string[] }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
+  const [valid, setValid] = useState(true);
+  useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(-1);

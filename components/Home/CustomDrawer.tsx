@@ -29,8 +29,8 @@ function ResponsiveDrawer({
 }) {
   const drawer = (
     <div>
-      <Toolbar />
-      <List>
+      <Toolbar sx={{height: "91px"}} />
+      <List sx={{padding: "0px"}}>
         <Tabs
           orientation="vertical"
           variant="scrollable"

@@ -1,8 +1,7 @@
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 
-export default function useTokenHandler() {
-  const [valid, setValid] = useState(true);
+export default function useTokenHandler(setValid: (isValid: boolean) => void) {
   const socket = useContext(SocketContext);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
@@ -17,5 +16,4 @@ export default function useTokenHandler() {
       }
     });
   }, []);
-  return valid;
 }

@@ -13,12 +13,7 @@ import {
   FormControl,
   FormHelperText,
 } from "@material-ui/core";
-import {
-  AccountCircle,
-  Lock,
-  Send,
-  ArrowBack,
-} from "@material-ui/icons";
+import { AccountCircle, Lock, Send, ArrowBack } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { UserCredentials } from "@types";
 import Link from "next/link";
@@ -32,7 +27,7 @@ import useUserHandler from "@hooks/useUserHandler";
 import useBondsHandler from "@hooks/useBondsHandler";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
-
+import useAPIHandler from "@hooks/useAPIHandler";
 
 const useStyles = makeStyles({
   container: {
@@ -91,11 +86,14 @@ function Index(): JSX.Element {
     socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
   };
   const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
+  const [valid, setValid] = useState(false);
+  useTokenHandler(setValid);
   const { status, user, setStatus } = useUserHandler({ valid });
   const { data } = useBondsHandler();
+  const { error, setError } = useAPIHandler();
   useEffect(() => {
     if (valid) {
+      console.log({ valid });
       setCredentialsMerge({
         name: "token",
         value: localStorage.getItem("token"),
@@ -121,9 +119,13 @@ function Index(): JSX.Element {
   }, [data]);
   const handleAccess = () => {
     setStatus("Logando");
-    router.push(`/home/${encodeURIComponent(vinculo)}`, undefined, { shallow: true });
-  }
+    setError(false);
+    router.push(`/home/${encodeURIComponent(vinculo)}`, undefined, {
+      shallow: true,
+    });
+  };
   const handleLogout = () => {
+    setError(false);
     socket.emit("user::logoff", { token: localStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
     localStorage.removeItem("token");
@@ -132,10 +134,12 @@ function Index(): JSX.Element {
     if (event.key === "Enter") {
       handleLogin();
     }
+    setError(false);
   };
   useEffect(() => {
     if (!vinculo) setVinculo(data[0].registration);
   }, [vinculo]);
+
   const styles = useStyles();
   const conditionals = {
     willLogout: status === "Deslogando",
@@ -188,6 +192,7 @@ function Index(): JSX.Element {
                         type="text"
                         name="username"
                         value={credentials.username}
+                        error={error ? true : false}
                       />
                       <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
                         Seu usuário do SIGAA
@@ -204,6 +209,7 @@ function Index(): JSX.Element {
                         type="password"
                         name="password"
                         value={credentials.password}
+                        error={error ? true : false}
                       />
                       <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
                         Sua senha do SIGAA
