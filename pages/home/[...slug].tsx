@@ -12,37 +12,40 @@ import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useTabHandler from "@hooks/useTabHandler";
 import useSlugHandler from "@hooks/useSlugHandler";
+import useAPIHandler from "@hooks/useAPIHandler";
+import { LoadingContext } from "@context/loading";
 
 function Page({ slug }: { slug: string[] }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
+  const [valid, setValid] = useState(true);
+  useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(-1);
-  const { data } = useCoursesHandler({ valid });
+  const { data, partialLoading } = useCoursesHandler({ valid });
   const [children, setChildren] = useState(<div></div>);
 
-  useSlugHandler({ setTab, slug })
-  useTabHandler({ slug, data, valid, setChildren, tab })
+  useAPIHandler();
+  useSlugHandler({ setTab, slug, setLoading });
+  useTabHandler({ slug, data, valid, tab, setLoading, setChildren, partialLoading });
 
   useEffect(() => {
-    setLoading(true);
     if (valid) {
-      socket.emit("user::info", { token: localStorage.getItem("token") })
+      socket.emit("user::info", { token: localStorage.getItem("token") });
     } else window.location.href = "/";
   }, [valid]);
-
-  useEffect(() => setLoading(false), [data]);
 
   return (
     <UserContext.Provider value={user}>
       <DataContext.Provider value={data}>
-        <Home setTab={setTab} tab={tab} loading={loading} setLoading={setLoading}>
-          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-            {children}
-          </Box>
-        </Home>
+        <LoadingContext.Provider value={loading}>
+          <Home setTab={setTab} tab={tab}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+              {children}
+            </Box>
+          </Home>
+        </LoadingContext.Provider>
       </DataContext.Provider>
     </UserContext.Provider>
   );

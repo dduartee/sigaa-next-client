@@ -11,6 +11,7 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import InboxIcon from "@material-ui/icons/Inbox";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Home } from "@material-ui/icons";
 
 function ResponsiveDrawer({
@@ -28,8 +29,8 @@ function ResponsiveDrawer({
 }) {
   const drawer = (
     <div>
-      <Toolbar />
-      <List>
+      <Toolbar sx={{height: "91px"}} />
+      <List sx={{padding: "0px"}}>
         <Tabs
           orientation="vertical"
           variant="scrollable"

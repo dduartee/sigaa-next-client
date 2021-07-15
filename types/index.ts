@@ -22,9 +22,47 @@ export type Course = {
     schedule: string,
     news: any[],
     homeworks: any[],
-    grades: any[],
+    grades: GradeGroup[],
 }
 
+
+export interface Grade {
+    name: string;
+    value?: number;
+  }
+  
+  export interface SubGrade extends Grade {
+    code: string;
+  }
+  
+  export interface SubGradeSumOfGrades extends SubGrade {
+    maxValue?: number;
+  }
+  
+  export interface SubGradeWeightedAverage extends SubGrade {
+    weight?: number;
+  }
+  
+  export interface GradeGroupOnlyAverage extends Grade {
+    type: "only-average";
+    grades: null;
+  }
+  
+  export interface GradeGroupWeightedAverage extends Grade {
+    grades: SubGradeWeightedAverage[];
+    type: "weighted-average";
+  }
+  
+  export interface GradeGroupSumOfGrades extends Grade {
+    grades: SubGradeSumOfGrades[];
+    type: "sum-of-grades";
+  }
+  
+  export declare type GradeGroup =
+    | GradeGroupSumOfGrades
+    | GradeGroupOnlyAverage
+    | GradeGroupWeightedAverage;
+  
 export type SlugParams = {
     registration: string | null;
     actionPrimary: "news" | "homeworks" | "grades" | "course" | "schedules" | null;
@@ -38,3 +76,5 @@ export type SchedulerData = {
     startDate: any
     endDate: any
 }
+
+export type Error = "SIGAA: Invalid credentials." 

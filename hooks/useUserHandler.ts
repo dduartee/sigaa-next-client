@@ -19,7 +19,6 @@ export default function useUserHandler({ valid }: { valid: boolean }) {
     socket.on("user::login", (data: string) => {
       const { logado } = JSON.parse(data);
       if (logado) {
-        console.log(data)
         socket.emit("user::info", { token: localStorage.getItem("token") });
         socket.emit("bonds::list", {
           token: localStorage.getItem("token"),
