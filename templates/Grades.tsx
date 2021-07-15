@@ -104,10 +104,7 @@ export default function Grades({
       {partialLoading ? (
         <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
       ) : (
-        <p>
-          Notas não são atualizadas em tempo real e podem estarem em ordem
-          errada
-        </p>
+        <p>Notas não são atualizadas em tempo real.</p>
       )}
     </React.Fragment>
   );
@@ -144,7 +141,9 @@ function Row({
           console.log(realIndex);
           return (
             <StyledTableCell align="left">
-              <span style={{fontSize: "1.0rem"}}>{realIndex ? (realIndex?.value)?.toPrecision(2) : " "}</span>
+              <span style={{ fontSize: "1.0rem" }}>
+                {realIndex ? realIndex?.value?.toPrecision(2) : " "}
+              </span>
             </StyledTableCell>
           );
         })}
@@ -176,7 +175,7 @@ function Row({
                     {course?.grades?.map((gradeGroup, key) =>
                       gradeGroup.grades?.map((grade, key) => (
                         <StyledTableCell key={key}>
-                          {(grade.value)?.toPrecision(2)}
+                          {grade.value?.toPrecision(2)}
                         </StyledTableCell>
                       ))
                     )}
