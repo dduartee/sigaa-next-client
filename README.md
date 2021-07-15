@@ -1,6 +1,6 @@
 # sigaa-next-client
 
-Este código está hospedado em [sigaa-next-client.vercel.app](https://sigaa-next-client.vercel.app/). <br>
+Este projeto está hospedado em [sigaa-next-client.vercel.app](https://sigaa-next-client.vercel.app/). <br>
 
 ## Disclaimer
 
