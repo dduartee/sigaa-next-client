@@ -17,3 +17,31 @@ Atualmente foi testada em 2 Institutos, [IFSC (Instituto Federal de Santa Catari
 
 ### Features do SIGAA não descobertas
 O SIGAA por ser um sistema sem codigo-fonte aberto, não é possivel garantir 100% de compatibilidade com cada usuario.
+
+## Página de login
+![login](/docs/images/login.png)
+
+## Página de seleção de vinculos
+![bonds](/docs/images/bonds.png)
+
+## Listagem de matérias
+![courses](/docs/images/courses.png)
+
+## Listagem de horarios (não finalizada)
+![schedules](/docs/images/schedules.png)
+
+## Listagem de notas de todas as matérias
+![grades](/docs/images/grades.png)
+
+# Páginas
+## To-Do
+
+- [ ] Página de matéria (Full View)
+- [ ] Página de horarios 
+- [ ] Página de tarefas 
+- [ ] Página de noticias 
+
+## Finalizadas
+
+- [X] Página de notas
+- [X] Página de matérias
