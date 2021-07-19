@@ -138,7 +138,6 @@ function Row({
           let realIndex = course?.grades?.find(
             (gradeGroup) => gradeGroup.name === index
           );
-          console.log(realIndex);
           return (
             <StyledTableCell align="left">
               <span style={{ fontSize: "1.0rem" }}>
