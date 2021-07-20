@@ -6,12 +6,10 @@ import List from "@material-ui/core/List";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import GroupsIcon from "@material-ui/icons/Groups";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import InboxIcon from "@material-ui/icons/Inbox";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Home } from "@material-ui/icons";
 
 function ResponsiveDrawer({

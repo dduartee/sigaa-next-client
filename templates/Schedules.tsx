@@ -10,6 +10,7 @@ import {
   Week,
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
+import Head from "next/head";
 // TO-DO: Adicionar calendario de eventos
 export default function Schedules({ data }: { data: Bond[] }) {
   const schedulerData = [] as SchedulerData[];
@@ -27,15 +28,18 @@ export default function Schedules({ data }: { data: Bond[] }) {
   });
   return (
     <div>
+      <Head>
+        <title>Horários | sigaa-next-client</title>
+      </Head>
       <ScheduleComponent
         currentView="Week"
         selectedDate={new Date()}
         startHour="7:00 AM"
         views={["Week"]}
-        eventSettings={{dataSource: schedulerData}}
+        eventSettings={{ dataSource: schedulerData }}
         readOnly
-        workDays={[0,1,2,3,4,5,6]}
-        workHours={{highlight: true, start: "0:00", end: "23:59"}}
+        workDays={[0, 1, 2, 3, 4, 5, 6]}
+        workHours={{ highlight: true, start: "0:00", end: "23:59" }}
       >
         <Inject services={[Week]} />
       </ScheduleComponent>

@@ -1,6 +1,13 @@
-import { Bond } from '@types';
-import React from 'react';
+import { Bond } from "@types";
+import Head from "next/head";
+import React from "react";
 
 export default function Homeworks({ data }: { data: Bond[] }) {
-  return <div />;
+  return (
+    <div>
+      <Head>
+        <title>Tarefas | sigaa-next-client</title>
+      </Head>
+    </div>
+  );
 }

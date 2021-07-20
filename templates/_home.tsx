@@ -11,12 +11,12 @@ import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import { LoadingContext } from "@context/loading";
 
-const StyledContent = styled(Box)(({theme}) => ({
+const StyledContent = styled(Box)(({ theme }) => ({
   width: "80%",
-  [theme.breakpoints.down(1024)] : {
-    width: "100%"
-  }
-}))
+  [theme.breakpoints.down(1024)]: {
+    width: "100%",
+  },
+}));
 
 export default function HomeTemplate({
   children,

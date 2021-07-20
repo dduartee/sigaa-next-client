@@ -1,11 +1,11 @@
 import React from "react";
-import { Box, TextField, TextFieldProps } from "@material-ui/core";
+import { TextField, TextFieldProps } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 function Input(props: TextFieldProps) {
   return <TextField {...props} variant="standard" fullWidth />;
 }
 
-function InputBox({ children, icon, input }: InputBoxProps) {
+function InputBox({ icon, input }: InputBoxProps) {
   return (
     <Grid
       container
