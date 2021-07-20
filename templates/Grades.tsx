@@ -19,7 +19,7 @@ import {
 } from "@material-ui/core";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
-
+import Head from "next/head";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.dark,
@@ -121,6 +121,9 @@ function Row({
 
   return (
     <>
+      <Head>
+        <title>Notas | sigaa-next-client</title>
+      </Head>
       <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <StyledTableCell>
           <IconButton
@@ -138,7 +141,6 @@ function Row({
           let realIndex = course?.grades?.find(
             (gradeGroup) => gradeGroup.name === index
           );
-          console.log(realIndex);
           return (
             <StyledTableCell align="left">
               <span style={{ fontSize: "1.0rem" }}>

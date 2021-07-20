@@ -16,7 +16,6 @@ import {
 import { AccountCircle, Lock, Send, ArrowBack } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { UserCredentials } from "@types";
-import Link from "next/link";
 import Particulas from "@components/Index/Particles";
 import { SocketContext } from "@context/socket";
 import { Input, InputBox } from "@components/Index/Input";
@@ -26,9 +25,8 @@ import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler from "@hooks/useUserHandler";
 import useBondsHandler from "@hooks/useBondsHandler";
 import { useRouter } from "next/router";
-import Loading from "@components/Loading";
 import useAPIHandler from "@hooks/useAPIHandler";
-
+import Head from "next/head";
 const useStyles = makeStyles({
   container: {
     display: "flex",
@@ -104,7 +102,7 @@ function Index(): JSX.Element {
         password: "",
       }); // tenta logar pelo cache
     }
-  }, [valid]);
+  }, [valid, socket]);
   useEffect(() => {
     socket.onAny((...args: any[]) => {
       console.log(args);
@@ -113,7 +111,7 @@ function Index(): JSX.Element {
       localStorage.setItem("token", token);
       setCredentialsMerge({ name: "token", value: token });
     });
-  }, []);
+  }, [socket, setCredentialsMerge]);
   useEffect(() => {
     setVinculo(data[0].registration);
   }, [data]);
@@ -155,6 +153,9 @@ function Index(): JSX.Element {
   };
   return (
     <NoSsr>
+      <Head>
+        <title>Login | sigaa-next-client</title>
+      </Head>
       <Fade in={true} timeout={1000}>
         <Grid className={styles.container}>
           <Particulas />
