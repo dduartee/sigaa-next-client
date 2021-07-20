@@ -27,7 +27,7 @@ O SIGAA por ser um sistema sem codigo-fonte aberto, não é possivel garantir 10
 ## Listagem de matérias
 ![courses](/docs/images/courses.png)
 
-## Listagem de horarios (não finalizada)
+## Listagem de horarios
 ![schedules](/docs/images/schedules.png)
 
 ## Listagem de notas de todas as matérias
