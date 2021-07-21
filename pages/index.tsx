@@ -144,6 +144,10 @@ function Index(): JSX.Element {
     }
     setError(false);
   };
+  const [hoverGithubIcon, setHoverGithubIcon] = useState(false);
+  const toggleGithubIcon = (event: any) => {
+    setHoverGithubIcon(!hoverGithubIcon);
+  };
   useEffect(() => {
     if (!vinculo) setVinculo(data[0].registration);
   }, [vinculo]);
@@ -309,9 +313,24 @@ function Index(): JSX.Element {
                 ) : null}
               </CardBottom>
             </Paper>
-            <Box position="absolute" bottom="0" width="100%" display="flex" justifyContent="center">
+            <Box
+              position="absolute"
+              bottom="0"
+              width="100%"
+              display="flex"
+              justifyContent="center"
+            >
               <Link href="https://github.com/dduartee/sigaa-next-client">
-                <img src="/img/GitHub-Mark-Light-64px.png" aria-label="Github"/>
+                <img
+                  src={
+                    hoverGithubIcon
+                      ? "/img/GitHub-Mark-Light-64px.png"
+                      : "/img/GitHub-Mark-64px.png"
+                  }
+                  aria-label="Github"
+                  onMouseEnter={toggleGithubIcon}
+                  onMouseLeave={toggleGithubIcon}
+                />
               </Link>
             </Box>
           </Box>
