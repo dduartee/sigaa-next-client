@@ -52,7 +52,6 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignContent: "center",
     width: "20rem",
-    height: "15rem",
   },
   profilePicture: {
     width: "100px",
