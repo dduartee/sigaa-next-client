@@ -89,9 +89,6 @@ function Index(): JSX.Element {
   }) => {
     setCredentials({ ...credentials, [name]: value } as UserCredentials);
   };
-  const handleLogin = () => {
-    socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
-  };
   const socket = useContext(SocketContext);
   const [valid, setValid] = useState(false);
   useTokenHandler(setValid);
@@ -124,6 +121,10 @@ function Index(): JSX.Element {
   useEffect(() => {
     setVinculo(data[0].registration);
   }, [data]);
+  const handleLogin = () => {
+    setStatus("Logando");
+    socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+  };
   const handleAccess = () => {
     setStatus("Logando");
     setError(false);
