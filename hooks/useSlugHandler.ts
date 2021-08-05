@@ -47,8 +47,15 @@ export default function useSlugHandler({
           cache: true,
         });
         break;
-      case "getHomeworksOfBond":
-        setTab(3);
+        case "getHomeworksOfBond":
+          setTab(3);
+          socket.emit('homeworks::list', {
+            registration, // numero da matricula do vinculo, obrigatório
+            fullHW: false, // quando true retorna todas as informações sendo mais devagar, quando false retorna somente titulo e datas
+            inactive: false, // retorna vinculos inativos ou não (EXPERIMENTAL)
+            cache: true,
+            token: localStorage.getItem("token"), // obrigatório
+          })
         break;
       case "getNewsOfBond":
         setTab(4);

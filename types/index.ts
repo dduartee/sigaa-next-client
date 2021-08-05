@@ -21,8 +21,16 @@ export type Course = {
   period: string;
   schedule: string;
   news: any[];
-  homeworks: any[];
+  homeworks: Homework[];
   grades: GradeGroup[];
+};
+export type Homework = {
+  title: string;
+  description: string | null;
+  startDate: string;
+  endDate: string;
+  isGroup: boolean | null;
+  haveGrade: boolean | null;
 };
 
 export interface Grade {

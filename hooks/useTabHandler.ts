@@ -48,7 +48,7 @@ export default function useTabHandler({
         break;
       case 3:
         route = `/homeworks`;
-        tabChildren = Homeworks({ data });
+        tabChildren = Homeworks({ data, partialLoading });
         break;
       case 4:
         route = `/news`;
