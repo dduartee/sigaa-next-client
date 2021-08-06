@@ -83,6 +83,9 @@ export default function Grades({
 
   return (
     <React.Fragment>
+      <Head>
+        <title>Notas | sigaa-next-client</title>
+      </Head>
       <CollapsibleTable>
         <TableHead>
           <StyledTableRow>
@@ -121,9 +124,6 @@ function Row({
 
   return (
     <>
-      <Head>
-        <title>Notas | sigaa-next-client</title>
-      </Head>
       <StyledTableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <StyledTableCell>
           <IconButton

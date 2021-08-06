@@ -11,7 +11,6 @@ import {
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import Head from "next/head";
-// TO-DO: Adicionar calendario de eventos
 export default function Schedules({ data }: { data: Bond[] }) {
   const schedulerData = [] as SchedulerData[];
   data.map(({ courses }) => {

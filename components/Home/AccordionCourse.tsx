@@ -16,8 +16,6 @@ export default function AccordionCourse({
     <Accordion sx={{marginBottom: "1rem", border: 0}}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon color="primary" />}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
         color="primary"
       >
         <Typography>{title}</Typography>

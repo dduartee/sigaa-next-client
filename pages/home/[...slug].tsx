@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/_home";
+import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
@@ -23,12 +23,20 @@ function Page({ slug }: { slug: string[] }) {
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(-1);
-  const { data, partialLoading } = useCoursesHandler({ valid });
+  const { data, partialLoading, setData, setPartialLoading } = useCoursesHandler({ valid });
   const [children, setChildren] = useState(<div></div>);
 
   useAPIHandler();
   useSlugHandler({ setTab, slug, setLoading });
-  useTabHandler({ slug, data, valid, tab, setLoading, setChildren, partialLoading });
+  useTabHandler({
+    slug,
+    data,
+    valid,
+    tab,
+    setLoading,
+    setChildren,
+    partialLoading,
+  });
 
   useEffect(() => {
     if (valid) {
