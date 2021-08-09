@@ -1,22 +1,88 @@
+import React, { useContext, useEffect, useState } from "react";
+import Home from "@templates/Home";
+import { useRouter } from "next/router";
+import { SocketContext } from "@context/socket";
+import useTokenHandler from "@hooks/useTokenHandler";
+import { UserContext } from "@context/user";
+import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
+import { DataContext } from "@context/data";
+import { GetServerSidePropsContext } from "next";
+import useAPIHandler from "@hooks/useAPIHandler";
+import { LoadingContext } from "@context/loading";
+import useCourseEvents, {
+  emitCourseList,
+} from "@hooks/courses/useCourseEvents";
+import { Bond, Course, Homework } from "@types";
 import {
   Box,
   CircularProgress,
-  IconButton,
   Collapse,
-  Paper,
+  IconButton,
+  Typography,
 } from "@material-ui/core";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Typography from "@material-ui/core/Typography";
-import { Bond, Course, Homework } from "@types";
+import { KeyboardArrowDown } from "@material-ui/icons";
 import Head from "next/head";
-import React, { useContext } from "react";
 import moment from "moment";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
-import { SocketContext } from "@context/socket";
-import { useEffect } from "react";
+import useHomeworksEvents, {
+  emitHomeworksList,
+} from "@hooks/courses/useHomeworksEvents";
+import useTabHandler from "@hooks/useTabHandler";
 
-export default function Homeworks({
+function HomeworksPage({ registration }: { registration: string }) {
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const [valid, setValid] = useState(true);
+  useTokenHandler(setValid);
+  const { user, setUser } = useUserHandler({ valid });
+  const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState(3);
+  const { data, partialLoading } = useHomeworksEvents();
+  useAPIHandler();
+  useTabHandler({tab, setLoading, registration, valid})
+  console.log("Registration: " + registration);
+  useEffect(() => {
+    if (valid) {
+      emitHomeworksList(
+        {
+          token: localStorage.getItem("token"),
+          registration,
+          fullHW: false,
+          inactive: false,
+          cache: true
+        },
+        socket
+      );
+      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+    } else window.location.href = "/";
+  }, [valid]);
+
+  return (
+    <>
+      <Head>
+        <title>Tarefas | sigaa-next-client</title>
+      </Head>
+      <UserContext.Provider value={user}>
+        <DataContext.Provider value={data}>
+          <LoadingContext.Provider value={loading}>
+            <Home setTab={setTab} tab={tab}>
+              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Homeworks data={data} partialLoading={partialLoading} />
+              </Box>
+            </Home>
+          </LoadingContext.Provider>
+        </DataContext.Provider>
+      </UserContext.Provider>
+    </>
+  );
+}
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  return {
+    props: context.query,
+  };
+}
+export default HomeworksPage;
+
+function Homeworks({
   data,
   partialLoading,
 }: {
@@ -25,9 +91,7 @@ export default function Homeworks({
 }) {
   return (
     <>
-      <Head>
-        <title>Tarefas | sigaa-next-client</title>
-      </Head>
+      
       {data?.map((bond: Bond) =>
         bond.courses?.map((course: Course) =>
           course.homeworks?.map((homework: Homework, index) => {
@@ -72,12 +136,12 @@ function HomeworkCollapse({
     setOpen(true);
     setWait(true);
     /*socket.emit("homeworks::specific", {
-      code,
-      fullHW: true, // quando true retorna todas as informações sendo mais devagar, quando false retorna somente titulo e datas
-      inactive: true, // retorna vinculos inativos ou não (EXPERIMENTAL)
-      cache: true,
-      token: localStorage.getItem("token"), // obrigatório
-    });*/
+        code,
+        fullHW: true, // quando true retorna todas as informações sendo mais devagar, quando false retorna somente titulo e datas
+        inactive: true, // retorna vinculos inativos ou não (EXPERIMENTAL)
+        cache: true,
+        token: localStorage.getItem("token"), // obrigatório
+      });*/
     console.log("buscando " + code);
   }
   return (

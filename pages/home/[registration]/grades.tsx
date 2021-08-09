@@ -1,14 +1,23 @@
-import AccordionCourse from "@components/Home/AccordionCourse";
+import React, { useContext, useEffect, useState } from "react";
+import Home from "@templates/Home";
+import { useRouter } from "next/router";
+import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Bond, Course, GradeGroup } from "@types";
-import React, { useEffect } from "react";
+import { UserContext } from "@context/user";
+import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
+import { DataContext } from "@context/data";
+import { GetServerSidePropsContext } from "next";
+import useAPIHandler from "@hooks/useAPIHandler";
+import { LoadingContext } from "@context/loading";
+import useCourseEvents, {
+  emitCourseList,
+} from "@hooks/courses/useCourseEvents";
+import { Bond, Course } from "@types";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell, { tableCellClasses } from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import { styled } from "@material-ui/core/styles";
 import {
   Box,
@@ -20,6 +29,60 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import Head from "next/head";
+import useGradesEvents, { emitGradesList } from "@hooks/courses/useGradesEvents";
+import useTabHandler from "@hooks/useTabHandler";
+function GradesPage({ registration }: { registration: string }) {
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const [valid, setValid] = useState(true);
+  useTokenHandler(setValid);
+  const { user, setUser } = useUserHandler({ valid });
+  const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState(2);
+  useAPIHandler();
+  useTabHandler({tab, setLoading, registration, valid})
+  console.log("Registration: " + registration);
+  const {data, partialLoading} = useGradesEvents();
+  useEffect(() => {
+    if (valid) {
+      emitGradesList(
+        {
+          registration, 
+          inactive: false, 
+          cache: true,
+          token: localStorage.getItem("token"),
+        },
+        socket
+      );
+      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+    } else window.location.href = "/";
+  }, [valid]);
+
+  return (
+    <>
+      <Head>
+        <title>Notas | sigaa-next-client</title>
+      </Head>
+      <UserContext.Provider value={user}>
+        <DataContext.Provider value={data}>
+          <LoadingContext.Provider value={loading}>
+            <Home setTab={setTab} tab={tab}>
+              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Grades data={data} partialLoading={partialLoading} />
+              </Box>
+            </Home>
+          </LoadingContext.Provider>
+        </DataContext.Provider>
+      </UserContext.Provider>
+    </>
+  );
+}
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  return {
+    props: context.query,
+  };
+}
+export default GradesPage;
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.dark,
@@ -71,8 +134,7 @@ function formatGradesIndex(data: Bond[]) {
   ];
   return gradesIndexSorted;
 }
-
-export default function Grades({
+function Grades({
   data,
   partialLoading,
 }: {
@@ -83,16 +145,13 @@ export default function Grades({
 
   return (
     <React.Fragment>
-      <Head>
-        <title>Notas | sigaa-next-client</title>
-      </Head>
       <CollapsibleTable>
         <TableHead>
           <StyledTableRow>
             <StyledTableCell />
             <StyledTableCell>Matéria</StyledTableCell>
-            {gradesIndex.map((index) => (
-              <StyledTableCell>{index}</StyledTableCell>
+            {gradesIndex.map((index, key) => (
+              <StyledTableCell key={key}>{index}</StyledTableCell>
             ))}
           </StyledTableRow>
         </TableHead>
@@ -138,11 +197,11 @@ function Row({
           {course.title}
         </StyledTableCell>
         {gradesIndex.map((index, key) => {
-          let realIndex = course?.grades?.find(
+          const realIndex = course?.grades?.find(
             (gradeGroup) => gradeGroup.name === index
           );
           return (
-            <StyledTableCell align="left">
+            <StyledTableCell align="left" key={key}>
               <span style={{ fontSize: "1.0rem" }}>
                 {realIndex ? realIndex?.value?.toPrecision(2) : " "}
               </span>

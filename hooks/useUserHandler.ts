@@ -1,8 +1,8 @@
-
-
-import { Bond, UserInfo, UserStatus } from '@types'
+import { Bond, UserInfo, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
+import { Socket } from "socket.io-client";
+import { emitBondList } from "./useBondsHandler";
 
 export default function useUserHandler({ valid }: { valid: boolean }) {
   const [status, setStatus] = useState<UserStatus>("Deslogado");
@@ -19,21 +19,24 @@ export default function useUserHandler({ valid }: { valid: boolean }) {
     socket.on("user::login", (data: string) => {
       const { logado } = JSON.parse(data);
       if (logado) {
-        socket.emit("user::info", { token: localStorage.getItem("token") });
-        socket.emit("bonds::list", {
-          token: localStorage.getItem("token"),
-          inactive: false,
-        });
+        emitUserInfo({ token: localStorage.getItem("token") }, socket);
+        emitBondList(
+          {
+            token: localStorage.getItem("token"),
+            inactive: false,
+          },
+          socket
+        );
       }
     });
     socket.on("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ fullName, profilePictureURL })
-      );
       setUser({ fullName, profilePictureURL });
     });
   }, [valid, setUser, setStatus]);
   return { user, status, setUser, setStatus };
+}
+
+export function emitUserInfo(params: { token: string | null }, socket: Socket) {
+  socket.emit("user::info", params);
 }

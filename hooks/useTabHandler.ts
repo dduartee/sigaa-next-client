@@ -2,62 +2,45 @@ import { Bond } from "@types";
 import parseSlugPattern from "@util/parseSlugPattern";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Courses from "@templates/Courses";
-import Schedules from "@templates/Schedules";
-import Grades from "@templates/Grades";
-import Homeworks from "@templates/Homeworks";
-import News from "@templates/News";
 
 export default function useTabHandler({
-  slug,
   tab,
-  data,
-  setChildren,
   valid,
   setLoading,
-  partialLoading,
+  registration,
 }: {
-  slug: string[];
   tab: number;
-  data: Bond[];
-  setChildren: React.Dispatch<React.SetStateAction<JSX.Element>>;
   valid: boolean;
   setLoading: React.Dispatch<boolean>;
-  partialLoading: boolean;
+  registration: string;
 }) {
-  const { registration, actionPrimary, code, actionSecondary } =
-    parseSlugPattern(slug);
   const router = useRouter();
 
   useEffect(() => {
     let defaultRoute = `/home/${registration}`;
     let route = "";
-    let tabChildren = null as unknown as JSX.Element;
     switch (tab) {
       case 0:
-        route = "/";
-        tabChildren = Courses({ data });
+        route = `/home/${registration}/`;
         break;
       case 1:
-        route = `/schedules`;
-        tabChildren = Schedules({ data });
+        route = `/home/${registration}/schedules`;
         break;
       case 2:
-        route = `/grades`;
-        tabChildren = Grades({ data, partialLoading });
+        route = `/home/${registration}/grades`;
         break;
       case 3:
-        route = `/homeworks`;
-        tabChildren = Homeworks({ data, partialLoading });
+        route = `/home/${registration}/homeworks`;
         break;
       case 4:
-        route = `/news`;
-        tabChildren = News({ data });
+        route = `/home/${registration}/news`;
+        break;
+      default:
+        route = "/";
         break;
     }
-    router.push(defaultRoute + route);
-    setChildren(tabChildren);
+    router.push(route);
     setLoading(false);
-  }, [tab, data, valid, setChildren]);
+  }, [tab, valid]);
   return;
 }
