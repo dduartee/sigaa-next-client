@@ -11,7 +11,7 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import InboxIcon from "@material-ui/icons/Inbox";
 import { Home } from "@material-ui/icons";
-
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 function ResponsiveDrawer({
   handler,
   open,
@@ -27,8 +27,8 @@ function ResponsiveDrawer({
 }) {
   const drawer = (
     <div>
-      <Toolbar sx={{height: "91px"}} />
-      <List sx={{padding: "0px"}}>
+      <Toolbar sx={{ height: "91px" }} />
+      <List sx={{ padding: "0px" }}>
         <Tabs
           orientation="vertical"
           variant="scrollable"
@@ -37,11 +37,12 @@ function ResponsiveDrawer({
           value={tab}
           onChange={tabChanger}
         >
-          <Tab label="Inicio" icon={<Home />}  />
+          <Tab label="Inicio" icon={<Home />} />
           <Tab label="Horários" icon={<CalendarTodayIcon />} />
           <Tab label="Desempenho" icon={<EqualizerIcon />} />
           <Tab label="Tarefas" icon={<AssignmentIcon />} />
           <Tab label="Noticias" icon={<InboxIcon />} />
+          <Tab label="Sair" icon={<ArrowBackIcon />} />
         </Tabs>
       </List>
     </div>

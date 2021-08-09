@@ -9,8 +9,6 @@ export default function useAPIHandler() {
     socket.on("api::info", (data: string) => {
       console.log(JSON.parse(data));
     });
-  }, []);
-  useEffect(() => {
     socket.on("api::error", (data: string) => {
       setError(true);
       console.error(data);
