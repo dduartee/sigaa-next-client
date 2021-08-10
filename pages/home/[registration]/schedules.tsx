@@ -1,21 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
-import useAPIHandler from "@hooks/useAPIHandler";
-import { LoadingContext } from "@context/loading";
+import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents, {
   emitCourseList,
 } from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import { Bond, SchedulerData } from "@types";
-import parseSchedule from "@util/formatSchedule";
 import "moment/locale/pt-br";
 import {
   ScheduleComponent,
@@ -23,26 +18,36 @@ import {
   Week,
 } from "@syncfusion/ej2-react-schedule";
 import useTabHandler from "@hooks/useTabHandler";
-
-function SchedulesPage({
-  registration,
-  actionPrimary,
-}: {
-  registration: string;
-  actionPrimary: string;
-}) {
-  const router = useRouter();
-  const socket = useContext(SocketContext);
+import HomeProviders from "@components/homeProvider";
+import moment from "moment";
+function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState(1);
   const { data } = useCourseEvents();
-  useTabHandler({tab, setLoading, registration, valid})
+  const { tab, setTab } = useTabHandler({
+    order: 1,
+    setLoading,
+    registration,
+    valid,
+  });
   useAPIHandler();
-  console.log("Registration: " + registration);
-  console.log("Action primary: " + actionPrimary);
+  return {
+    valid,
+    user,
+    loading,
+    data,
+    tab,
+    setTab,
+  };
+}
+export default function SchedulesPage({ registration }: { registration: string }) {
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const { valid, user, loading, data, tab, setTab } = InitializeHooks({
+    registration,
+  });
   useEffect(() => {
     if (valid) {
       emitCourseList(
@@ -58,17 +63,17 @@ function SchedulesPage({
       <Head>
         <title>Horários | sigaa-next-client</title>
       </Head>
-      <UserContext.Provider value={user}>
-        <DataContext.Provider value={data}>
-          <LoadingContext.Provider value={loading}>
-            <Home setTab={setTab} tab={tab}>
-              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Schedules data={data} />
-              </Box>
-            </Home>
-          </LoadingContext.Provider>
-        </DataContext.Provider>
-      </UserContext.Provider>
+      <HomeProviders
+        data={data}
+        loading={loading}
+        user={user}
+        setTab={setTab}
+        tab={tab}
+      >
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Schedules data={data} />
+        </Box>
+      </HomeProviders>
     </>
   );
 }
@@ -77,7 +82,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: context.query,
   };
 }
-export default SchedulesPage;
 
 function Schedules({ data }: { data: Bond[] }) {
   const schedulerData = [] as SchedulerData[];
@@ -112,4 +116,22 @@ function Schedules({ data }: { data: Bond[] }) {
       </ScheduleComponent>
     </div>
   );
+}
+
+function parseSchedule(schedule: string) {
+  const periodo = schedule.substr(1, 1);
+  const diaSemana = parseInt(schedule.substr(0, 1)) - 1;
+  const horarios = schedule.substr(2).split('') as any;
+
+  const horariosM = [[], ["7:45:00", "8:40:00"], ["8:40:00", "9:35:00"], ["9:55:00", "10:50:00"], ["10:50:00", "11:45:00"]];
+  const horariosT = [[], ["13:30:00", "14:25:00"], ["14:25:00", "15:20:00"], ["15:40:00", "16:35:00"], ["16:35:00", "17:30:00"]];
+
+  const horarioList = [];
+  for (const horario of horarios) horarioList.push(periodo === "T" ? horariosT[horario] : horariosM[horario])
+
+  const dayMonthYear = moment().weekday(diaSemana).format('DD/MM/YYYY');
+  const startDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`);
+  horarioList.reverse()[0].reverse();
+  const endDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`)
+  return { startDate, endDate };
 }

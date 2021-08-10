@@ -3,7 +3,7 @@ import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Box } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { DataContext } from "@context/data";
@@ -26,7 +26,7 @@ function InitializeHooks({ registration }: { registration: string }) {
   const [loading, setLoading] = useState(false);
   const { data } = useCourseEvents();
   const { tab, setTab } = useTabHandler({
-    order: 0,
+    order: 4,
     setLoading,
     registration,
     valid,
@@ -69,7 +69,9 @@ export default function RegistrationPage({
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Courses data={data} />
+          <Typography variant="h4" component="h1">
+              ainda não implementado &gt;:(
+          </Typography>
         </Box>
       </HomeProviders>
     </>
@@ -81,17 +83,3 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-function Courses({ data }: { data: Bond[] }) {
-  return (
-    <>
-      <Head>
-        <title>Matérias | sigaa-next-client</title>
-      </Head>
-      {data?.map(({ courses }) =>
-        courses?.map((course, key) => (
-          <AccordionCourse key={key} title={course.title} ></AccordionCourse>
-        ))
-      )}
-    </>
-  );
-}

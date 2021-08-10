@@ -25,9 +25,9 @@ import LoginBox from "@components/Index/LoginBox";
 import { CardBottom, CardHeader } from "@components/Index/Card";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler from "@hooks/useUserHandler";
-import useBondsHandler from "@hooks/useBondsHandler";
+import useBondsHandler from "@hooks/useBondsEvents";
 import { useRouter } from "next/router";
-import useAPIHandler from "@hooks/useAPIHandler";
+import useAPIHandler from "@hooks/useAPIEvents";
 import Head from "next/head";
 const useStyles = makeStyles({
   container: {

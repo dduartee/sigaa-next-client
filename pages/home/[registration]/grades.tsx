@@ -7,7 +7,7 @@ import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
-import useAPIHandler from "@hooks/useAPIHandler";
+import useAPIHandler from "@hooks/useAPIEvents";
 import { LoadingContext } from "@context/loading";
 import useCourseEvents, {
   emitCourseList,
@@ -29,26 +29,60 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import Head from "next/head";
-import useGradesEvents, { emitGradesList } from "@hooks/courses/useGradesEvents";
+import useGradesEvents, {
+  emitGradesList,
+} from "@hooks/courses/useGradesEvents";
 import useTabHandler from "@hooks/useTabHandler";
-function GradesPage({ registration }: { registration: string }) {
-  const router = useRouter();
-  const socket = useContext(SocketContext);
+import HomeProviders from "@components/homeProvider";
+
+function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState(2);
   useAPIHandler();
-  useTabHandler({tab, setLoading, registration, valid})
+  const { tab, setTab } = useTabHandler({
+    order: 2,
+    setLoading,
+    registration,
+    valid,
+  });
   console.log("Registration: " + registration);
-  const {data, partialLoading} = useGradesEvents();
+  const { data, partialLoading } = useGradesEvents();
+  return {
+    data,
+    partialLoading,
+    loading,
+    setLoading,
+    user,
+    setUser,
+    setValid,
+    valid,
+    tab,
+    setTab,
+  };
+}
+export default function GradesPage({ registration }: { registration: string }) {
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const {
+    data,
+    partialLoading,
+    loading,
+    user,
+    valid,
+    tab,
+    setUser,
+    setValid,
+    setLoading,
+    setTab,
+  } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
       emitGradesList(
         {
-          registration, 
-          inactive: false, 
+          registration,
+          inactive: false,
           cache: true,
           token: localStorage.getItem("token"),
         },
@@ -63,17 +97,17 @@ function GradesPage({ registration }: { registration: string }) {
       <Head>
         <title>Notas | sigaa-next-client</title>
       </Head>
-      <UserContext.Provider value={user}>
-        <DataContext.Provider value={data}>
-          <LoadingContext.Provider value={loading}>
-            <Home setTab={setTab} tab={tab}>
-              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Grades data={data} partialLoading={partialLoading} />
-              </Box>
-            </Home>
-          </LoadingContext.Provider>
-        </DataContext.Provider>
-      </UserContext.Provider>
+      <HomeProviders
+        data={data}
+        loading={loading}
+        user={user}
+        setTab={setTab}
+        tab={tab}
+      >
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Grades data={data} partialLoading={partialLoading} />
+        </Box>
+      </HomeProviders>
     </>
   );
 }
@@ -82,7 +116,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: context.query,
   };
 }
-export default GradesPage;
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary.dark,
