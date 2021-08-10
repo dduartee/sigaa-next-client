@@ -1,23 +1,20 @@
-import { Bond } from "@types";
-import parseSlugPattern from "@util/parseSlugPattern";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 export default function useTabHandler({
-  tab,
+  order,
   valid,
   setLoading,
   registration,
 }: {
-  tab: number;
+  order: number;
   valid: boolean;
   setLoading: React.Dispatch<boolean>;
   registration: string;
 }) {
   const router = useRouter();
-
+  const [tab, setTab] = useState(order);
   useEffect(() => {
-    let defaultRoute = `/home/${registration}`;
     let route = "";
     switch (tab) {
       case 0:
@@ -42,5 +39,5 @@ export default function useTabHandler({
     router.push(route);
     setLoading(false);
   }, [tab, valid]);
-  return;
+  return { tab, setTab, order, valid, setLoading, registration };
 }

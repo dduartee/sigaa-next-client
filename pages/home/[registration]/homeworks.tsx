@@ -7,7 +7,7 @@ import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
-import useAPIHandler from "@hooks/useAPIHandler";
+import useAPIHandler from "@hooks/useAPIEvents";
 import { LoadingContext } from "@context/loading";
 import useCourseEvents, {
   emitCourseList,
@@ -27,19 +27,55 @@ import useHomeworksEvents, {
   emitHomeworksList,
 } from "@hooks/courses/useHomeworksEvents";
 import useTabHandler from "@hooks/useTabHandler";
+import HomeProviders from "@components/homeProvider";
 
-function HomeworksPage({ registration }: { registration: string }) {
-  const router = useRouter();
-  const socket = useContext(SocketContext);
+function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState(3);
-  const { data, partialLoading } = useHomeworksEvents();
+  const { data, partialLoading, partialLoadingDescription } =
+    useHomeworksEvents();
   useAPIHandler();
-  useTabHandler({tab, setLoading, registration, valid})
-  console.log("Registration: " + registration);
+  const { tab, setTab } = useTabHandler({
+    order: 3,
+    setLoading,
+    registration,
+    valid,
+  });
+  return {
+    user,
+    setUser,
+    loading,
+    setLoading,
+    data,
+    partialLoading,
+    partialLoadingDescription,
+    tab,
+    setTab,
+    valid,
+  };
+}
+
+export default function HomeworksPage({
+  registration,
+}: {
+  registration: string;
+}) {
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const {
+    user,
+    setUser,
+    loading,
+    setLoading,
+    data,
+    partialLoading,
+    partialLoadingDescription,
+    tab,
+    setTab,
+    valid,
+  } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
       emitHomeworksList(
@@ -48,7 +84,7 @@ function HomeworksPage({ registration }: { registration: string }) {
           registration,
           fullHW: false,
           inactive: false,
-          cache: true
+          cache: true,
         },
         socket
       );
@@ -61,17 +97,21 @@ function HomeworksPage({ registration }: { registration: string }) {
       <Head>
         <title>Tarefas | sigaa-next-client</title>
       </Head>
-      <UserContext.Provider value={user}>
-        <DataContext.Provider value={data}>
-          <LoadingContext.Provider value={loading}>
-            <Home setTab={setTab} tab={tab}>
-              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Homeworks data={data} partialLoading={partialLoading} />
-              </Box>
-            </Home>
-          </LoadingContext.Provider>
-        </DataContext.Provider>
-      </UserContext.Provider>
+      <HomeProviders
+        data={data}
+        loading={loading}
+        user={user}
+        setTab={setTab}
+        tab={tab}
+      >
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Homeworks
+            data={data}
+            partialLoading={partialLoading}
+            partialLoadingDescription={partialLoadingDescription}
+          />
+        </Box>
+      </HomeProviders>
     </>
   );
 }
@@ -80,18 +120,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: context.query,
   };
 }
-export default HomeworksPage;
 
 function Homeworks({
   data,
   partialLoading,
+  partialLoadingDescription,
 }: {
   data: Bond[];
   partialLoading: boolean;
+  partialLoadingDescription: boolean;
 }) {
   return (
     <>
-      
       {data?.map((bond: Bond) =>
         bond.courses?.map((course: Course) =>
           course.homeworks?.map((homework: Homework, index) => {
@@ -99,11 +139,13 @@ function Homeworks({
             return status != "Finalizado" ? (
               <HomeworkCollapse
                 key={index}
+                course={course}
                 homework={homework}
                 diff={diferenca}
                 status={status}
                 code={course.code}
                 partialLoading={partialLoading}
+                partialLoadingDescription={partialLoadingDescription}
               />
             ) : null;
           })
@@ -119,16 +161,20 @@ function Homeworks({
 }
 function HomeworkCollapse({
   homework,
+  course,
   code,
   diff,
   status,
   partialLoading,
+  partialLoadingDescription,
 }: {
   homework: Homework;
+  course: Course;
   code: string;
   diff: number;
   status: HomeworkStatus;
   partialLoading: boolean;
+  partialLoadingDescription: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const [wait, setWait] = React.useState(false);
@@ -165,7 +211,7 @@ function HomeworkCollapse({
             component="h2"
             marginLeft="1rem"
           >
-            {homework.title}
+            {`${course.title} - ${homework.title}`}
           </Typography>
           <Typography
             variant="h6"
@@ -187,7 +233,7 @@ function HomeworkCollapse({
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Box sx={{ margin: "1rem", whiteSpace: "pre-wrap" }}>
           {homework.description}
-          {partialLoading ? (
+          {partialLoadingDescription ? (
             <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
           ) : (
             <p></p>

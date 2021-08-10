@@ -42,7 +42,7 @@ function ResponsiveDrawer({
           <Tab label="Desempenho" icon={<EqualizerIcon />} />
           <Tab label="Tarefas" icon={<AssignmentIcon />} />
           <Tab label="Noticias" icon={<InboxIcon />} />
-          <Tab label="Sair" icon={<ArrowBackIcon />} />
+          <Tab label="Voltar" icon={<ArrowBackIcon />} />
         </Tabs>
       </List>
     </div>

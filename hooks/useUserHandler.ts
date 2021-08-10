@@ -2,7 +2,7 @@ import { Bond, UserInfo, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
-import { emitBondList } from "./useBondsHandler";
+import { emitBondList } from "./useBondsEvents";
 
 export default function useUserHandler({ valid }: { valid: boolean }) {
   const [status, setStatus] = useState<UserStatus>("Deslogado");

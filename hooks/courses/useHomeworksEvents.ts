@@ -11,6 +11,8 @@ export default function useHomeworksEvents() {
     },
   ]);
   const [partialLoading, setPartialLoading] = useState(false);
+  const [partialLoadingDescription, setPartialLoadingDescription] =
+    useState(false);
   const socket = useContext(SocketContext);
 
   useEffect(() => {
@@ -27,15 +29,38 @@ export default function useHomeworksEvents() {
     return () => {};
   }, [setData]);
 
-  return { data, setData, partialLoading, setPartialLoading };
+  return {
+    data,
+    setData,
+    partialLoading,
+    setPartialLoading,
+    partialLoadingDescription,
+    setPartialLoadingDescription,
+  };
 }
 
-export function emitHomeworksList(params: {
-  registration: string;
-  fullHW: boolean;
-  inactive: boolean;
-  token: string | null;
-  cache: boolean
-}, socket: Socket) {
-  socket.emit('homeworks::list', params)
+export function emitHomeworksList(
+  params: {
+    registration: string;
+    fullHW: boolean;
+    inactive: boolean;
+    token: string | null;
+    cache: boolean;
+  },
+  socket: Socket
+) {
+  socket.emit("homeworks::list", params);
+}
+
+export function emitHomeworksSpecific(
+  params: {
+    code: string;
+    fullHW: boolean;
+    inactive: boolean;
+    token: string | null;
+    cache: boolean;
+  },
+  socket: Socket
+) {
+  socket.emit("homeworks::specific", params);
 }
