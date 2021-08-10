@@ -1,10 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
+import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
+import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
+import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
+import { LoadingContext } from "@context/loading";
+import useCourseEvents, {
+  emitCourseList,
+} from "@hooks/courses/useCourseEvents";
 import { Bond, Course } from "@types";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -172,9 +179,6 @@ function Grades({
 
   return (
     <React.Fragment>
-      <Head>
-        <title>Notas | sigaa-next-client</title>
-      </Head>
       <CollapsibleTable>
         <TableHead>
           <StyledTableRow>
