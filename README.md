@@ -37,10 +37,10 @@ O SIGAA por ser um sistema sem codigo-fonte aberto, não é possivel garantir 10
 ## To-Do
 
 - [ ] Página de matéria (Full View)
-- [ ] Página de tarefas 
 - [ ] Página de noticias 
 
 ## Finalizadas
 - [X] Página de horarios 
 - [X] Página de notas
 - [X] Página de matérias
+- [X] Página de tarefas(incompleta)
