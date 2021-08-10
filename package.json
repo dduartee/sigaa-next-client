@@ -1,10 +1,6 @@
 {
   "name": "sigaa-next-client",
-<<<<<<< HEAD
   "version": "0.4.6",
-=======
-  "version": "0.4.2",
->>>>>>> cc94b52c1fe5cfd5a7c580462cbaa7a874ac5258
   "main": "src/index.js",
   "scripts": {
     "dev": "next dev",
