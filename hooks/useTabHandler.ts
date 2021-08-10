@@ -27,7 +27,12 @@ export default function useTabHandler({
         route = `/home/${registration}/grades`;
         break;
       case 3:
+<<<<<<< HEAD
         route = `/home/${registration}/homeworks`;
+=======
+        route = `/homeworks`;
+        tabChildren = Homeworks({ data, partialLoading });
+>>>>>>> cc94b52c1fe5cfd5a7c580462cbaa7a874ac5258
         break;
       case 4:
         route = `/home/${registration}/news`;
