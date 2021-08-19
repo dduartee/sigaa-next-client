@@ -8,6 +8,7 @@ export default function useHomeworksEvents() {
       program: "",
       registration: "",
       courses: [],
+      activities: [],
     },
   ]);
   const [partialLoading, setPartialLoading] = useState(false);

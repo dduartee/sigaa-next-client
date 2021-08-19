@@ -13,7 +13,17 @@ export type Bond = {
   program: string;
   registration: string;
   courses: Course[];
+  activities: Activity[];
 };
+export type Activity = {
+    type: "homework" | "exam" | "quiz";
+    description: string;
+    date: string;
+    course: {
+        title: string;
+    };
+    done: boolean;
+}
 export type Course = {
   id: string;
   title: string;

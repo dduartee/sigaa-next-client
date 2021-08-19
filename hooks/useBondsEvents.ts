@@ -9,6 +9,7 @@ export default function useBondsHandler() {
       program: "",
       registration: "",
       courses: [],
+      activities: []
     },
   ]);
   const socket = useContext(SocketContext);
@@ -27,4 +28,12 @@ export function emitBondList(params: {
   inactive: boolean;
 }, socket: Socket) {
   socket.emit("bonds::list", params);
+}
+
+export function emitActivitiesList(params: {
+  token: string | null;
+  inactive: boolean;
+  registration: string
+}, socket: Socket) {
+  socket.emit("activities::list", params);
 }
