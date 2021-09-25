@@ -18,6 +18,9 @@ import AccordionCourse from "@components/Home/AccordionCourse";
 import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProviders from "@components/homeProvider";
+import { emitActivitiesList } from "@hooks/useBondsEvents";
+import Homeworks from "@components/Homeworks/Content";
+import Activities from "@components/Activities/Content";
 
 function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
@@ -42,14 +45,14 @@ export default function RegistrationPage({
   const router = useRouter();
   const socket = useContext(SocketContext);
   const { valid, data, loading, user, tab, setLoading, setTab } =
-  InitializeHooks({
+    InitializeHooks({
       registration,
     });
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
-      emitCourseList(
-        { token: localStorage.getItem("token"), registration },
+      emitActivitiesList(
+        { token: localStorage.getItem("token"), registration, inactive: false },
         socket
       );
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
@@ -59,7 +62,7 @@ export default function RegistrationPage({
   return (
     <>
       <Head>
-        <title>Matérias | sigaa-next-client</title>
+        <title>Inicio | sigaa-next-client</title>
       </Head>
       <HomeProviders
         data={data}
@@ -69,7 +72,7 @@ export default function RegistrationPage({
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Courses data={data} />
+          <Activities data={data} />
         </Box>
       </HomeProviders>
     </>
@@ -89,7 +92,7 @@ function Courses({ data }: { data: Bond[] }) {
       </Head>
       {data?.map(({ courses }) =>
         courses?.map((course, key) => (
-          <AccordionCourse key={key} title={course.title} ></AccordionCourse>
+          <AccordionCourse key={key} title={course.title}></AccordionCourse>
         ))
       )}
     </>

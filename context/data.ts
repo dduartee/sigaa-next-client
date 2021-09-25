@@ -6,6 +6,7 @@ export const defaultValue: Bond[] = [
     program: "",
     registration: "",
     courses: [],
+    activities: []
   },
 ]
 

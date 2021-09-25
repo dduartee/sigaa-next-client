@@ -8,6 +8,7 @@ export default function useCourseEvents() {
       program: "",
       registration: "",
       courses: [],
+      activities: []
     },
   ]);
   const [partialLoading, setPartialLoading] = useState(false);
@@ -17,6 +18,11 @@ export default function useCourseEvents() {
     socket.on("courses::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
       setData(bondsJSON);
+    });
+    socket.on("activities::list", (data: string) => {
+      const bondsJSON = JSON.parse(data);
+      setData(bondsJSON);
+      console.log(bondsJSON)
     });
     return () => {};
   }, [setData]);

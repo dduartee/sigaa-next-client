@@ -14,6 +14,18 @@ const light: ThemeOptions = {
   },
 };
 const dark: ThemeOptions = {
+  typography: {
+    h6: {
+      fontWeight: 400,
+      '@media (max-width:425px)': {
+        fontSize: '1rem',
+      },
+      '@media (max-width:768px)': {
+        fontSize: '1.1rem',
+      },
+    },
+
+  },
   palette: {
     mode: "dark",
     primary: {
