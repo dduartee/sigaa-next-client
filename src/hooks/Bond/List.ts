@@ -25,7 +25,7 @@ export const BondListHook = (
   setError: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   const socket = useContext(socketContext);
-  const { setData } = useContext(DataContext);
+  const { Data, setData } = useContext(DataContext);
   useEffect(() => {
     socket.on(events.bonds.list, (data: bondResponse) => {
       if (data.bonds && !data.error) {

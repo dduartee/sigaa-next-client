@@ -4,6 +4,7 @@ import {
   Lock,
   AccountBalance,
   ExitToApp,
+  ChevronRight,
   Send,
 } from "@mui/icons-material";
 import {
@@ -27,7 +28,7 @@ import { credentialsArgs, LoginHook, optionsArgs } from "@hooks/Auth/Login";
 import { IProfileSchema } from "@contexts/Profile";
 import { DataContext } from "@contexts/Data";
 import { Bond } from "@types";
-import { BondListHook } from "@hooks/Bond/List";
+import { bondArgs, BondListHook } from "@hooks/Bond/List";
 export default function Index() {
   const [vinculo, setVinculo] = React.useState("");
   const [options, setOptions] = React.useState<optionsArgs>({
@@ -62,6 +63,7 @@ export default function Index() {
   );
   const {
     Profile,
+    User,
     emitLogin,
     setStatus,
     status,
@@ -107,7 +109,7 @@ export default function Index() {
   }, [Data]);
   React.useEffect(() => {
     if (!vinculo) setVinculo(Data[0].registration);
-  }, [vinculo, Data]);
+  }, [vinculo]);
   React.useEffect(() => {
     if (options.institution != "") {
       localStorage.setItem("options", JSON.stringify(options));
@@ -130,7 +132,7 @@ export default function Index() {
         }
       }
     }
-  }, [setCredentialsMerge, handleLogin]);
+  }, []);
   React.useEffect(() => {
     if (retry) {
       handleLogin(credentials, options);
@@ -138,7 +140,7 @@ export default function Index() {
     }
   }, [retry]);
   const handleChangeVinculo = (
-    _event: React.MouseEvent<HTMLElement>,
+    event: React.MouseEvent<HTMLElement>,
     nextVinculo: string
   ) => {
     setVinculo(nextVinculo);
