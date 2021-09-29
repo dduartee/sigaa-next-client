@@ -1,46 +1,39 @@
 {
   "name": "sigaa-next-client",
-  "version": "0.4.6",
+  "version": "0.5.0",
   "main": "src/index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc"
   },
   "repository": "https://github.com/dduartee/sigaa-next-client",
   "author": "dduartee <gabrielkduarte234@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@emotion/cache": "latest",
-    "@emotion/react": "^11.4.0",
+    "@emotion/react": "latest",
     "@emotion/server": "latest",
-    "@emotion/styled": "^11.3.0",
-    "@material-ui/core": "^5.0.0-beta.0",
-    "@material-ui/icons": "^5.0.0-alpha.37",
-    "@material-ui/styles": "latest",
-    "@syncfusion/ej2-react-schedule": "^19.2.47",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "latest",
+    "@mui/material": "latest",
+    "clsx": "latest",
+    "dotenv": "^10.0.0",
     "next": "latest",
-    "prettier": "^2.3.2",
     "react": "latest",
     "react-dom": "latest",
-    "react-moment": "^1.1.1",
-    "react-tsparticles": "^1.29.2",
-    "socket.io-client": "latest"
+    "socket.io": "^4.2.0",
+    "socket.io-client": "latest",
+    "tsparticles": "^1.35.1"
   },
   "devDependencies": {
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "@typescript-eslint/parser": "^4.28.0",
-    "eslint": "^7.29.0",
-    "eslint-config-next": "^11.0.1",
-    "eslint-plugin-react": "^7.24.0",
+    "dotenv-webpack": "^7.0.3",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.2",
     "typescript": "latest"
   }
 }
