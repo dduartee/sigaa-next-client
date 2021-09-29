@@ -48,6 +48,8 @@ export type logoutResponse = {
 export const LoginHook = (
   setError: (value: boolean) => void,
   setCredentials: (value: credentialsArgs) => void,
+  setCredentialsMerge: ({ name, value }: { name: string; value: any }) => void,
+  setRetryLogin: (value: boolean) => void,
   cb: (unique: string, username: string) => void
 ) => {
   const socket = useContext(socketContext);
@@ -55,12 +57,11 @@ export const LoginHook = (
   const { User, setUser } = useContext(UserContext);
   const { Profile, setProfile } = useContext(ProfileContext);
   const [status, setStatus] = useState<statusResponse>("Deslogado");
-  const [retry, setRetry] = useState<boolean>(false);
   const eventAuth = events.auth;
   useEffect(() => {
     socket.onAny((event, data) => {
-      console.log(event);
-      console.log(data);
+      console.info(event);
+      console.info(data);
     });
     socket.on(eventAuth.login, (data: loginResponse) => {
       if (data.isLoggedIn) {
@@ -81,7 +82,6 @@ export const LoginHook = (
             console.log("Perfil setado");
             if (data.Unique) {
               localStorage.setItem("unique", data.Unique);
-              console.log(data.Unique);
               cb(data.Unique, data.User.username);
               setCredentials({
                 username: data.User.username,
@@ -92,16 +92,23 @@ export const LoginHook = (
           }
         }
       } else {
-        if (
-          data.error ===
-          "SIGAA: Invalid homepage, the system behaved unexpectedly."
-        ) {
-          setRetry(true);
-        } else {
+        if (data.error === "SIGAA: Invalid credentials.") {
           setError(true);
-          setStatus("Deslogado");
+        } else if (
+          data.error === "SIGAA: Unknown homepage format." ||
+          data.error ===
+            "SIGAA: Invalid homepage, the system behaved unexpectedly."
+        ) {
+          setRetryLogin(true);
+        } else if (
+          data.error === "SessionError: Session not found, verify unique"
+        ) {
+          localStorage.removeItem("unique");
+          setCredentialsMerge({ name: "unique", value: "" });
+          setRetryLogin(true);
         }
         console.error(data.error);
+        setStatus("Deslogado");
       }
     });
     socket.on(eventAuth.status, (data: statusResponse) => {
@@ -114,12 +121,8 @@ export const LoginHook = (
         }
         localStorage.setItem("unique", "");
         localStorage.setItem("username", "");
+        setCredentialsMerge({ name: "unique", value: "" });
         setStatus("Deslogado");
-        setCredentials({
-          username: "",
-          unique: undefined,
-          password: "",
-        });
       }
     });
   }, []);
@@ -144,8 +147,6 @@ export const LoginHook = (
     Profile,
     status,
     setStatus,
-    retry,
-    setRetry,
     emitLogout,
   };
 };
