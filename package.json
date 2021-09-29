@@ -12,7 +12,7 @@
   "author": "dduartee <gabrielkduarte234@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "16.3.x"
+    "node": "14.x"
   },
   "dependencies": {
     "@emotion/cache": "latest",
