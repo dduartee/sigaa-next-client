@@ -23,7 +23,11 @@ import {
   Typography,
 } from "@mui/material";
 import { InputBox } from "@components/Login/Input";
-import { credentialsArgs, LoginHook, optionsArgs } from "@hooks/Auth/Login";
+import {
+  credentialsArgs,
+  LoginHook,
+  optionsArgs,
+} from "@hooks/Auth/Login";
 import { IProfileSchema } from "@contexts/Profile";
 import { DataContext } from "@contexts/Data";
 import { Bond } from "@types";
@@ -35,6 +39,7 @@ export default function Index() {
     url: "",
   });
   const [error, setError] = React.useState<boolean>(false);
+  const [retryLogin, setRetryLogin] = React.useState<boolean>(false);
   const [credentials, setCredentials] = React.useState<credentialsArgs>({
     password: "",
     username: "",
@@ -43,34 +48,7 @@ export default function Index() {
   const { Data } = React.useContext(DataContext);
   const bondListHook = BondListHook(setError);
   const { getBonds } = bondListHook;
-  const loginHook = LoginHook(
-    setError,
-    setCredentials,
-    (unique: string, username: string) => {
-      getBonds({
-        credentials: {
-          password: undefined,
-          unique,
-          username,
-        },
-        options: JSON.parse(
-          localStorage.getItem("options") ?? "{url: '', institution: ''}"
-        ),
-        query: { type: "student" },
-      });
-    }
-  );
-  const {
-    Profile,
-    emitLogin,
-    setStatus,
-    status,
-    retry,
-    setRetry,
-    emitLogout,
-  } = loginHook;
 
-  const handleChange = (event?: any) => setCredentialsMerge(event.target);
   const setCredentialsMerge = ({
     name,
     value,
@@ -85,8 +63,8 @@ export default function Index() {
   };
   const handleLogin = (credentials: credentialsArgs, options: optionsArgs) => {
     setStatus("Logando");
-    emitLogin(options, credentials);
     setError(false);
+    emitLogin(options, credentials);
   };
   const handleLogout = () => {
     setStatus("Deslogando");
@@ -102,12 +80,35 @@ export default function Index() {
     }
     setError(false);
   };
+  const loginHook = LoginHook(
+    setError,
+    setCredentials,
+    setCredentialsMerge,
+    setRetryLogin,
+    (unique: string, username: string) => {
+      getBonds({
+        credentials: {
+          password: undefined,
+          unique,
+          username,
+        },
+        options: JSON.parse(
+          localStorage.getItem("options") ?? "{url: '', institution: ''}"
+        ),
+        query: { type: "student" },
+      });
+    }
+  );
+  const { Profile, emitLogin, setStatus, status, emitLogout } = loginHook;
   React.useEffect(() => {
     setVinculo(Data[0].registration);
   }, [Data]);
   React.useEffect(() => {
     if (!vinculo) setVinculo(Data[0].registration);
   }, [vinculo, Data]);
+  React.useEffect(() => {
+    emitLogin(options, credentials);
+  }, [retryLogin]);
   React.useEffect(() => {
     if (options.institution != "") {
       localStorage.setItem("options", JSON.stringify(options));
@@ -119,7 +120,6 @@ export default function Index() {
       localStorage.getItem("options") ?? ""
     ) as optionsArgs;
     const username = localStorage.getItem("username");
-    console.log(unique, options, username);
     if (!!unique) {
       setCredentialsMerge({ name: "unique", value: unique });
       if (options.institution && options.url) {
@@ -130,13 +130,7 @@ export default function Index() {
         }
       }
     }
-  }, [setCredentialsMerge, handleLogin]);
-  React.useEffect(() => {
-    if (retry) {
-      handleLogin(credentials, options);
-      setRetry(false);
-    }
-  }, [retry]);
+  }, []);
   const handleChangeVinculo = (
     _event: React.MouseEvent<HTMLElement>,
     nextVinculo: string
@@ -172,14 +166,31 @@ export default function Index() {
           <Collapse in={IsLoggedIn}>{loggedIn.cardHeader(Profile)}</Collapse>
           <CardContent>
             <Collapse in={!IsLoggedIn && !esperando} timeout={250}>
-              {loggedOut.form(institution, changeInstitution, error, {
-                onChange: handleChange,
-                onKeyPress: handleKeyPress,
-              })}
+              {loggedOut.form(
+                institution,
+                {
+                  username: credentials.username,
+                  password: credentials.password,
+                },
+                changeInstitution,
+                setCredentialsMerge,
+                error,
+                {
+                  onKeyPress: handleKeyPress,
+                }
+              )}
             </Collapse>
-            <Collapse in={IsLoggedIn && !esperando} timeout={250}>
-              {loggedIn.bondSelector(Data, vinculo, handleChangeVinculo)}
-            </Collapse>
+            {!!Data[0].registration && IsLoggedIn && !esperando ? (
+              <Collapse
+                in={IsLoggedIn && !esperando && !!Data[0].registration}
+                timeout={250}
+              >
+                {loggedIn.bondSelector(Data, vinculo, handleChangeVinculo)}
+              </Collapse>
+            ) : IsLoggedIn && !esperando ? (
+              <p>Estamos recebendo seus vinculos...</p>
+            ) : null}
+            {retryLogin && esperando ? <p>Tentando novamente...</p> : null}
           </CardContent>
           {esperando ? (
             <CardContent>
@@ -339,10 +350,18 @@ const WhileIsLoggedOut = () => {
   );
   const form = (
     institution: string,
+    credentials: { username: string; password: string | undefined },
     changeInstitution: (event: {
       target: {
         value: string;
       };
+    }) => void,
+    setCredentialsMerge: ({
+      name,
+      value,
+    }: {
+      name: string;
+      value: any;
     }) => void,
     error: boolean,
     props: React.DetailedHTMLProps<
@@ -358,6 +377,7 @@ const WhileIsLoggedOut = () => {
           justifyContent: "center",
           alignItems: "center",
         }}
+        autoComplete="on"
         {...props}
       >
         <InputBox
@@ -369,7 +389,13 @@ const WhileIsLoggedOut = () => {
           input={
             <FormControl fullWidth>
               <TextField
-                autoComplete="off"
+                onChange={({ target }) =>
+                  setCredentialsMerge({
+                    name: target.name,
+                    value: target.value,
+                  })
+                }
+                value={credentials.username ?? ""}
                 error={error}
                 name="username"
                 label="Usuário"
@@ -389,7 +415,13 @@ const WhileIsLoggedOut = () => {
           input={
             <FormControl fullWidth>
               <TextField
-                autoComplete="off"
+                onChange={({ target }) =>
+                  setCredentialsMerge({
+                    name: target.name,
+                    value: target.value,
+                  })
+                }
+                value={credentials.password ?? ""}
                 error={error}
                 name="password"
                 label="Senha"
