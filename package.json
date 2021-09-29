@@ -11,9 +11,6 @@
   "repository": "https://github.com/dduartee/sigaa-next-client",
   "author": "dduartee <gabrielkduarte234@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "node": "16.3.x"
-  },
   "dependencies": {
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
