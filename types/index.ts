@@ -12,8 +12,8 @@ export type UserStatus = "Logado" | "Deslogado" | "Logando" | "Deslogando";
 export type Bond = {
   program: string;
   registration: string;
-  courses: Course[];
-  activities: Activity[];
+  courses: Course[] | [];
+  activities: Activity[] | [];
 };
 export type Activity = {
     type: "homework" | "exam" | "quiz";
