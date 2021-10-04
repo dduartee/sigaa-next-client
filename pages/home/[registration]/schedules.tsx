@@ -119,7 +119,7 @@ function Schedules({ data }: { data: Bond[] }) {
 }
 
 function parseSchedule(schedule: string | null) {
-  if (!schedule) return { startDate: "", endDate: "" };
+  if (!schedule) return { startDate: new Date("January 01, 1970 00:00:00"), endDate: new Date("January 01, 1970 00:00:00") };
   const periodo = schedule.substr(1, 1);
   const diaSemana = parseInt(schedule.substr(0, 1)) - 1;
   const horarios = schedule.substr(2).split('') as any;
