@@ -1,7 +1,12 @@
+
 #__next {
     height: 100vh;
     width: 100vw;
     overflow-x: hidden;
+}
+a {
+    text-decoration: none;
+    color: "#268E36"
 }
 /* Change the white to any color */
 input:-webkit-autofill,

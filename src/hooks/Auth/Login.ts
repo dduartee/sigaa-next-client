@@ -3,6 +3,166 @@ import { useContext, useEffect, useState } from "react";
 import events from "@events.json";
 import { IProfileSchema, ProfileContext } from "@contexts/Profile";
 import { IUserSchema, UserContext } from "@contexts/User";
+import { Socket } from "socket.io-client";
+
+export const LoginHook = (
+  setError: (value: boolean) => void,
+  setCredentials: (value: credentialsArgs) => void,
+  setCredentialsMerge: ({ name, value }: { name: string; value: any }) => void,
+  setRetryLogin: (value: boolean) => void,
+  cb: (unique: string, username: string) => void
+) => {
+  const socket = useContext(socketContext);
+
+  const { User, setUser } = useContext(UserContext);
+  const { Profile, setProfile } = useContext(ProfileContext);
+  const [status, setStatus] = useState<statusResponse>("Deslogado");
+  const eventAuth = events.auth;
+  const authEmitter = AuthEmitter(socket, eventAuth);
+  useEffect(() => {
+    socket.onAny((event, data) => {
+      console.debug(event, data);
+    });
+
+    socket.on(eventAuth.login, (data: loginResponse) => {
+      const { error, isLoggedIn } = data;
+      if (error === undefined && isLoggedIn === true) {
+        const { Profile, Unique, User } = data;
+        const { username } = User;
+
+        // tratamento do Usuário
+        setUser({ username });
+        localStorage.setItem("username", data.User.username);
+        console.debug("Usuário setado");
+
+        // tratamento do Perfil
+        const { emails, fullName, profilePictureURL } = Profile;
+        setProfile({
+          emails,
+          fullName,
+          profilePictureURL,
+        });
+        console.debug("Perfil setado");
+
+        // tratamento do Unique
+        localStorage.setItem("unique", Unique);
+        console.debug("Unique setado");
+
+        setCredentials({
+          username: data.User.username,
+          unique: data.Unique,
+          password: undefined,
+        });
+
+        // executa callback definido na função, getBonds, etc
+        cb(data.Unique, data.User.username);
+      } else {
+        setStatus("Deslogado");
+        errorHandler();
+      }
+
+      function errorHandler() {
+        if (error === "SIGAA: Invalid credentials.") {
+          setError(true);
+        } else if (
+          error ===
+            "SIGAA: Invalid homepage, the system behaved unexpectedly." ||
+          error === "SIGAA: Unknown homepage format."
+        ) {
+          setRetryLogin(true);
+        } else if (error === "SessionError: Session not found, verify unique") {
+          localStorage.removeItem("unique");
+          setCredentialsMerge({ name: "unique", value: "" });
+          setRetryLogin(true);
+        }
+      }
+    });
+    socket.on(eventAuth.status, (data: statusResponse) => {
+      setStatus(data);
+    });
+    socket.on(eventAuth.logout, (data: logoutResponse) => {
+      const { error, isLoggedOut } = data;
+      if (error === undefined && isLoggedOut === true) {
+        localStorage.removeItem("unique");
+        localStorage.removeItem("username");
+        setUser({ username: "" });
+        setProfile({
+          emails: [],
+          fullName: "",
+          profilePictureURL: "",
+        });
+        setCredentials({
+          username: "",
+          unique: "",
+          password: undefined,
+        });
+        setStatus("Deslogado");
+      } else {
+        console.error(data.error);
+      }
+    });
+    return () => {
+      socket.close();
+    };
+  }, []);
+  return {
+    User,
+    Profile,
+    status,
+    setStatus,
+    authEmitter,
+  };
+};
+const AuthEmitter = (
+  socket: Socket,
+  eventAuth: { login: string; logout: string }
+) => {
+  const emitLogin = (options: optionsArgs, credentials: credentialsArgs) => {
+    socket.emit(eventAuth.login, {
+      options,
+      credentials,
+    } as loginArgs);
+  };
+  const emitLogout = (
+    options: optionsArgs,
+    credentials: credentialsWithUnique
+  ) => {
+    socket.emit(eventAuth.logout, {
+      options,
+      credentials,
+    } as logoutArgs);
+  };
+
+  return { login: emitLogin, logout: emitLogout };
+};
+
+export const useSessionCredentials = () => {
+  const [sessionCredentials, setSessionCredentials] = useState<{
+    unique: string;
+    username: string;
+    options: optionsArgs;
+  }>({
+    options: {
+      institution: "",
+      url: "",
+    },
+    unique: "",
+    username: "",
+  });
+  useEffect(() => {
+    const unique = localStorage.getItem("unique") ?? "";
+    const username = localStorage.getItem("username") ?? "";
+    const options =
+      localStorage.getItem("options") ?? '{ institution: "", url: "" }';
+    setSessionCredentials({
+      unique,
+      username,
+      options: JSON.parse(options) as optionsArgs,
+    });
+  }, []);
+  return sessionCredentials;
+};
+
 export interface optionsArgs {
   institution: string;
   url: string;
@@ -25,12 +185,18 @@ export type loginArgs = {
   credentials: credentialsArgs;
 };
 
-export type loginResponse = {
-  User?: IUserSchema;
-  isLoggedIn?: boolean;
-  error?: string | undefined;
-  Profile?: IProfileSchema;
-  Unique?: string;
+export type loginResponse = loginResponseError | loginResponseSuccess;
+export type loginResponseError = {
+  error: ErrorKnownleadge;
+  isLoggedIn: false;
+};
+
+export type loginResponseSuccess = {
+  User: IUserSchema;
+  isLoggedIn: true;
+  error: undefined;
+  Profile: IProfileSchema;
+  Unique: string;
 };
 
 export type statusResponse = "Logado" | "Deslogado" | "Logando" | "Deslogando";
@@ -39,114 +205,19 @@ export type logoutArgs = {
   credentials: credentialsWithUnique;
 };
 
-export type logoutResponse = {
+export type logoutResponse = logoutResponseError | logoutResponseSuccess;
+export type logoutResponseError = {
+  isLoggedOut: false;
+  error: string;
+};
+export type logoutResponseSuccess = {
   User?: IUserSchema;
   Unique?: string;
   isLoggedOut: boolean;
   error: string | undefined;
 };
-export const LoginHook = (
-  setError: (value: boolean) => void,
-  setCredentials: (value: credentialsArgs) => void,
-  setCredentialsMerge: ({ name, value }: { name: string; value: any }) => void,
-  setRetryLogin: (value: boolean) => void,
-  cb: (unique: string, username: string) => void
-) => {
-  const socket = useContext(socketContext);
-
-  const { User, setUser } = useContext(UserContext);
-  const { Profile, setProfile } = useContext(ProfileContext);
-  const [status, setStatus] = useState<statusResponse>("Deslogado");
-  const eventAuth = events.auth;
-  useEffect(() => {
-    socket.onAny((event, data) => {
-      console.info(event);
-      console.info(data);
-    });
-    socket.on(eventAuth.login, (data: loginResponse) => {
-      if (data.isLoggedIn) {
-        if (data.User) {
-          setUser({
-            username: data.User.username,
-          });
-          localStorage.setItem("username", data.User.username);
-          console.log("Usuário setado");
-
-          if (data.Profile) {
-            const { emails, fullName, profilePictureURL } = data.Profile;
-            setProfile({
-              emails,
-              fullName,
-              profilePictureURL,
-            });
-            console.log("Perfil setado");
-            if (data.Unique) {
-              localStorage.setItem("unique", data.Unique);
-              cb(data.Unique, data.User.username);
-              setCredentials({
-                username: data.User.username,
-                unique: data.Unique,
-                password: undefined,
-              });
-            }
-          }
-        }
-      } else {
-        if (data.error === "SIGAA: Invalid credentials.") {
-          setError(true);
-        } else if (
-          data.error === "SIGAA: Unknown homepage format." ||
-          data.error ===
-            "SIGAA: Invalid homepage, the system behaved unexpectedly."
-        ) {
-          setRetryLogin(true);
-        } else if (
-          data.error === "SessionError: Session not found, verify unique"
-        ) {
-          localStorage.removeItem("unique");
-          setCredentialsMerge({ name: "unique", value: "" });
-          setRetryLogin(true);
-        }
-        console.error(data.error);
-        setStatus("Deslogado");
-      }
-    });
-    socket.on(eventAuth.status, (data: statusResponse) => {
-      setStatus(data);
-    });
-    socket.on(eventAuth.logout, (data: logoutResponse) => {
-      if (data.isLoggedOut) {
-        if (data.User) {
-          setUser({ username: data.User.username });
-        }
-        localStorage.setItem("unique", "");
-        localStorage.setItem("username", "");
-        setCredentialsMerge({ name: "unique", value: "" });
-        setStatus("Deslogado");
-      }
-    });
-  }, []);
-  const emitLogin = (options: optionsArgs, credentials: credentialsArgs) => {
-    socket.emit(eventAuth.login, {
-      options,
-      credentials,
-    } as loginArgs);
-  };
-  const emitLogout = (
-    options: optionsArgs,
-    credentials: credentialsWithUnique
-  ) => {
-    socket.emit(eventAuth.logout, {
-      options,
-      credentials,
-    } as logoutArgs);
-  };
-  return {
-    emitLogin,
-    User,
-    Profile,
-    status,
-    setStatus,
-    emitLogout,
-  };
-};
+export type ErrorKnownleadge =
+  | "SIGAA: Invalid credentials."
+  | "SIGAA: Unknown homepage format."
+  | "SIGAA: Invalid homepage, the system behaved unexpectedly."
+  | "SessionError: Session not found, verify unique";

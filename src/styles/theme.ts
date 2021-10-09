@@ -1,6 +1,9 @@
 import { createTheme, ThemeOptions } from "@mui/material/styles";
 
 export const themeOptions: ThemeOptions = {
+  typography: {
+    fontFamily: "Noto Sans Display",
+  },
   palette: {
     mode: "dark",
     primary: {
@@ -36,9 +39,7 @@ export const themeOptions: ThemeOptions = {
 
     MuiToggleButton: {
       styleOverrides: {
-        root: {
-          
-        },
+        root: {},
       },
     },
   },

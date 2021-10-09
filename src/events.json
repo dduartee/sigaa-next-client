@@ -31,7 +31,6 @@
         "store": "auth::store"
     },
     "api": {
-        "error": "api::error",
-        "info": "api::info"
+        "loading": "api::loading"
     }
 }
