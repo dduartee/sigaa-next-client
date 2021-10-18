@@ -112,8 +112,8 @@ export default function AboutPersonal() {
               <li>
                 <Typography width="100%" fontSize="1rem">
                   Como todo estudante, querer acessar as coisas rápidas, e nisso
-                  o SIGAA pode ser ruim, os tais dos "comportamentos
-                  inesperados", me levava sustos por ser inesperado (é uma
+                  o SIGAA pode ser ruim, os tais dos &quot;comportamentos
+                  inesperados&quot;, me dava sustos por ser inesperado (é uma
                   piada...)
                 </Typography>
               </li>

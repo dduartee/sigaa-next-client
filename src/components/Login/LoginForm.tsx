@@ -1,51 +1,88 @@
 import { InputBox } from "@components/Login/Input";
 import { AccountCircle, Lock, AccountBalance } from "@mui/icons-material";
-import { FormControl, TextField, MenuItem, Collapse } from "@mui/material";
+import {
+  FormControl,
+  TextField,
+  MenuItem,
+  Collapse,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { optionsState, setOptions } from "@redux/reducers/options.reducer";
+import { credentialsArgs } from "@types";
 import React from "react";
 
-export default function loginForm(
+export default function LoginForm(
   props: React.DetailedHTMLProps<
     React.FormHTMLAttributes<HTMLFormElement>,
     HTMLFormElement
   > & {
     hooks: {
-      institution: string;
-      credentials: { username: string; password: string | undefined };
-      changeInstitution: (event: {
-        target: {
-          value: string;
-        };
-      }) => void;
-      setCredentialsMerge: ({
-        name,
-        value,
-      }: {
-        name: string;
-        value: any;
-      }) => void;
+      credentials: credentialsArgs;
       error: boolean;
+      setCredentials: (credentials: credentialsArgs) => void;
     };
   }
 ) {
-  const {
-    institution,
-    credentials,
-    changeInstitution,
-    setCredentialsMerge,
-    error,
-  } = props.hooks;
+  // TRANSIÇÕES
   const [openInstitution, setOpenInstitution] = React.useState(false);
+  const [openCheckbox, setOpenCheckbox] = React.useState(false);
   const [openUsername, setOpenUsername] = React.useState(false);
   const [openPassword, setOpenPassword] = React.useState(false);
-  setTimeout(() => {
-    setOpenUsername(true);
-  }, 100);
-  setTimeout(() => {
-    setOpenPassword(true);
-  }, 400);
-  setTimeout(() => {
-    setOpenInstitution(true);
-  }, 600);
+  React.useEffect(() => {
+    const timeoutOpenUsername = setTimeout(() => {
+      setOpenUsername(true);
+    }, 100);
+    const timeoutOpenPassword = setTimeout(() => {
+      setOpenPassword(true);
+    }, 400);
+    const timeoutOpenInstitution = setTimeout(() => {
+      setOpenInstitution(true);
+    }, 600);
+    const timeoutOpenCheckbox = setTimeout(() => {
+      setOpenCheckbox(true);
+    }, 800);
+    return () => {
+      clearTimeout(timeoutOpenUsername);
+      clearTimeout(timeoutOpenPassword);
+      clearTimeout(timeoutOpenInstitution);
+      clearTimeout(timeoutOpenCheckbox);
+    };
+  }, []);
+
+  const { credentials, setCredentials, error } = props.hooks;
+  const dispatch = useAppDispatch();
+  const options = useAppSelector(
+    (state: { options: optionsState }) => state.options
+  );
+  const onChangeCredentials = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCredentials({
+      ...credentials,
+      [event.target.name]: event.target.value,
+    });
+  };
+  const onChangeRememberMe = (
+    _event: React.SyntheticEvent<Element, Event>,
+    checked: boolean
+  ) => {
+    dispatch(setOptions({ ...options, rememberMe: checked }));
+  };
+  const onChangeInstitutionAndURLValue = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const [institution, url] = event.target.value.split(" | ");
+    dispatch(setOptions({ ...options, institution, url }));
+  };
+  const listOfInstitution = [
+    {
+      institution: "IFSC",
+      url: "https://sigaa.ifsc.edu.br",
+      disabled: false,
+    },
+  ];
+
   return (
     <form
       style={{
@@ -67,17 +104,13 @@ export default function loginForm(
           input={
             <FormControl fullWidth>
               <TextField
-                onChange={({ target }) =>
-                  setCredentialsMerge({
-                    name: target.name,
-                    value: target.value,
-                  })
-                }
+                onChange={onChangeCredentials}
                 value={credentials.username ?? ""}
                 error={error}
                 name="username"
                 label="Usuário"
                 size="small"
+                autoComplete="username"
                 fullWidth
                 helperText="Seu usuário na SIGAA"
               />
@@ -95,18 +128,14 @@ export default function loginForm(
           input={
             <FormControl fullWidth>
               <TextField
-                onChange={({ target }) =>
-                  setCredentialsMerge({
-                    name: target.name,
-                    value: target.value,
-                  })
-                }
+                onChange={onChangeCredentials}
                 value={credentials.password ?? ""}
                 error={error}
                 name="password"
                 label="Senha"
                 size="small"
                 fullWidth
+                autoComplete="current-password"
                 type="password"
                 helperText="Sua senha do SIGAA"
               />
@@ -125,24 +154,42 @@ export default function loginForm(
             <FormControl fullWidth sx={{ minWidth: 210 }}>
               <TextField
                 error={error}
-                autoComplete="off"
                 id="outlined-select-currency"
                 select
-                value={institution}
+                value={
+                  options.institution
+                    ? `${options.institution} | ${options.url}`
+                    : ""
+                }
                 label="Instituição"
-                onChange={changeInstitution}
+                onChange={onChangeInstitutionAndURLValue}
                 size="small"
                 helperText="Selecione sua instituição"
                 fullWidth
               >
-                <MenuItem value="IFSC - https://sigaa.ifsc.edu.br">
-                  IFSC
-                </MenuItem>
-                <MenuItem value="UFPB - https://sigaa.ufpb.br">UFPB</MenuItem>
+                {listOfInstitution.map((option) => (
+                  <MenuItem
+                    key={option.institution}
+                    value={`${option.institution} | ${option.url}`}
+                    disabled={option.disabled}
+                  >
+                    {option.institution}
+                  </MenuItem>
+                ))}
               </TextField>
             </FormControl>
           }
         />
+      </Collapse>
+      <Collapse in={openCheckbox} sx={{ width: "100%" }}>
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox />}
+            label="Lembrar de mim"
+            value={options.rememberMe}
+            onChange={onChangeRememberMe}
+          />
+        </FormGroup>
       </Collapse>
     </form>
   );

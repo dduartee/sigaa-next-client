@@ -10,100 +10,117 @@ import {
   Grow,
 } from "@mui/material";
 import React from "react";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
 import About from "./_about";
 import AboutPersonal from "./_about-personal";
 import AboutTechnical from "./_about-technical";
-import LoginPage from "./_login&bondPage";
+import LoginPage from "./_login";
 import { Info, Login as LoginIcon } from "@mui/icons-material";
+import BondsPage from "./_bonds";
+import { SocketContext, SocketInstance } from "@contexts/Socket";
 export default function Index() {
-  const [openLogo, setOpenLogo] = React.useState(false);
-  const [openCollapseLogo, setOpenCollapseLogo] = React.useState(false);
-  setTimeout(() => {
-    setOpenCollapseLogo(true);
-  }, 3000);
-
+  const socketInstance = SocketInstance();
   return (
-    <Switch>
-      <>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          height="100vh"
-          spacing={2}
-        >
-          <Route path="/">
-            <Grid item sx={{ m: 4, maxWidth: "1440px" }}>
-              <Card
-                variant="elevation"
-                sx={{
-                  overflow: "visible",
-                  borderRadius: "9px",
-                  width: "fit-content",
-                }}
-              >
-                <Collapse
-                  in={openCollapseLogo}
-                  timeout={1000}
-                  onEnter={() => setOpenLogo(true)}
-                >
-                  <CardContent>
-                    <Grow in={openLogo} timeout={1000}>
-                      <Box
-                        display="flex"
-                        justifyContent="center"
-                        flexWrap={"wrap"}
-                      >
-                        <Typography variant="h2" fontSize="2rem">
-                          sigaa-next-client
-                        </Typography>
-                      </Box>
-                    </Grow>
-                  </CardContent>
-                </Collapse>
-                <Route path="/" exact>
-                  <IndexContent />
-                </Route>
-                <Route path="/login" exact>
-                  <LoginPage />
-                </Route>
-                <Route path="/about" exact>
-                  <About />
-                </Route>
-                <Route path="/about-personal" exact>
-                  <AboutPersonal />
-                </Route>
-                <Route path="/about-technical" exact>
-                  <AboutTechnical />
-                </Route>
-              </Card>
-            </Grid>
-          </Route>
+    <SocketContext.Provider value={socketInstance}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        spacing={2}
+      >
+        <Grid item sx={{ m: 4, maxWidth: "1440px" }}>
+          <Card
+            variant="elevation"
+            sx={{
+              overflow: "visible",
+              borderRadius: "9px",
+              width: "fit-content",
+            }}
+          >
+            <Route path="/" exact>
+              <LogoText />
+              <IndexContent />
+            </Route>
+            <Route path="/login" exact>
+              <LoginPage />
+            </Route>
+            <Route path="/bonds" exact>
+              <BondsPage />
+            </Route>
+            <Route path="/about" exact>
+              <LogoText />
+              <About />
+            </Route>
+            <Route path="/about-personal" exact>
+              <LogoText />
+              <AboutPersonal />
+            </Route>
+            <Route path="/about-technical" exact>
+              <LogoText />
+              <AboutTechnical />
+            </Route>
+          </Card>
         </Grid>
-      </>
-    </Switch>
+      </Grid>
+    </SocketContext.Provider>
   );
 }
-
+function LogoText() {
+  const [openLogo, setOpenLogo] = React.useState(false);
+  const [openCollapseLogo, setOpenCollapseLogo] = React.useState(false);
+  React.useEffect(() => {
+    const timeoutOpenCollapseLogo = setTimeout(() => {
+      setOpenCollapseLogo(true);
+    }, 3000);
+    return () => {
+      clearTimeout(timeoutOpenCollapseLogo);
+    };
+  }, []);
+  return (
+    <Collapse
+      in={openCollapseLogo}
+      timeout={1000}
+      onEnter={() => setOpenLogo(true)}
+    >
+      <CardContent>
+        <Grow in={openLogo} timeout={1000}>
+          <Box display="flex" justifyContent="center" flexWrap={"wrap"}>
+            <Typography variant="h2" fontSize="2rem">
+              sigaa-next-client
+            </Typography>
+          </Box>
+        </Grow>
+      </CardContent>
+    </Collapse>
+  );
+}
 function IndexContent() {
   const [open, setOpen] = React.useState(false);
-  setTimeout(() => {
-    setOpen(true);
-  }, 200);
   const [openStart, setOpenStart] = React.useState(false);
   const [openMiddle, setOpenMiddle] = React.useState(false);
   const [openEnd, setOpenEnd] = React.useState(false);
-  setTimeout(() => {
-    setOpenStart(true);
-  }, 800);
-  setTimeout(() => {
-    setOpenMiddle(true);
-  }, 1500);
-  setTimeout(() => {
-    setOpenEnd(true);
-  }, 2300);
+  React.useEffect(() => {
+    const timeoutOpen = setTimeout(() => {
+      setOpen(true);
+    }, 200);
+    const timeoutOpenStart = setTimeout(() => {
+      setOpenStart(true);
+    }, 800);
+    const timeoutOpenMiddle = setTimeout(() => {
+      setOpenMiddle(true);
+    }, 1500);
+    const timeoutOpenEnd = setTimeout(() => {
+      setOpenEnd(true);
+    }, 2300);
+    return () => {
+      clearTimeout(timeoutOpen);
+      clearTimeout(timeoutOpenStart);
+      clearTimeout(timeoutOpenMiddle);
+      clearTimeout(timeoutOpenEnd);
+    };
+  }, []);
 
   return (
     <>

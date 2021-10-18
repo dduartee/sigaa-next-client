@@ -24,6 +24,9 @@ export const themeOptions: ThemeOptions = {
         root: {
           paddingTop: "1em",
           paddingBottom: "1em",
+          ":last-child": {
+            paddingBottom: "1em",
+          },
         },
       },
     },
@@ -34,12 +37,6 @@ export const themeOptions: ThemeOptions = {
             transform: "scaleX(-1)",
           },
         },
-      },
-    },
-
-    MuiToggleButton: {
-      styleOverrides: {
-        root: {},
       },
     },
   },

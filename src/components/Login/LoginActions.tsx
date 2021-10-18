@@ -1,9 +1,8 @@
-import { credentialsArgs, optionsArgs } from "@hooks/Auth/Login";
 import { ExitToApp, Send } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-export function LoginActions(props: { handleLogin: () => void }) {
+export default function LoginActions(props: { handleLogin: () => void }) {
   const { handleLogin } = props;
   return (
     <Box display="flex" justifyContent="space-between" width="100%">

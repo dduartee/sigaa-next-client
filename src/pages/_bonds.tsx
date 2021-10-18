@@ -1,161 +1,89 @@
-import * as React from "react";
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  Collapse,
-  Grid,
-  ToggleButton,
-  ToggleButtonGroup,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
-import { IProfileSchema } from "@contexts/Profile";
-import { Bond } from "@types";
-export interface BondsProps {
-  Profile: IProfileSchema;
-  Bonds: Bond[];
-  conditionals: { isWaiting: boolean; isLoggedIn: boolean };
-}
-export function ProfileHeader(Profile: IProfileSchema) {
-  let carregado = false;
-  setTimeout(() => {
-    carregado = true;
-  }, 100);
-  return (
-    <CardContent
-      sx={{
-        overflow: "visible",
-        padding: 0,
-        display: "flex",
-        alignContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
-      <Collapse in={carregado}>
-        <img
-          src={Profile.profilePictureURL}
-          style={{
-            width: "100px",
-            height: "100px",
-            objectFit: "cover",
-            borderRadius: "50%",
-            marginTop: "-50px",
-            userSelect: "none",
-          }}
-        />
-        <p style={{ fontSize: "1.25rem", border: 0, margin: 0 }}>
-          {Profile.fullName}
-        </p>
-      </Collapse>
-    </CardContent>
-  );
-}
+import BondActions from "@components/Bonds/BondActions";
+import { BondSelector } from "@components/Bonds/BondSelector";
+import { ProfileHeader } from "@components/Bonds/ProfileHeader";
+import CircularProgressWithLabel from "@components/CircularProgressWithLabel";
+import { SocketContext } from "@contexts/Socket";
+import useAuthenticationAPI from "@hooks/useAuthenticationAPI";
+import useBondsAPI from "@hooks/useBondsAPI";
+import useLoadingAPI from "@hooks/useLoadingAPI";
+import { Box, CardActions, CardContent, Collapse } from "@mui/material";
+import React, { useContext, useEffect } from "react";
 
-export function bondSelector(bonds: Bond[]) {
-  const [vinculo, setVinculo] = React.useState("");
-  let carregado = false;
-  setTimeout(() => {
-    carregado = true;
-  }, 200);
+export default function BondsPage() {
+  const socket = useContext(SocketContext);
+  const [authenticatedDelay, setAuthenticatedDelay] = React.useState("3");
+
+  const { emitGetBonds, storeState } = useBondsAPI(socket);
+  const { emitLogout } = useAuthenticationAPI(socket);
+  const handleLogout = () => {
+    emitLogout();
+  };
+  const handleGetBonds = () => {
+    const { user, options } = storeState;
+    emitGetBonds(
+      { password: undefined, username: user.username, unique: user.unique },
+      options
+    );
+  };
+  const [currentBond, setCurrentBond] = React.useState("");
+  useEffect(() => {
+    if (!currentBond && storeState.bonds.length > 0) {
+      setCurrentBond(storeState.bonds[0].registration);
+    }
+  }, [currentBond]);
+  useEffect(() => {
+    if (storeState.bonds.length > 0) {
+      setCurrentBond(storeState.bonds[0].registration);
+    } else {
+      setCurrentBond("");
+    }
+  }, [storeState.bonds]);
+  useEffect(() => {
+    setTimeout(() => {
+      setAuthenticatedDelay(storeState.user.isLoggedIn ? "1" : "2");
+    }, 200);
+  });
+  const { loading, progress } = useLoadingAPI(socket);
+  const conditionals = {
+    isAuthenticated: authenticatedDelay,
+    isLoading:
+      storeState.user.status === "Logando" ||
+      storeState.user.status === "Deslogando" ||
+      loading,
+    error: storeState.user.status === "Erro",
+  };
+  useEffect(() => {
+    console.debug(storeState.user);
+    if (conditionals.isAuthenticated === "1") {
+      handleGetBonds();
+    }
+  }, [conditionals.isAuthenticated]);
   return (
-    <CardContent>
-      <Collapse in={carregado}>
-        <Box textAlign="center">
-          <Typography>Escolha um vínculo para acessar</Typography>
-          <ToggleButtonGroup
-            exclusive
-            aria-label=""
-            value={vinculo}
-            onChange={(
-              _event: React.MouseEvent<HTMLElement, MouseEvent>,
-              value: any
-            ) => {
-              if (!value) {
-                setVinculo(bonds[0].registration);
-              }
-              setVinculo(value);
-            }}
-            orientation="vertical"
-          >
-            {bonds?.map((value, index) => {
-              return (
-                <ToggleButton
-                  sx={{
-                    "&.Mui-selected": {
-                      backgroundColor: "#268E36",
-                      color: "#ffffff",
-                      transition:
-                        "background-color .25s cubic-bezier(.4,0,.2,1) 0ms,box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms,border-color .25s cubic-bezier(.4,0,.2,1) 0ms,color .25s cubic-bezier(.4,0,.2,1) 0ms,-webkit-box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms",
-                    },
-                    "&.Mui-selected:hover": {
-                      backgroundColor: "#1b7d2b90",
-                    },
-                  }}
-                  key={index}
-                  value={value.registration}
-                  style={{
-                    marginTop: ".5rem",
-                    marginLeft: "1rem",
-                    marginRight: "1rem",
-                    marginBottom: ".5rem",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    borderRadius: "4px",
-                    color: "#fff",
-                  }}
-                >
-                  {value.program}
-                </ToggleButton>
-              );
-            })}
-          </ToggleButtonGroup>
+    <Box width={"300px"}>
+      <Collapse
+        in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
+      >
+        <CardContent>
+          <ProfileHeader Profile={storeState.profile} />
+          <BondSelector
+            bonds={storeState.bonds}
+            setCurrentBond={setCurrentBond}
+            currentBond={currentBond}
+          />
+        </CardContent>
+      </Collapse>
+      <Collapse in={conditionals.isLoading}>
+        <Box display={"flex"} justifyContent={"center"}>
+          <CircularProgressWithLabel value={progress} size={"3rem"} />
         </Box>
       </Collapse>
-    </CardContent>
-  );
-}
-export function Loading() {
-  let carregado = false;
-  setTimeout(() => {
-    carregado = true;
-  }, 10);
-  return (
-    <CardContent>
-      <Collapse in={carregado} sx={{ width: "100%" }}>
-        <Box justifyContent="center" display="flex">
-          <CircularProgress />
-        </Box>
+      <Collapse
+        in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
+      >
+        <CardActions>
+          <BondActions handleLogout={handleLogout} currentBond={currentBond} />
+        </CardActions>
       </Collapse>
-    </CardContent>
-  );
-}
-export default function Bonds({ Profile, Bonds, conditionals }: BondsProps) {
-  const { isWaiting, isLoggedIn } = conditionals;
-  return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="center"
-      alignItems="center"
-      height="100%"
-    >
-      <Grid item sx={{ m: 4, width: "300px" }}>
-        <Card
-          variant="elevation"
-          sx={{ overflow: "visible", borderRadius: "9px" }}
-        >
-          {isLoggedIn ? (
-            <>
-              {ProfileHeader(Profile)}
-              {bondSelector(Bonds)}
-            </>
-          ) : null}
-          {isWaiting || !isLoggedIn ? Loading() : null}
-          <CardActions></CardActions>
-        </Card>
-      </Grid>
-    </Grid>
+    </Box>
   );
 }
