@@ -17,7 +17,6 @@ import AboutTechnical from "./_about-technical";
 import LoginPage from "./_login";
 import { Info, Login as LoginIcon } from "@mui/icons-material";
 import BondsPage from "./_bonds";
-import { SocketContext, SocketInstance } from "@contexts/Socket";
 import BondPage from "./_bond/bond.router";
 export default function Index() {
   return (

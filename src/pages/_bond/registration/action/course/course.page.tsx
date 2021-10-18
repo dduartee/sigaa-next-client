@@ -4,7 +4,7 @@ import { CourseRouterParams } from "./course.router";
 
 export default function CourseIDPage() {
   const params = useParams() as CourseRouterParams;
-  const { registration, courseID, action } = params;
+  const { registration, courseID } = params;
   return (
     <div>
       <h1>CourseIDPage</h1>
