@@ -16,12 +16,10 @@ export const bondsSlice = createSlice({
         state[i] = bond;
       }
     },
-    clearBonds: (state) => {
-      state.length = 0;
-    },
+    resetBonds: () => initialState,
   },
 });
 
-export const { setBonds, clearBonds } = bondsSlice.actions;
+export const { setBonds, resetBonds } = bondsSlice.actions;
 export type bondsActions = typeof bondsSlice.actions;
 export default bondsSlice.reducer;

@@ -18,10 +18,11 @@ export const profileSlice = createSlice({
       state.fullName = action.payload.fullName;
       state.profilePictureURL = action.payload.profilePictureURL;
     },
+    resetProfile: () => initialState,
   },
 });
 
-export const { setProfile } = profileSlice.actions;
+export const { setProfile, resetProfile } = profileSlice.actions;
 export type ProfileActions = typeof profileSlice.actions;
 
 export default profileSlice.reducer;

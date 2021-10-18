@@ -8,8 +8,10 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider as ReduxProvider } from "react-redux";
 import { persistor, store } from "@redux/configureStore";
 import { PersistGate } from "redux-persist/integration/react";
+import { SocketInstance, SocketContext } from "@contexts/Socket";
 export default function MyApp(props: AppProps) {
   const { Component, pageProps } = props;
+  const socketInstance = SocketInstance();
 
   return (
     <div suppressHydrationWarning>
@@ -19,10 +21,12 @@ export default function MyApp(props: AppProps) {
           <ReduxProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <ThemeProvider theme={theme}>
+                <SocketContext.Provider value={socketInstance}>
                   <CssBaseline />
                   <BrowserRouter>
                     <Component {...pageProps} />
                   </BrowserRouter>
+                </SocketContext.Provider>
               </ThemeProvider>
             </PersistGate>
           </ReduxProvider>

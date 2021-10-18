@@ -23,9 +23,10 @@ export const optionsSlice = createSlice({
       state.url = action.payload.url;
       state.rememberMe = action.payload.rememberMe;
     },
+    resetOptions: () => initialState,
   },
 });
 
-export const { setOptions } = optionsSlice.actions;
+export const { setOptions, resetOptions } = optionsSlice.actions;
 export type optionsActions = typeof optionsSlice.actions;
 export default optionsSlice.reducer;

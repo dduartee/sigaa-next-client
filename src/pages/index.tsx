@@ -18,10 +18,9 @@ import LoginPage from "./_login";
 import { Info, Login as LoginIcon } from "@mui/icons-material";
 import BondsPage from "./_bonds";
 import { SocketContext, SocketInstance } from "@contexts/Socket";
+import BondPage from "./_bond/bond.router";
 export default function Index() {
-  const socketInstance = SocketInstance();
   return (
-    <SocketContext.Provider value={socketInstance}>
       <Grid
         container
         direction="row"
@@ -49,6 +48,9 @@ export default function Index() {
             <Route path="/bonds" exact>
               <BondsPage />
             </Route>
+            <Route path="/bond">
+              <BondPage />
+            </Route>
             <Route path="/about" exact>
               <LogoText />
               <About />
@@ -64,7 +66,6 @@ export default function Index() {
           </Card>
         </Grid>
       </Grid>
-    </SocketContext.Provider>
   );
 }
 function LogoText() {

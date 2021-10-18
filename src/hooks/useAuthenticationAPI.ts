@@ -1,8 +1,8 @@
 import { Socket } from "socket.io-client";
 import events from "@events";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { setProfile } from "@redux/reducers/profile.reducer";
-import { setUser } from "@redux/reducers/user.reducer";
+import { resetProfile, setProfile } from "@redux/reducers/profile.reducer";
+import { resetUser, setUser } from "@redux/reducers/user.reducer";
 import {
   credentialsArgs,
   credentialsWithUnique,
@@ -14,7 +14,8 @@ import {
   statusResponse,
 } from "@types";
 import { useEffect } from "react";
-import { clearBonds } from "@redux/reducers/bonds.reducer";
+import { resetOptions } from "@redux/reducers/options.reducer";
+import { resetBonds } from "@redux/reducers/bonds.reducer";
 
 export default (
   socket: Socket,
@@ -70,18 +71,12 @@ export default (
     socket.on(events.auth.logout, (response: logoutResponse) => {
       const { error, isLoggedOut } = response;
       if (!error && isLoggedOut) {
-        dispatch(
-          setUser({
-            isLoggedIn: false,
-            status: "Deslogado",
-            username: "",
-            unique: "",
-          })
-        );
-        dispatch(
-          setProfile({ emails: [], fullName: "", profilePictureURL: "" })
-        );
-        dispatch(clearBonds());
+        dispatch(resetUser());
+        dispatch(resetOptions());
+        dispatch(resetBonds());
+        dispatch(resetProfile());
+      } else {
+        console.error(error);
       }
     });
     socket.on(events.auth.status, (status: statusResponse) => {

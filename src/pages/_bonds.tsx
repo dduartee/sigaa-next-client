@@ -8,6 +8,7 @@ import useBondsAPI from "@hooks/useBondsAPI";
 import useLoadingAPI from "@hooks/useLoadingAPI";
 import { Box, CardActions, CardContent, Collapse } from "@mui/material";
 import React, { useContext, useEffect } from "react";
+import { Redirect } from "react-router";
 
 export default function BondsPage() {
   const socket = useContext(SocketContext);
@@ -39,10 +40,13 @@ export default function BondsPage() {
     }
   }, [storeState.bonds]);
   useEffect(() => {
-    setTimeout(() => {
+    const authenticatedDelayTimeout = setTimeout(() => {
       setAuthenticatedDelay(storeState.user.isLoggedIn ? "1" : "2");
     }, 200);
-  });
+    return () => {
+      clearTimeout(authenticatedDelayTimeout);
+    };
+  }, [storeState.user.isLoggedIn]);
   const { loading, progress } = useLoadingAPI(socket);
   const conditionals = {
     isAuthenticated: authenticatedDelay,
@@ -53,7 +57,6 @@ export default function BondsPage() {
     error: storeState.user.status === "Erro",
   };
   useEffect(() => {
-    console.debug(storeState.user);
     if (conditionals.isAuthenticated === "1") {
       handleGetBonds();
     }
@@ -84,6 +87,9 @@ export default function BondsPage() {
           <BondActions handleLogout={handleLogout} currentBond={currentBond} />
         </CardActions>
       </Collapse>
+      {authenticatedDelay !== "3" && !storeState.user.isLoggedIn ? (
+        <Redirect to={"/login"} />
+      ) : null}
     </Box>
   );
 }
