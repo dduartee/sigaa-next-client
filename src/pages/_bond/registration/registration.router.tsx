@@ -11,9 +11,7 @@ export default function RegistrationRouter() {
       <Route path={`${match.path}`} exact>
         <RegistrationPage />
       </Route>
-      <Route path={`${match.path}`} exact>
-        <ActionRouter />
-      </Route>
+      <ActionRouter />
     </Switch>
   );
 }
