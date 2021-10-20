@@ -1,6 +1,7 @@
 import CustomLink from "@components/CustomLink";
+import { Button } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { BondRouterParams } from "./registration.router";
+import { BondRouterParams } from "../bond.router";
 
 export default function RegistrationPage() {
   const params = useParams() as BondRouterParams;
@@ -9,12 +10,24 @@ export default function RegistrationPage() {
     <div>
       <h1>Bond Registration</h1>
       <p>{registration}</p>
-      <CustomLink to={`${registration}/courses/`}>Courses</CustomLink>
-      <CustomLink to={`${registration}/course/343`}>Course</CustomLink>
-      <CustomLink to={`${registration}/news`}>News</CustomLink>
-      <CustomLink to={`${registration}/grades`}>Grades</CustomLink>
-      <CustomLink to={`${registration}/activities`}>Activities</CustomLink>
-      <CustomLink to={`${registration}/schedules`}>Schedules</CustomLink>
+      <CustomLink to={`${registration}/courses/`}>
+        <Button>Courses</Button>
+      </CustomLink>
+      <CustomLink to={`${registration}/course/343`}>
+        <Button>Course</Button>
+      </CustomLink>
+      <CustomLink to={`${registration}/news`}>
+        <Button>News</Button>
+      </CustomLink>
+      <CustomLink to={`${registration}/grades`}>
+        <Button>Grades</Button>
+      </CustomLink>
+      <CustomLink to={`${registration}/activities`}>
+        <Button>Activities</Button>
+      </CustomLink>
+      <CustomLink to={`${registration}/schedules`}>
+        <Button>Schedules</Button>
+      </CustomLink>
     </div>
   );
 }

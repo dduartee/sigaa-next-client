@@ -9,11 +9,11 @@ export default function CourseRouter() {
   const match = useRouteMatch();
   return (
     <Switch>
-      <Route path={`${match.path}/:courseID`} exact>
-        <CourseIDPage />
-      </Route>
       <Route path={`${match.path}`} exact>
         <h3>Selecione uma matéria...</h3>
+      </Route>
+      <Route path={`${match.path}/:courseID`} exact>
+        <CourseIDPage />
       </Route>
       <Route path={`${match.path}/:courseID`}>
         <SecondaryActionRouter />

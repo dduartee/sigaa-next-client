@@ -1,6 +1,6 @@
+import { BondRouterParams } from "@pages/_bond/bond.router";
 import CoursesPage from "@pages/_bond/registration/action/courses.page";
 import { useRouteMatch, Route, Switch } from "react-router-dom";
-import { BondRouterParams } from "../registration.router";
 import CourseRouter from "./course/course.router";
 
 export interface ActionRouterParams extends BondRouterParams {

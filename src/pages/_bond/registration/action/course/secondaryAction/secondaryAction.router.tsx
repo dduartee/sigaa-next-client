@@ -8,13 +8,13 @@ export default function SecondaryActionRouter() {
   const params = useParams() as SecondaryActionRouterParams;
   return (
     <Switch>
-      <Route path={`${match.path}/news`}>
+      <Route path={`${match.path}/news`} exact>
         <h3>News of {params.courseID}</h3>
       </Route>
-      <Route path={`${match.path}/grades`}>
+      <Route path={`${match.path}/grades`} exact>
         <h3>Grades of {params.courseID}</h3>
       </Route>
-      <Route path={`${match.path}/activities`}>
+      <Route path={`${match.path}/activities`} exact>
         <h3>Activities of {params.courseID}</h3>
       </Route>
     </Switch>
