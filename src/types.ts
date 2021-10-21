@@ -113,6 +113,27 @@ export type bondResponse = {
   bonds: Bond[] | undefined;
   error: any | undefined;
 };
+export type courseArgs = {
+  credentials: credentialsWithUnique;
+  query: courseQuery;
+};
+
+export type courseQuery = {
+  type: "student";
+  bond: {
+    registration: string;
+    inactive: boolean;
+  };
+  course?: {
+    id: string;
+  };
+  full?: boolean;
+};
+
+export type courseResponse = {
+  bond?: Bond;
+  error?: any;
+};
 export type IUserSchema = {
   username: string;
 };

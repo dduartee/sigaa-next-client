@@ -1,10 +1,13 @@
+import BottomTabs, { secondaryActionTabs } from "@components/BottomTabs";
 import CustomLink from "@components/CustomLink";
+import useTabHandler from "@hooks/useTabHandler";
 import { Button } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { CourseRouterParams } from "./course.router";
 
 export default function CourseIDPage() {
   const params = useParams() as CourseRouterParams;
+  const { setTab, tab } = useTabHandler({ page: "course" });
   const { registration, courseID } = params;
   return (
     <div>
@@ -24,6 +27,11 @@ export default function CourseIDPage() {
       <CustomLink to={`${courseID}/activities`}>
         <Button>Activities</Button>
       </CustomLink>
+      <BottomTabs
+        tab={tab}
+        setTab={setTab}
+        tabsData={secondaryActionTabs(params.registration, params.courseID)}
+      />
     </div>
   );
 }

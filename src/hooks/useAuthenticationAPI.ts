@@ -15,7 +15,7 @@ import {
 } from "@types";
 import { useEffect } from "react";
 import { resetOptions } from "@redux/reducers/options.reducer";
-import { resetBonds } from "@redux/reducers/bonds.reducer";
+import { resetBonds } from "@redux/reducers/bonds/bonds.reducer";
 
 export default (
   socket: Socket,
@@ -84,6 +84,11 @@ export default (
       dispatch(setUser({ ...storeState.user, status }));
     });
     loginByRememberMe();
+    return () => {
+      socket.off(events.auth.login);
+      socket.off(events.auth.logout);
+      socket.off(events.auth.status);
+    };
   }, [socket]);
   useEffect(() => {
     if (credentials && credentials.password && credentials.username) {

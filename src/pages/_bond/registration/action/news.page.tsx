@@ -1,4 +1,4 @@
-import BottomTabs from "@components/BottomTabs";
+import BottomTabs, { primaryActionTabs } from "@components/BottomTabs";
 import useTabHandler from "@hooks/useTabHandler";
 import { useParams } from "react-router-dom";
 import { ActionRouterParams } from "./action.router";
@@ -11,7 +11,11 @@ export default function NewsPage() {
     <>
       <h3>News</h3>
       <p>{registration}</p>
-      <BottomTabs currentBond={registration} tab={tab} setTab={setTab} />
+      <BottomTabs
+        tab={tab}
+        setTab={setTab}
+        tabsData={primaryActionTabs(params.registration)}
+      />
     </>
   );
 }

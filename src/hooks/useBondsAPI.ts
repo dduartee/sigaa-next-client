@@ -1,13 +1,8 @@
 import { Socket } from "socket.io-client";
 import events from "@events";
 import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { setBonds } from "@redux/reducers/bonds.reducer";
-import {
-  bondArgs,
-  bondResponse,
-  credentialsWithUnique,
-  optionsArgs,
-} from "@types";
+import { setBonds } from "@redux/reducers/bonds/bonds.reducer";
+import { bondArgs, bondResponse, credentialsWithUnique } from "@types";
 import { useEffect } from "react";
 
 export default (socket: Socket) => {
@@ -24,13 +19,9 @@ export default (socket: Socket) => {
       }
     });
   }, [socket]);
-  const emitGetBonds = (
-    credentials: credentialsWithUnique,
-    options: optionsArgs
-  ) => {
+  const emitGetBonds = (credentials: credentialsWithUnique) => {
     socket.emit(events.bonds.list, {
       credentials,
-      options,
       query: { type: "student" },
     } as bondArgs);
   };

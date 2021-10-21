@@ -1,4 +1,4 @@
-import BottomTabs from "@components/BottomTabs";
+import BottomTabs, { primaryActionTabs } from "@components/BottomTabs";
 import CustomLink from "@components/CustomLink";
 import useTabHandler from "@hooks/useTabHandler";
 import { Button } from "@mui/material";
@@ -31,7 +31,11 @@ export default function RegistrationPage() {
       <CustomLink to={`${registration}/schedules`}>
         <Button>Schedules</Button>
       </CustomLink>
-      <BottomTabs currentBond={params.registration} tab={tab} setTab={setTab} />
+      <BottomTabs
+        tab={tab}
+        setTab={setTab}
+        tabsData={primaryActionTabs(params.registration)}
+      />
     </div>
   );
 }

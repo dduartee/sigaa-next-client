@@ -1,4 +1,5 @@
 module.exports = {
+  target: "serverless",
   images: {
     domains: ["sigaa.ifsc.edu.br"],
   },

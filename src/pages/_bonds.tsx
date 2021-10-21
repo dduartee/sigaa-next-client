@@ -6,13 +6,22 @@ import { SocketContext } from "@contexts/Socket";
 import useAuthenticationAPI from "@hooks/useAuthenticationAPI";
 import useBondsAPI from "@hooks/useBondsAPI";
 import useLoadingAPI from "@hooks/useLoadingAPI";
-import { Box, Card, CardActions, CardContent, Collapse, Grid } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Collapse,
+  Grid,
+} from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { Redirect } from "react-router";
 
 export default function BondsPage() {
   const socket = useContext(SocketContext);
-  const [authenticatedDelay, setAuthenticatedDelay] = React.useState("3");
+  const [authenticatedDelay, setAuthenticatedDelay] = React.useState<
+    "unknown" | true | false
+  >("unknown");
 
   const { emitGetBonds, storeState } = useBondsAPI(socket);
   const { emitLogout } = useAuthenticationAPI(socket);
@@ -20,11 +29,12 @@ export default function BondsPage() {
     emitLogout();
   };
   const handleGetBonds = () => {
-    const { user, options } = storeState;
-    emitGetBonds(
-      { password: undefined, username: user.username, unique: user.unique },
-      options
-    );
+    const { user } = storeState;
+    emitGetBonds({
+      password: undefined,
+      username: user.username,
+      unique: user.unique,
+    });
   };
   const [currentBond, setCurrentBond] = React.useState("");
   useEffect(() => {
@@ -41,7 +51,7 @@ export default function BondsPage() {
   }, [storeState.bonds]);
   useEffect(() => {
     const authenticatedDelayTimeout = setTimeout(() => {
-      setAuthenticatedDelay(storeState.user.isLoggedIn ? "1" : "2");
+      setAuthenticatedDelay(storeState.user.isLoggedIn ? true : false);
     }, 200);
     return () => {
       clearTimeout(authenticatedDelayTimeout);
@@ -57,7 +67,7 @@ export default function BondsPage() {
     error: storeState.user.status === "Erro",
   };
   useEffect(() => {
-    if (conditionals.isAuthenticated === "1") {
+    if (conditionals.isAuthenticated === true) {
       handleGetBonds();
     }
   }, [conditionals.isAuthenticated]);
@@ -105,7 +115,7 @@ export default function BondsPage() {
             />
           </CardActions>
         </Collapse>
-        {authenticatedDelay !== "3" && !storeState.user.isLoggedIn ? (
+        {authenticatedDelay !== "unknown" && !storeState.user.isLoggedIn ? (
           <Redirect to={"/login"} />
         ) : null}
       </Card>
