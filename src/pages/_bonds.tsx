@@ -7,7 +7,6 @@ import useAuthenticationAPI from "@hooks/useAuthenticationAPI";
 import useBondsAPI from "@hooks/useBondsAPI";
 import useLoadingAPI from "@hooks/useLoadingAPI";
 import { Box, Card, CardActions, CardContent, Collapse, Grid } from "@mui/material";
-import { LogoText } from "@pages";
 import React, { useContext, useEffect } from "react";
 import { Redirect } from "react-router";
 
@@ -79,7 +78,6 @@ export default function BondsPage() {
           maxWidth: "300px",
         }}
       >
-        <LogoText />
         <Collapse
           in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
         >

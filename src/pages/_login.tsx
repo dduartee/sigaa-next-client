@@ -9,7 +9,6 @@ import CircularProgressWithLabel from "@components/CircularProgressWithLabel";
 import useLoadingAPI from "@hooks/useLoadingAPI";
 import { SocketContext } from "@contexts/Socket";
 import { Redirect } from "react-router";
-import { LogoText } from "@pages";
 export default function LoginPage() {
   const socket = useContext(SocketContext);
   const { user } = useAppSelector((state) => state);
@@ -51,7 +50,6 @@ export default function LoginPage() {
           width: "300px",
         }}
       >
-        <LogoText />
         <CardContent>
           <Collapse
             in={!conditionals.isAuthenticated && !conditionals.isLoading}
