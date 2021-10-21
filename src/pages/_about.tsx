@@ -8,7 +8,10 @@ import {
   CardActions,
   Button,
   Collapse,
+  Card,
+  Grid,
 } from "@mui/material";
+import { LogoText } from "@pages";
 import React from "react";
 import { Link } from "react-router-dom";
 export default function About() {
@@ -21,28 +24,47 @@ export default function About() {
     setOpenSecond(true);
   }, 2000);
   return (
-    <Collapse in={open}>
-      <CardContent>
-        <Typography variant="h4">Sobre</Typography>
-        <Box display="flex" justifyContent="center" flexWrap={"wrap"}>
-          <Typography width="100%" fontSize="1rem">
-            O propósito de vida do sigaa-next-client, é facilitar as tarefas
-            repetitivas (e demoradas) do SIGAA como por exemplo:
-            <ul>
-              <li>Ver as notas de todas as matérias</li>
-              <li>Ver as atividades</li>
-              <li>Ver os horários de forma mais intuitiva</li>
-              <li>Ver as faltas</li>
-              <li>Ver as notícias publicadas</li>
-            </ul>
-            <Collapse in={openSecond}>
-              Claro que tudo isso de forma mais simples (e preguiçosa)
-            </Collapse>
-          </Typography>
-        </Box>
-      </CardContent>
-      <AboutButtons />
-    </Collapse>
+    <Grid
+      item
+      sx={{ m: 4 }}
+      width={"100%"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      display={"flex"}
+    >
+      <Card
+        variant="elevation"
+        sx={{
+          overflow: "visible",
+          borderRadius: "9px",
+          maxWidth: "100%",
+        }}
+      >
+        <LogoText />
+        <Collapse in={open}>
+          <CardContent>
+            <Typography variant="h4">Sobre</Typography>
+            <Box display="flex" justifyContent="center" flexWrap={"wrap"}>
+              <Typography width="100%" fontSize="1rem">
+                O propósito de vida do sigaa-next-client, é facilitar as tarefas
+                repetitivas (e demoradas) do SIGAA como por exemplo:
+                <ul>
+                  <li>Ver as notas de todas as matérias</li>
+                  <li>Ver as atividades</li>
+                  <li>Ver os horários de forma mais intuitiva</li>
+                  <li>Ver as faltas</li>
+                  <li>Ver as notícias publicadas</li>
+                </ul>
+                <Collapse in={openSecond}>
+                  Claro que tudo isso de forma mais simples (e preguiçosa)
+                </Collapse>
+              </Typography>
+            </Box>
+          </CardContent>
+          <AboutButtons />
+        </Collapse>
+      </Card>
+    </Grid>
   );
 }
 
@@ -68,7 +90,10 @@ function AboutButtons() {
             </Button>
           </Link>
           <div>
-            <Link to="/about-personal" style={{ textDecoration: "none", marginLeft: "10px" }}>
+            <Link
+              to="/about-personal"
+              style={{ textDecoration: "none", marginLeft: "10px" }}
+            >
               <Button
                 variant="text"
                 startIcon={

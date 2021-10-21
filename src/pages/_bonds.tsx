@@ -6,7 +6,8 @@ import { SocketContext } from "@contexts/Socket";
 import useAuthenticationAPI from "@hooks/useAuthenticationAPI";
 import useBondsAPI from "@hooks/useBondsAPI";
 import useLoadingAPI from "@hooks/useLoadingAPI";
-import { Box, CardActions, CardContent, Collapse } from "@mui/material";
+import { Box, Card, CardActions, CardContent, Collapse, Grid } from "@mui/material";
+import { LogoText } from "@pages";
 import React, { useContext, useEffect } from "react";
 import { Redirect } from "react-router";
 
@@ -62,34 +63,54 @@ export default function BondsPage() {
     }
   }, [conditionals.isAuthenticated]);
   return (
-    <Box width={"300px"}>
-      <Collapse
-        in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
+    <Grid
+      item
+      sx={{ m: 4 }}
+      width={"100%"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      display={"flex"}
+    >
+      <Card
+        variant="elevation"
+        sx={{
+          overflow: "visible",
+          borderRadius: "9px",
+          maxWidth: "300px",
+        }}
       >
-        <CardContent>
-          <ProfileHeader Profile={storeState.profile} />
-          <BondSelector
-            bonds={storeState.bonds}
-            setCurrentBond={setCurrentBond}
-            currentBond={currentBond}
-          />
-        </CardContent>
-      </Collapse>
-      <Collapse in={conditionals.isLoading}>
-        <Box display={"flex"} justifyContent={"center"}>
-          <CircularProgressWithLabel value={progress} size={"3rem"} />
-        </Box>
-      </Collapse>
-      <Collapse
-        in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
-      >
-        <CardActions>
-          <BondActions handleLogout={handleLogout} currentBond={currentBond} />
-        </CardActions>
-      </Collapse>
-      {authenticatedDelay !== "3" && !storeState.user.isLoggedIn ? (
-        <Redirect to={"/login"} />
-      ) : null}
-    </Box>
+        <LogoText />
+        <Collapse
+          in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
+        >
+          <CardContent>
+            <ProfileHeader Profile={storeState.profile} />
+            <BondSelector
+              bonds={storeState.bonds}
+              setCurrentBond={setCurrentBond}
+              currentBond={currentBond}
+            />
+          </CardContent>
+        </Collapse>
+        <Collapse in={conditionals.isLoading}>
+          <Box display={"flex"} justifyContent={"center"}>
+            <CircularProgressWithLabel value={progress} size={"3rem"} />
+          </Box>
+        </Collapse>
+        <Collapse
+          in={storeState.user.isLoggedIn && storeState.bonds.length !== 0}
+        >
+          <CardActions>
+            <BondActions
+              handleLogout={handleLogout}
+              currentBond={currentBond}
+            />
+          </CardActions>
+        </Collapse>
+        {authenticatedDelay !== "3" && !storeState.user.isLoggedIn ? (
+          <Redirect to={"/login"} />
+        ) : null}
+      </Card>
+    </Grid>
   );
 }

@@ -1,4 +1,5 @@
 import { createTheme, ThemeOptions } from "@mui/material/styles";
+import darkScrollbar from "@mui/material/darkScrollbar";
 
 export const themeOptions: ThemeOptions = {
   typography: {
@@ -28,6 +29,11 @@ export const themeOptions: ThemeOptions = {
             paddingBottom: "1em",
           },
         },
+      },
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: darkScrollbar(),
       },
     },
     MuiSvgIcon: {

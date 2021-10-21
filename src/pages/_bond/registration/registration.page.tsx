@@ -1,11 +1,17 @@
+import BottomTabs from "@components/BottomTabs";
 import CustomLink from "@components/CustomLink";
+import { UIContext } from "@contexts/UI";
+import useTabHandler from "@hooks/useTabHandler";
 import { Button } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "@redux/hooks";
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BondRouterParams } from "../bond.router";
 
 export default function RegistrationPage() {
   const params = useParams() as BondRouterParams;
-  const { registration } = params;
+  const registration = params.registration;
+  const { tab, setTab } = useTabHandler({ page: "home" });
   return (
     <div>
       <h1>Bond Registration</h1>
@@ -28,6 +34,7 @@ export default function RegistrationPage() {
       <CustomLink to={`${registration}/schedules`}>
         <Button>Schedules</Button>
       </CustomLink>
+      <BottomTabs currentBond={params.registration} tab={tab} setTab={setTab} />
     </div>
   );
 }

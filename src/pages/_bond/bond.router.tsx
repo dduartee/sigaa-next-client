@@ -1,22 +1,38 @@
+import { Card, Grid } from "@mui/material";
+
 import { useRouteMatch, Route, Switch } from "react-router-dom";
-import ActionRouter from "./registration/action/action.router";
-import RegistrationPage from "./registration/registration.page";
+import RegistrationRouter from "./registration/registration.router";
 export interface BondRouterParams {
   registration: string;
 }
 export default function BondRouter() {
   const match = useRouteMatch();
   return (
-    <Switch>
-      <Route path={match.path} exact>
-        <h3>Selecione um vinculo...</h3>
-      </Route>
-      <Route path={`${match.path}/:registration`} exact>
-        <RegistrationPage />
-      </Route>
-      <Route path={`${match.path}/:registration`}>
-        <ActionRouter />
-      </Route>
-    </Switch>
+    <Grid
+      item
+      width={"90%"}
+      justifyContent={"center"}
+      alignItems={"flex-start"}
+      display={"flex"}
+      flexDirection={"column"}
+      m={2}
+    >
+      <Card
+        sx={{
+          borderRadius: "9px",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <Switch>
+          <Route path={match.path} exact>
+            <h3>Especifique um vinculo</h3>
+          </Route>
+          <Route path={`${match.path}/:registration`}>
+            <RegistrationRouter />
+          </Route>
+        </Switch>
+      </Card>
+    </Grid>
   );
 }
