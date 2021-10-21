@@ -1,10 +1,7 @@
 import BottomTabs from "@components/BottomTabs";
 import CustomLink from "@components/CustomLink";
-import { UIContext } from "@contexts/UI";
 import useTabHandler from "@hooks/useTabHandler";
 import { Button } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@redux/hooks";
-import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BondRouterParams } from "../bond.router";
 

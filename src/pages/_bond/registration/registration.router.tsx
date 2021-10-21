@@ -1,11 +1,8 @@
-import BottomTabs from "@components/BottomTabs";
-import { Route, Switch, useParams, useRouteMatch } from "react-router";
-import { BondRouterParams } from "../bond.router";
+import { Route, Switch, useRouteMatch } from "react-router";
 import ActionRouter from "./action/action.router";
 import RegistrationPage from "./registration.page";
 
 export default function RegistrationRouter() {
-  const params = useParams() as BondRouterParams;
   const match = useRouteMatch();
   return (
     <>

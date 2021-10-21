@@ -8,7 +8,6 @@ import {
   Button,
   Box,
   Grow,
-  NoSsr,
 } from "@mui/material";
 import React from "react";
 import { Route, Link, Switch } from "react-router-dom";

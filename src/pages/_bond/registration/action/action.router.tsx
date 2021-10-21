@@ -1,8 +1,6 @@
-import BottomTabs from "@components/BottomTabs";
 import { BondRouterParams } from "@pages/_bond/bond.router";
 import CoursesPage from "@pages/_bond/registration/action/courses.page";
-import { useState } from "react";
-import { useRouteMatch, Route, Switch, useParams } from "react-router-dom";
+import { useRouteMatch, Route, Switch } from "react-router-dom";
 import ActivitiesPage from "./activities.page";
 import CourseRouter from "./course/course.router";
 import GradesPage from "./grades.page";
@@ -13,7 +11,7 @@ export interface ActionRouterParams extends BondRouterParams {
 }
 export default function ActionRouter() {
   const match = useRouteMatch();
-  const params = useParams() as BondRouterParams;
+  
   return (
     <>
       <Switch>

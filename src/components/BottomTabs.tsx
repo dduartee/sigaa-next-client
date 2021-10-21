@@ -104,7 +104,7 @@ export default function BottomTabs(props: {
       >
         <BottomNavigation
           value={tab}
-          onChange={(event, newValue) => {
+          onChange={(_event, newValue) => {
             setTab(newValue);
           }}
           
