@@ -7,7 +7,7 @@ export type Bond = {
 };
 
 export type Course = {
-  courseID: string;
+  id: string;
   title: string;
   code: string;
   schedule?: string; // nem todas as materias tem horário

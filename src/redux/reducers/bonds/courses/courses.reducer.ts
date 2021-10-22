@@ -13,10 +13,14 @@ export const coursesSlice = createSlice({
   initialState,
   reducers: {
     setCourses: (state, action: PayloadAction<coursesState>) => {
-      state.push({
-        courses: action.payload.courses,
-        registration: action.payload.registration,
-      });
+      for (let i = 0; i < state.length; i++) {
+        const bond = state[i];
+        if (bond.registration === action.payload.registration) {
+          state[i] = action.payload;
+          return;
+        }
+      }
+      state.push(action.payload);
     },
     resetCourses: () => initialState,
   },

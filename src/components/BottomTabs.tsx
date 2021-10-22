@@ -145,7 +145,10 @@ export default function BottomTabs(props: {
   const [onHoverValue, setOnHoverValue] = React.useState(tab);
 
   return (
-    <Box sx={{ pb: 7, display: "flex", justifyContent: "center" }} ref={ref}>
+    <Box
+      sx={{ display: "flex", justifyContent: "center", paddingBottom: "5rem" }}
+      ref={ref}
+    >
       <Paper
         sx={{
           position: "fixed",
@@ -153,6 +156,7 @@ export default function BottomTabs(props: {
           maxWidth: "720px",
           width: "100%",
           borderRadius: "9px",
+          margin: "1rem"
         }}
         elevation={3}
       >
