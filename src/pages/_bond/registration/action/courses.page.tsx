@@ -104,6 +104,3 @@ export default function CoursesPage() {
     </div>
   );
 }
-function setCourseHover(index: number): void {
-  throw new Error("Function not implemented.");
-}
