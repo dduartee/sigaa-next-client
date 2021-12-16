@@ -1,3 +1,3 @@
 {
-    "baseURL": "http://10.0.0.3:5000"
+    "baseURL": "https://sigaa-http-api-development.herokuapp.com"
 }
