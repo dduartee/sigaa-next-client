@@ -1,35 +1,28 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import BottomNavigation from "@mui/material/BottomNavigation";
-import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import Paper from "@mui/material/Paper";
-import { generatePath, Link } from "react-router-dom";
-
-import ScheduleIcon from "@mui/icons-material/Schedule";
-import HomeIcon from "@mui/icons-material/Home";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
-import InboxIcon from "@mui/icons-material/Inbox";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import GroupsIcon from "@mui/icons-material/Groups";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+/* eslint-disable @next/next/no-img-element */
+import Box from '@mui/material/Box'
+import BottomNavigation from '@mui/material/BottomNavigation'
+import BottomNavigationAction from '@mui/material/BottomNavigationAction'
+import Paper from '@mui/material/Paper'
+import ScheduleIcon from '@mui/icons-material/Schedule'
+import HomeIcon from '@mui/icons-material/Home'
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'
+import EqualizerIcon from '@mui/icons-material/Equalizer'
+import InboxIcon from '@mui/icons-material/Inbox'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import GroupsIcon from '@mui/icons-material/Groups'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Link } from '@mui/material'
+import { PageIndexTab } from '@hooks/useTabHandler'
+import { ReactElement, useRef, useState } from 'react'
 type TabData = {
   label: string;
-  icon: React.ReactElement;
+  icon: ReactElement;
   value: number;
   to: string;
 };
-export type PageIndexTab =
-  | "bonds"
-  | "home"
-  | "courses"
-  | "schedules"
-  | "grades"
-  | "news"
-  | "activities"
-  | "back"
-  | "course";
+
 type ITabOrder = {
+  // eslint-disable-next-line no-unused-vars
   [key in PageIndexTab]: number;
 };
 export const TabOrder: ITabOrder = {
@@ -41,156 +34,149 @@ export const TabOrder: ITabOrder = {
   news: 5,
   activities: 6,
   back: 7,
-  course: 8,
-};
+  course: 8
+}
 export const primaryActionTabs = (registration: string): TabData[] => [
   {
-    label: "Início",
+    label: 'Início',
     icon: <HomeIcon />,
     value: TabOrder.home,
-    to: generatePath("/bond/:registration", { registration }),
+    to: `/bond/${registration}`
   },
   {
-    label: "Vínculos",
+    label: 'Vínculos',
     icon: <GroupsIcon />,
     value: TabOrder.bonds,
-    to: generatePath("/bonds"),
+    to: '/bonds'
   },
   {
-    label: "Matérias",
+    label: 'Matérias',
     icon: <LibraryBooksIcon />,
     value: TabOrder.courses,
-    to: generatePath("/bond/:registration/courses", { registration }),
+    to: `/bond/${registration}/courses`
   },
   {
-    label: "Horários",
+    label: 'Horários',
     icon: <ScheduleIcon />,
     value: TabOrder.schedules,
-    to: generatePath("/bond/:registration/schedules", { registration }),
+    to: `/bond/${registration}/schedules`
   },
   {
-    label: "Notas",
+    label: 'Notas',
     icon: <EqualizerIcon />,
     value: TabOrder.grades,
-    to: generatePath("/bond/:registration/grades", { registration }),
+    to: `/bond/${registration}/grades`
   },
   {
-    label: "Notícias",
+    label: 'Notícias',
     icon: <InboxIcon />,
     value: TabOrder.news,
-    to: generatePath("/bond/:registration/news", { registration }),
+    to: `/bond/${registration}/news`
   },
   {
-    label: "Atividades",
+    label: 'Atividades',
     icon: <AssignmentIcon />,
     value: TabOrder.activities,
-    to: generatePath("/bond/:registration/activities", { registration }),
-  },
-];
+    to: `/bond/${registration}/activities`
+  }
+]
 export const secondaryActionTabs = (
   registration: string,
   courseID: string
 ): TabData[] => [
   {
-    label: "Voltar",
+    label: 'Voltar',
     icon: <ArrowBackIcon />,
     value: TabOrder.back,
-    to: generatePath("/bond/:registration", { registration }),
+    to: `/bond/${registration}`
   },
   {
-    label: "Matéria",
+    label: 'Matéria',
     icon: <LibraryBooksIcon />,
     value: TabOrder.course,
-    to: generatePath("/bond/:registration/course/:courseID", {
-      registration,
-      courseID,
-    }),
+    to: `/bond/${registration}/course/${courseID}`
   },
   {
-    label: "Notas",
+    label: 'Notas',
     icon: <EqualizerIcon />,
     value: TabOrder.grades,
-    to: generatePath("/bond/:registration/course/:courseID/grades", {
-      courseID,
-      registration,
-    }),
+    to: `/bond/${registration}/course/${courseID}/grades`
   },
   {
-    label: "Notícias",
+    label: 'Notícias',
     icon: <InboxIcon />,
     value: TabOrder.news,
-    to: generatePath("/bond/:registration/course/:courseID/news", {
-      courseID,
-      registration,
-    }),
+    to: `/bond/${registration}/course/${courseID}/news`
   },
   {
-    label: "Atividades",
+    label: 'Atividades',
     icon: <AssignmentIcon />,
     value: TabOrder.activities,
-    to: generatePath("/bond/:registration/course/:courseID/activities", {
-      courseID,
-      registration,
-    }),
-  },
-];
+    to: `/bond/${registration}/course/${courseID}/activities`
+  }
+]
 
-export default function BottomTabs(props: {
-  tab: number;
-  setTab: (tab: number) => void;
-  tabsData: TabData[];
+export default function BottomTabs (props: {
+  tabHook: {
+    tab: number;
+    setTab: (tab: number) => void;
+  },
+  tabsData: TabData[],
+  profilePictureURL: string,
 }) {
-  const { tab, setTab, tabsData } = props;
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [onHoverValue, setOnHoverValue] = React.useState(tab);
+  const { tabHook, tabsData, profilePictureURL } = props
+  const { tab, setTab } = tabHook
+  const ref = useRef<HTMLDivElement>(null)
+  const [onHoverValue, setOnHoverValue] = useState(tab)
 
   return (
     <Box
-      sx={{ display: "flex", justifyContent: "center", paddingBottom: "5rem" }}
+      sx={{ display: 'flex', justifyContent: 'center', paddingBottom: '5rem' }}
       ref={ref}
     >
       <Paper
         sx={{
-          position: "fixed",
+          position: 'fixed',
           bottom: 0,
-          maxWidth: "720px",
-          width: "100%",
-          borderRadius: "9px",
-          margin: "1rem"
+          maxWidth: '720px',
+          width: '100%',
+          borderRadius: '9px',
+          margin: '1rem',
+          marginBottom: '0'
         }}
         elevation={3}
       >
         <BottomNavigation
           value={tab}
           onChange={(_event, newValue) => {
-            setTab(newValue);
+            setTab(newValue)
           }}
           sx={{
-            borderRadius: "9px",
-            justifyContent: "flex-start",
-            overflowX: "auto",
-            overflowY: "hidden",
-            height: "fit-content",
+            borderRadius: '10px',
+            justifyContent: 'flex-start',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            height: 'fit-content'
           }}
         >
           <BottomNavigationAction
-            label={"Perfil"}
+            label={'Perfil'}
             icon={
               <img
-                src="https://sig.ifsc.edu.br/sigaa/img/no_picture.png"
+                src={profilePictureURL}
+                alt="profilePictureURL"
                 style={{
-                  width: "2em",
-                  height: "2em",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                  userSelect: "none",
+                  borderRadius: '50%',
+                  userSelect: 'none',
+                  width: '1.5rem',
+                  height: '1.5rem'
                 }}
-              />
+                />
             }
             value={33}
             component={Link}
-            showLabel={33 === onHoverValue}
-            to={"/profile"}
+            showLabel={onHoverValue === 33}
+            href={'/profile'}
             onMouseOver={() => setOnHoverValue(33)}
             onMouseLeave={() => setOnHoverValue(-1)}
           />
@@ -202,7 +188,7 @@ export default function BottomTabs(props: {
               value={tab.value}
               component={Link}
               showLabel={tab.value === onHoverValue}
-              to={tab.to}
+              href={tab.to}
               onMouseOver={() => setOnHoverValue(tab.value)}
               onMouseLeave={() => setOnHoverValue(-1)}
             />
@@ -210,5 +196,5 @@ export default function BottomTabs(props: {
         </BottomNavigation>
       </Paper>
     </Box>
-  );
+  )
 }

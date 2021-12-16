@@ -1,29 +1,29 @@
-import * as React from "react";
 import {
   Box,
   CardContent,
   Collapse,
   ToggleButton,
   ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
-import { Bond } from "@types";
+  Typography
+} from '@mui/material'
+import { Bond } from '@services/api/types/Bonds'
+import { useEffect, useState, MouseEvent as ReactMouseEvent } from 'react'
 
-export function BondSelector(props: {
+export function BondSelector (props: {
   bonds: Bond[];
   setCurrentBond: (value: string) => void;
   currentBond: string;
 }) {
-  const { bonds, setCurrentBond, currentBond } = props;
-  const [open, setOpen] = React.useState(false);
-  React.useEffect(() => {
+  const { bonds, setCurrentBond, currentBond } = props
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
     const timeoutOpen = setTimeout(() => {
-      setOpen(true);
-    }, 200);
+      setOpen(true)
+    }, 200)
     return () => {
-      clearTimeout(timeoutOpen);
-    };
-  }, []);
+      clearTimeout(timeoutOpen)
+    }
+  }, [])
   return (
     <CardContent>
       <Collapse in={open}>
@@ -34,13 +34,13 @@ export function BondSelector(props: {
             aria-label=""
             value={currentBond}
             onChange={(
-              _event: React.MouseEvent<HTMLElement, MouseEvent>,
+              _event: ReactMouseEvent<HTMLElement, MouseEvent>,
               value: any
             ) => {
               if (!value) {
-                setCurrentBond(bonds[0].registration);
+                setCurrentBond(bonds[0].registration)
               }
-              setCurrentBond(value);
+              setCurrentBond(value)
             }}
             orientation="vertical"
           >
@@ -48,35 +48,35 @@ export function BondSelector(props: {
               return (
                 <ToggleButton
                   sx={{
-                    "&.Mui-selected": {
-                      backgroundColor: "#268E36",
-                      color: "#ffffff",
+                    '&.Mui-selected': {
+                      backgroundColor: '#268E36',
+                      color: '#ffffff',
                       transition:
-                        "background-color .25s cubic-bezier(.4,0,.2,1) 0ms,box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms,border-color .25s cubic-bezier(.4,0,.2,1) 0ms,color .25s cubic-bezier(.4,0,.2,1) 0ms,-webkit-box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms",
+                        'background-color .25s cubic-bezier(.4,0,.2,1) 0ms,box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms,border-color .25s cubic-bezier(.4,0,.2,1) 0ms,color .25s cubic-bezier(.4,0,.2,1) 0ms,-webkit-box-shadow .25s cubic-bezier(.4,0,.2,1) 0ms'
                     },
-                    "&.Mui-selected:hover": {
-                      backgroundColor: "#1b7d2b90",
-                    },
+                    '&.Mui-selected:hover': {
+                      backgroundColor: '#1b7d2b90'
+                    }
                   }}
                   key={index}
                   value={value.registration}
                   style={{
-                    marginTop: ".5rem",
-                    marginLeft: "1rem",
-                    marginRight: "1rem",
-                    marginBottom: ".5rem",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    borderRadius: "4px",
-                    color: "#fff",
+                    marginTop: '.5rem',
+                    marginLeft: '1rem',
+                    marginRight: '1rem',
+                    marginBottom: '.5rem',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '4px',
+                    color: '#fff'
                   }}
                 >
                   {value.program}
                 </ToggleButton>
-              );
+              )
             })}
           </ToggleButtonGroup>
         </Box>
       </Collapse>
     </CardContent>
-  );
+  )
 }

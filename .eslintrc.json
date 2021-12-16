@@ -1,7 +1,25 @@
 {
-  "extends": "next",
-  "rules": {
-    "@next/next/no-document-import-in-page": "off",
-    "react/display-name": "off"
-  }
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "standard",
+        "next"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {}
 }

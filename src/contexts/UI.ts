@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react'
 
 type UIState = {
   tabs: {
@@ -14,12 +14,12 @@ type UIState = {
 const initialState: UIState = {
   tabs: {
     setTab: () => {},
-    tab: 0,
+    tab: 0
   },
   registration: {
     setRegistration: (_value: string) => {},
-    value: "",
-  },
-};
+    value: ''
+  }
+}
 
-export const UIContext = createContext(initialState);
+export const UIContext = createContext(initialState)

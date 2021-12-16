@@ -1,16 +1,15 @@
-import { ExitToApp, Send } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
-import React from "react";
-import { Link } from "react-router-dom";
-export default function LoginActions(props: { handleLogin: () => void }) {
-  const { handleLogin } = props;
+import Link from '@components/Link'
+import { ExitToApp, Send } from '@mui/icons-material'
+import { Box, Button, Typography } from '@mui/material'
+export default function LoginActions (props: { handleLogin: () => void }) {
+  const { handleLogin } = props
   return (
     <Box display="flex" justifyContent="space-between" width="100%">
       <Link
-        to="/"
+        href="/"
         style={{
-          textDecoration: "none",
-          width: "100%",
+          textDecoration: 'none',
+          width: '100%'
         }}
       >
         <Button
@@ -34,5 +33,5 @@ export default function LoginActions(props: { handleLogin: () => void }) {
         Entrar
       </Button>
     </Box>
-  );
+  )
 }

@@ -1,13 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
-import React from "react";
-import { Link } from "react-router-dom";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
-export default function BondActions(props: {
+import { Box, Button, Typography } from '@mui/material'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import Link from '@components/Link'
+export default function BondActions (props: {
   handleLogout: () => void;
   currentBond: string;
 }) {
-  const { handleLogout } = props;
+  const { handleLogout } = props
   return (
     <Box display="flex" justifyContent="space-between" width="100%">
       <Button
@@ -23,10 +22,10 @@ export default function BondActions(props: {
         <Typography fontSize="1rem">Sair</Typography>
       </Button>
       <Link
-        to={`/bond/${props.currentBond}`}
+        href={`/bond/${props.currentBond}`}
         style={{
-          textDecoration: "none",
-          width: "100%",
+          textDecoration: 'none',
+          width: '100%'
         }}
       >
         <Button
@@ -42,5 +41,5 @@ export default function BondActions(props: {
         </Button>
       </Link>
     </Box>
-  );
+  )
 }
