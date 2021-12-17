@@ -2,7 +2,7 @@ import BottomTabs, { secondaryActionTabs } from '@components/BottomTabs'
 import Link from '@components/Link'
 import useTabHandler from '@hooks/useTabHandler'
 import { Button } from '@mui/material'
-import { getUser } from '@pages/_app'
+import api from '@services/api'
 import { User } from '@services/api/types/User'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
@@ -37,8 +37,7 @@ export default function CourseIDPage (props: {
         tabHook={{
           tab, setTab
         }}
-        tabsData={secondaryActionTabs(registration, courseID)}
-        profilePictureURL={props.user.profilePictureURL}
+        tabsData={secondaryActionTabs(registration, courseID, props.user.profilePictureURL)}
       />
     </div>
   )
@@ -48,10 +47,9 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
   const cookies = parseCookies(context)
   const credentials = {
     token: cookies.token,
-    username: cookies.username,
-    password: undefined
+    username: cookies.username
   }
-  const user = await getUser(credentials)
+  const user = await api.getUser(credentials)
   return {
     props: {
       user

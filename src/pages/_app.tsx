@@ -6,13 +6,9 @@ import { CacheProvider, EmotionCache } from '@emotion/react'
 import theme from '../styles/theme'
 import createCache from '@emotion/cache'
 import '@styles/global.css'
-import { UserContext, userInitialState } from '@contexts/User'
+import { UserContext } from '@contexts/User'
 import { useState } from 'react'
-import { GetServerSidePropsContext } from 'next'
-import { parseCookies } from 'nookies'
-import api from '@services/api'
-import { User, UserRequest, UserResponse } from '@services/api/types/User'
-import { AxiosResponse } from 'axios'
+import { User } from '@services/api/types/User'
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
@@ -39,30 +35,7 @@ export default function MyApp (props: MyAppProps) {
     </UserContext.Provider>
   )
 }
-export async function getUser (credentials: { username: string, token: string, password: undefined }) {
-  const { data: response } = await api.post<UserResponse, AxiosResponse<UserResponse>, UserRequest>('/users/me', credentials)
-  const { success, data, message } = response
-  if (success && data) {
-    return data.user
-  } else {
-    console.error(message)
-    return userInitialState
-  }
-}
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = parseCookies(context)
-  const credentials = {
-    username: cookies.username,
-    token: cookies.token,
-    password: undefined
-  }
-  const user = await getUser(credentials)
-  return {
-    props: {
-      user
-    }
-  }
-}
+
 function createEmotionCache () {
   return createCache({ key: 'css' })
 }

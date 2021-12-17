@@ -2,11 +2,10 @@ import LoginForm from '@components/Login/LoginForm'
 import { useState } from 'react'
 import { Box, Card, CardActions, CardContent, CircularProgress, Collapse, Grid } from '@mui/material'
 import LoginActions from '@components/Login/LoginActions'
-import { IInstitutionInfo, InstitutionsResponse } from '@services/api/types/Institutions'
+import { IInstitutionInfo } from '@services/api/types/Institutions'
 import api from '@services/api'
-import { LoginOptions, LoginRequest, LoginResponse } from '@services/api/types/Login'
+import { LoginOptions, LoginRequest } from '@services/api/types/Login'
 import { useRouter } from 'next/router'
-import { AxiosResponse } from 'axios'
 import { destroyCookie, parseCookies, setCookie } from 'nookies'
 import MainGrid from '@components/MainGrid'
 
@@ -14,6 +13,7 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
   const router = useRouter()
   const [credentials, setCredentials] = useState<{ username: string, password: string, token: undefined }>({ username: '', password: '', token: undefined })
   const [options, setOptions] = useState<LoginOptions & { rememberMe: boolean }>({ institution: '', url: '', rememberMe: false })
+  const [loading, setLoading] = useState<boolean>(false)
   const user = {
     status: 'Deslogado'
   }
@@ -27,43 +27,48 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
   }
 
   const handleLogin = async () => {
+    setLoading(true)
+    const { username, password } = credentials
     const token = parseCookies().token
-    console.log(token)
-    const username = credentials.username
-    api.post<LoginResponse, AxiosResponse<LoginResponse>, LoginRequest>('/auth/login', {
+    const { institution, url } = options
+    const loginRequest: LoginRequest = {
       username,
-      password: token ? undefined : credentials.password,
-      token: token ?? undefined,
-      institution: options.institution,
-      url: options.url
-    }).then((response) => {
-      console.log(response.status)
-      const { success, data, message } = response.data
-      if (success && data) {
-        const { token, bonds, user } = data
-        setCookie(null, 'token', token, {
-          maxAge: options.rememberMe ? 60 * 60 * 24 * 1 : undefined,
-          path: '/'
-        })
-        setCookie(null, 'username', user.username, {
-          maxAge: 7 * 24 * 60 * 60, // 7 days
-          path: '/'
-        })
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('bonds', JSON.stringify(bonds))
-        router.push('/bonds')
-      } else {
-        console.error(message)
-      }
-    }).catch(error => {
-      if (error.response.data.message === 'Session has expired' || error.response.data.message === 'Session related to token not found') {
+      password: password as any,
+      token: undefined as any,
+      institution,
+      url
+    }
+    if (credentials.password) {
+      loginRequest.password = password
+      loginRequest.token = undefined
+    } else {
+      loginRequest.password = undefined
+      loginRequest.token = token
+    }
+    const { success, data, message } = await api.doLogin(loginRequest)
+    if (success && data) {
+      const { token, bonds, user } = data
+      setCookie(null, 'token', token, {
+        maxAge: options.rememberMe ? 60 * 60 * 24 * 1 : undefined,
+        path: '/'
+      })
+      setCookie(null, 'username', user.username, {
+        maxAge: options.rememberMe ? 60 * 60 * 24 * 1 : undefined,
+        path: '/'
+      })
+      localStorage.setItem('user', JSON.stringify({ ...user, createdAt: new Date().toISOString() }))
+      localStorage.setItem('bonds', JSON.stringify({ ...bonds, createdAt: new Date().toISOString() }))
+      router.push('/bonds')
+    } else {
+      console.error(message)
+      if (message === 'Session has expired' || message === 'Session related to token not found') {
         console.log('Session has expired')
         destroyCookie(null, 'token')
         handleLogin()
       } else {
-        console.error(error.response.data)
+        setLoading(false)
       }
-    })
+    }
   }
   return (
     <MainGrid>
@@ -85,7 +90,7 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
         >
           <CardContent>
             <Collapse
-              in={!conditionals.isAuthenticated && !conditionals.isLoading}
+              in={!loading}
             >
               <LoginForm
                 hooks={{
@@ -101,13 +106,13 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
                 institutions={props.institutions}
               />
             </Collapse>
-            <Collapse in={conditionals.isLoading}>
+            <Collapse in={loading}>
               <Box display={'flex'} justifyContent={'center'}>
                 <CircularProgress />
               </Box>
             </Collapse>
           </CardContent>
-          <Collapse in={!conditionals.isAuthenticated && !conditionals.isLoading}>
+          <Collapse in={!loading}>
             <CardActions>
               <LoginActions handleLogin={handleLogin} />
             </CardActions>
@@ -118,21 +123,12 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
   )
 }
 
-async function getCompatiblesInstitutions () {
-  const response = await api.get('/institutions')
-  const institutions = await response.data as InstitutionsResponse
-  if (institutions.success) {
-    return institutions.data as IInstitutionInfo[]
-  } else {
-    throw new Error(institutions.message)
-  }
-}
-
 export async function getServerSideProps () {
-  const institutions = await getCompatiblesInstitutions()
+  const response = await api.getInstitutions()
+
   return {
     props: {
-      institutions
+      institutions: response.data
     }
   }
 }

@@ -1,3 +1,4 @@
+import { withToken } from './Login'
 
 export type User = {
     username: string;
@@ -6,11 +7,7 @@ export type User = {
     emails: string[];
     institution: string;
 }
-export type UserRequest = {
-    username: string;
-    token: string;
-    password: undefined
-}
+export type UserRequest = withToken
 
 export interface UserResponse {
     data?: {

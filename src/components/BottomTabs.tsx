@@ -26,28 +26,44 @@ type ITabOrder = {
   [key in PageIndexTab]: number;
 };
 export const TabOrder: ITabOrder = {
-  home: 0,
-  bonds: 1,
-  courses: 2,
-  schedules: 3,
-  grades: 4,
-  news: 5,
-  activities: 6,
-  back: 7,
-  course: 8
+  home: 1,
+  profile: 0,
+  bonds: 2,
+  courses: 3,
+  schedules: 4,
+  grades: 5,
+  news: 6,
+  activities: 7,
+  back: 8,
+  course: 9
 }
-export const primaryActionTabs = (registration: string): TabData[] => [
+export const primaryActionTabs = (registration: string, profilePictureURL: string): TabData[] => [
   {
-    label: 'Início',
-    icon: <HomeIcon />,
-    value: TabOrder.home,
-    to: `/bond/${registration}`
+    label: 'Perfil',
+    icon: <img
+    src={profilePictureURL}
+    alt="profilePictureURL"
+    style={{
+      borderRadius: '50%',
+      userSelect: 'none',
+      width: '1.5rem',
+      height: '1.5rem'
+    }}
+    />,
+    value: TabOrder.profile,
+    to: '/profile'
   },
   {
     label: 'Vínculos',
     icon: <GroupsIcon />,
     value: TabOrder.bonds,
     to: '/bonds'
+  },
+  {
+    label: 'Início',
+    icon: <HomeIcon />,
+    value: TabOrder.home,
+    to: `/bond/${registration}`
   },
   {
     label: 'Matérias',
@@ -82,8 +98,24 @@ export const primaryActionTabs = (registration: string): TabData[] => [
 ]
 export const secondaryActionTabs = (
   registration: string,
-  courseID: string
+  courseID: string,
+  profilePictureURL: string
 ): TabData[] => [
+  {
+    label: 'Perfil',
+    icon: <img
+    src={profilePictureURL}
+    alt="profilePictureURL"
+    style={{
+      borderRadius: '50%',
+      userSelect: 'none',
+      width: '1.5rem',
+      height: '1.5rem'
+    }}
+    />,
+    value: TabOrder.profile,
+    to: '/profile'
+  },
   {
     label: 'Voltar',
     icon: <ArrowBackIcon />,
@@ -122,9 +154,8 @@ export default function BottomTabs (props: {
     setTab: (tab: number) => void;
   },
   tabsData: TabData[],
-  profilePictureURL: string,
 }) {
-  const { tabHook, tabsData, profilePictureURL } = props
+  const { tabHook, tabsData } = props
   const { tab, setTab } = tabHook
   const ref = useRef<HTMLDivElement>(null)
   const [onHoverValue, setOnHoverValue] = useState(tab)
@@ -159,28 +190,9 @@ export default function BottomTabs (props: {
             height: 'fit-content'
           }}
         >
-          <BottomNavigationAction
-            label={'Perfil'}
-            icon={
-              <img
-                src={profilePictureURL}
-                alt="profilePictureURL"
-                style={{
-                  borderRadius: '50%',
-                  userSelect: 'none',
-                  width: '1.5rem',
-                  height: '1.5rem'
-                }}
-                />
-            }
-            value={33}
-            component={Link}
-            showLabel={onHoverValue === 33}
-            href={'/profile'}
-            onMouseOver={() => setOnHoverValue(33)}
-            onMouseLeave={() => setOnHoverValue(-1)}
-          />
-          {tabsData.map((tab, index) => (
+          {tabsData.sort((tab, nextTab) => {
+            return tab.value - nextTab.value
+          }).map((tab, index) => (
             <BottomNavigationAction
               key={index}
               label={tab.label}

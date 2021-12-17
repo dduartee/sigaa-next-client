@@ -1,6 +1,7 @@
 import { TabOrder } from '@components/BottomTabs'
 import { useState } from 'react'
 export type PageIndexTab =
+  | 'profile'
   | 'bonds'
   | 'home'
   | 'courses'

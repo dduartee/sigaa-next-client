@@ -1,42 +1,43 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
 import Link from '@components/Link'
 import MainGrid from '@components/MainGrid'
+import { userInitialState } from '@contexts/User'
+import useCachedUser from '@hooks/useCachedUser'
 import useTabHandler from '@hooks/useTabHandler'
 import { Button } from '@mui/material'
-import { getUser } from '@pages/_app'
-import { User } from '@services/api/types/User'
+import api from '@services/api'
+import { withToken } from '@services/api/types/Login'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
-import { useEffect, useState } from 'react'
-import { getCourses } from './courses'
+import { useEffect } from 'react'
 
-export default function RegistrationPage (props: {
-  user: User
-}) {
+export default function RegistrationPage (props: {credentials: withToken}) {
   const { query } = useRouter()
-  const User = props.user
   const registration = query.registration as string
-  const { username, token } = parseCookies()
-  const [bgAction, setBgAction] = useState<string>('')
+  const { tab, setTab } = useTabHandler({ page: 'home' })
+  const { user, setUser, valid: validUser, setValid: setValidUser } = useCachedUser()
   useEffect(() => {
-    if (registration) {
-      setBgAction('getCourses')
-      getCourses({ username, token }, registration).then(() => {
-        setBgAction('')
-      }).catch(error => {
-        console.error(error.response.data)
+    if (validUser === false) {
+      api.getUser(props.credentials).then(response => {
+        if (response.success && response.data) {
+          localStorage.setItem('user', JSON.stringify(response.data))
+          setUser(response.data.user)
+          setValidUser(true)
+        } else {
+          console.error(response.message)
+          setUser(userInitialState)
+        }
       })
     }
-  }, [registration])
-  const { tab, setTab } = useTabHandler({ page: 'home' })
+  }, [props.credentials, setUser, setValidUser, validUser])
   return (
+      <div>
     <MainGrid>
       <div>
         <h1>Bond Registration</h1>
         <h2>{registration}</h2>
-        <p>{User.fullName}</p>
-        <p>{bgAction}</p>
+        <p>{user.fullName}</p>
         <Link href={`${registration}/courses/`}>
           <Button>Courses</Button>
         </Link>
@@ -55,26 +56,30 @@ export default function RegistrationPage (props: {
         <Link href={`${registration}/schedules`}>
           <Button>Schedules</Button>
         </Link>
+        </div>
+      </MainGrid>
+
         <BottomTabs
         tabHook={{
           tab,
           setTab
         }}
-          tabsData={primaryActionTabs(registration)}
-          profilePictureURL={User.profilePictureURL}
-        />
-      </div>
-      </MainGrid>
+        tabsData={primaryActionTabs(registration, user.profilePictureURL)}
+          />
+          </div>
   )
 }
 
 export async function getServerSideProps (context: GetServerSidePropsContext) {
   const cookies = parseCookies(context)
   const { username, token } = cookies
-  const user = await getUser({ username, token, password: undefined })
+  const credentials = {
+    username,
+    token
+  }
   return {
     props: {
-      user
+      credentials
     }
   }
 }

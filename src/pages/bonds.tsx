@@ -11,26 +11,41 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import api from '@services/api'
-import { Bond, BondsRequest, BondsResponse } from '@services/api/types/Bonds'
-import { AxiosResponse } from 'axios'
+import { Bond } from '@services/api/types/Bonds'
 import { GetServerSidePropsContext } from 'next'
 import { parseCookies, destroyCookie } from 'nookies'
 import { useRouter } from 'next/router'
-import { User } from '@services/api/types/User'
 import MainGrid from '@components/MainGrid'
-export default function BondsPage (props: { bonds: Bond[] }) {
+import { withToken } from '@services/api/types/Login'
+import { userInitialState } from '@contexts/User'
+import useCachedUser from '@hooks/useCachedUser'
+export default function BondsPage (props: { bonds: Bond[], credentials: withToken }) {
   const [currentBond, setCurrentBond] = useState<string>(props.bonds[0].registration)
-  const [user, setUser] = useState<User>({
-    emails: [],
-    fullName: '',
-    institution: '',
-    profilePictureURL: '',
-    username: ''
-  })
+  const { user, setUser, valid: validUser, setValid: setValidUser } = useCachedUser()
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') ?? '') as User
-    setUser(user)
-  }, [])
+    props.bonds.map(async bond => {
+      const getCoursesResponse = await api.getCourses(props.credentials, bond.registration)
+      if (getCoursesResponse.success) {
+        localStorage.setItem(`courses@${bond.registration}`, JSON.stringify(getCoursesResponse.data?.bond.courses))
+      } else {
+        console.error(getCoursesResponse.message)
+      }
+    })
+  }, [props.bonds, props.credentials])
+  useEffect(() => {
+    if (validUser === false) {
+      api.getUser(props.credentials).then(response => {
+        if (response.success && response.data) {
+          localStorage.setItem('user', JSON.stringify(response.data))
+          setUser(response.data.user)
+          setValidUser(true)
+        } else {
+          console.error(response.message)
+          setUser(userInitialState)
+        }
+      })
+    }
+  }, [props.credentials, setUser, setValidUser, validUser])
   const router = useRouter()
   const handleLogout = () => {
     localStorage.removeItem('user')
@@ -89,32 +104,27 @@ export default function BondsPage (props: { bonds: Bond[] }) {
   )
 }
 
-async function getBonds (credentials: { username: string, token: string }): Promise<Bond[]> {
-  const { data: response } = await api.post<BondsResponse, AxiosResponse<BondsResponse>, BondsRequest>('/bonds', {
-    username: credentials.username,
-    token: credentials.token,
-    password: undefined
-  })
-  const { success, data, message } = response
-  if (success && data) {
-    return data.bonds
-  } else {
-    console.error(message)
-    return []
-  }
-}
-
 export async function getServerSideProps (context: GetServerSidePropsContext) {
   const cookies = parseCookies(context)
   const credentials = {
     username: cookies.username,
     token: cookies.token
   }
-  const bonds = await getBonds(credentials)
-  return {
-    props: {
-      bonds,
-      credentials
+  const response = await api.getBonds(credentials)
+  if (response.success && response.data) {
+    return {
+      props: {
+        bonds: response.data.bonds,
+        credentials
+      }
+    }
+  } else {
+    console.error(response.message)
+    return {
+      props: {
+        bonds: [],
+        credentials
+      }
     }
   }
 }

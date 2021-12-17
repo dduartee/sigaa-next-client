@@ -10,8 +10,17 @@ export interface LoginResponse {
     success: boolean;
     message: string;
 }
-
-export interface LoginCredentials { username: string, password: string | undefined, token: string | undefined }
+export type withToken = {
+    username: string;
+    token: string;
+    password?: undefined;
+}
+export type withPassword = {
+    username: string;
+    password: string;
+    token?: undefined;
+}
+export type LoginCredentials = withToken | withPassword;
 export interface LoginOptions {
     institution: string;
     url: string;

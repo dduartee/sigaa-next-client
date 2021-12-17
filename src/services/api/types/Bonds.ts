@@ -1,15 +1,8 @@
-import { Course } from "./Courses";
-import { LoginCredentials } from "./Login";
+import { Course } from './Courses'
+import { withToken } from './Login'
 
-export type BondsRequest = LoginCredentials
+export type BondsRequest = withToken
 
-export interface BondsResponse {
-    data?: {
-        bonds: Bond[];
-    };
-    success: boolean;
-    message: string;
-}
 export type Bond = {
     registration: string;
     program: string;
@@ -18,3 +11,10 @@ export type Bond = {
     courses?: Course[];
     activities?: any[];
 };
+export interface BondsResponse {
+    data?: {
+        bonds: Bond[];
+    };
+    success: boolean;
+    message: string;
+}

@@ -1,7 +1,7 @@
-import { Course } from "./Courses";
-import { LoginCredentials } from "./Login";
+import { Course } from './Courses'
+import { withToken } from './Login'
 
-export type GradesRequest = LoginCredentials
+export type GradesRequest = withToken
 
 export type GradesResponse = {
   success: boolean;

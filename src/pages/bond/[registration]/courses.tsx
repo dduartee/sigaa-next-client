@@ -1,6 +1,8 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
 import Link from '@components/Link'
 import MainGrid from '@components/MainGrid'
+import { userInitialState } from '@contexts/User'
+import useCachedUser from '@hooks/useCachedUser'
 import useTabHandler from '@hooks/useTabHandler'
 import {
   Box,
@@ -11,20 +13,34 @@ import {
   CardContent,
   Typography
 } from '@mui/material'
-import { getUser } from '@pages/_app'
 import api from '@services/api'
-import { Course, CoursesRequest, CoursesResponse } from '@services/api/types/Courses'
-import { User } from '@services/api/types/User'
-import { AxiosResponse } from 'axios'
+import { Course } from '@services/api/types/Courses'
+import { withToken } from '@services/api/types/Login'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { parseCookies } from 'nookies'
+import { useEffect } from 'react'
 
-export default function CoursesPage (props: { courses: Course[], user: User }) {
+export default function CoursesPage (props: { courses: Course[], credentials: withToken }) {
   const { query } = useRouter()
   const registration = query.registration as string
   const { tab, setTab } = useTabHandler({ page: 'courses' })
   const listCourses: Course[] = props.courses.map(({ id, title, code, period, numberOfStudents, schedule }) => ({ id, title, code, period, numberOfStudents, schedule }))
+  const { user, setUser, valid: validUser, setValid: setValidUser } = useCachedUser()
+  useEffect(() => {
+    if (validUser === false) {
+      api.getUser(props.credentials).then(response => {
+        if (response.success && response.data) {
+          localStorage.setItem('user', JSON.stringify(response.data))
+          setUser(response.data.user)
+          setValidUser(true)
+        } else {
+          console.error(response.message)
+          setUser(userInitialState)
+        }
+      })
+    }
+  }, [props.credentials, setUser, setValidUser, validUser])
   return (
     <MainGrid>
       <div style={{ margin: '.5rem' }}>
@@ -73,8 +89,7 @@ export default function CoursesPage (props: { courses: Course[], user: User }) {
             tab,
             setTab
           }}
-          tabsData={primaryActionTabs(registration)}
-          profilePictureURL={props.user.profilePictureURL}
+          tabsData={primaryActionTabs(registration, user.profilePictureURL)}
         />
       </div>
     </MainGrid>
@@ -86,33 +101,26 @@ export default function CoursesPage (props: { courses: Course[], user: User }) {
         setTab={setTab}
         tabsData={primaryActionTabs(params.registration)}
       /> */
-export async function getCourses (credentials: { username: string, token: string }, registration: string): Promise<Course[]> {
-  const { data: response } = await api.post<CoursesResponse, AxiosResponse<CoursesResponse>, CoursesRequest>(`/bonds/${registration}/courses`, {
-    username: credentials.username,
-    token: credentials.token,
-    password: undefined
-  })
-  const { success, data, message } = response
-  if (success && data) {
-    return data.bond.courses as Course[]
-  } else {
-    console.error(message)
-    return []
-  }
-}
 export async function getServerSideProps (context: GetServerSidePropsContext) {
   const cookies = parseCookies(context)
   const credentials = {
     username: cookies.username,
-    token: cookies.token,
-    password: undefined
+    token: cookies.token
   }
-  const courses = await getCourses(credentials, context.query.registration as string)
-  const user = await getUser(credentials)
-  return {
-    props: {
-      courses,
-      user
+  const coursesResponse = await api.getCourses(credentials, context.query.registration as string)
+  if (coursesResponse.success && coursesResponse.data) {
+    return {
+      props: {
+        courses: coursesResponse.data.bond.courses,
+        credentials
+      }
+    }
+  } else {
+    return {
+      props: {
+        courses: [],
+        credentials
+      }
     }
   }
 }

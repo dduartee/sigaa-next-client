@@ -28,7 +28,6 @@ export default function CustomAppBar () {
           </div>
           <div>
             <IconButton>
-              <img />
             </IconButton>
           </div>
         </Toolbar>

@@ -1,6 +1,6 @@
 import BottomTabs, { secondaryActionTabs } from '@components/BottomTabs'
 import useTabHandler from '@hooks/useTabHandler'
-import { getUser } from '@pages/_app'
+import api from '@services/api'
 import { User } from '@services/api/types/User'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
@@ -18,8 +18,7 @@ export default function GradesSecondaryPage (props: {grades: any, user: User}) {
         tabHook={{
           tab, setTab
         }}
-        tabsData={secondaryActionTabs(registration, courseID)}
-        profilePictureURL={props.user.profilePictureURL}
+        tabsData={secondaryActionTabs(registration, courseID, props.user.profilePictureURL)}
       />
     </>
   )
@@ -28,10 +27,9 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
   const cookies = parseCookies(context)
   const credentials = {
     token: cookies.token,
-    username: cookies.username,
-    password: undefined
+    username: cookies.username
   }
-  const user = await getUser(credentials)
+  const user = await api.getUser(credentials)
   return {
     props: {
       grades: [],

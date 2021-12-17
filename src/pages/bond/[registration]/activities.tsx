@@ -1,6 +1,6 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
 import useTabHandler from '@hooks/useTabHandler'
-import { getUser } from '@pages/_app'
+import api from '@services/api'
 import { User } from '@services/api/types/User'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
@@ -18,8 +18,7 @@ export default function ActivitiesPage (props: {activities: any, user: User}) {
         tabHook={{
           tab, setTab
         }}
-        tabsData={primaryActionTabs(registration)}
-        profilePictureURL={props.user.profilePictureURL}
+        tabsData={primaryActionTabs(registration, props.user.profilePictureURL)}
       />
     </>
   )
@@ -32,7 +31,7 @@ export async function getServerSideProps (context: GetServerSidePropsContext) {
     username: cookies.username,
     password: undefined
   }
-  const user = await getUser(credentials)
+  const user = await api.getUser(credentials)
   return {
     props: {
       activities: [],

@@ -1,8 +1,8 @@
-import { Bond } from "./Bonds";
-import { GradeGroup } from "./Grades";
-import { LoginCredentials } from "./Login";
+import { Bond } from './Bonds'
+import { GradeGroup } from './Grades'
+import { withToken } from './Login'
 
-export type CoursesRequest = LoginCredentials;
+export type CoursesRequest = withToken;
 export type CoursesResponse = {
     data?: {
       bond: Bond;
@@ -11,7 +11,7 @@ export type CoursesResponse = {
     message: string;
   };
 
-  export type Course = {
+export type Course = {
     id: string;
     title: string;
     code: string;
