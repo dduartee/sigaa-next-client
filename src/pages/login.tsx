@@ -1,5 +1,5 @@
 import LoginForm from '@components/Login/LoginForm'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Card, CardActions, CardContent, CircularProgress, Collapse, Grid } from '@mui/material'
 import LoginActions from '@components/Login/LoginActions'
 import { IInstitutionInfo } from '@services/api/types/Institutions'
@@ -9,25 +9,22 @@ import { useRouter } from 'next/router'
 import { destroyCookie, parseCookies, setCookie } from 'nookies'
 import MainGrid from '@components/MainGrid'
 
-export default function LoginPage (props: { institutions: IInstitutionInfo[] }) {
+export default function LoginPage () {
   const router = useRouter()
   const [credentials, setCredentials] = useState<{ username: string, password: string, token: undefined }>({ username: '', password: '', token: undefined })
   const [options, setOptions] = useState<LoginOptions & { rememberMe: boolean }>({ institution: '', url: '', rememberMe: false })
   const [loading, setLoading] = useState<boolean>(false)
-  const user = {
-    status: 'Deslogado'
-  }
-  const conditionals = {
-    isAuthenticated: user.status === 'Logado',
-    isLoading:
-      user.status === 'Logando' ||
-      user.status === 'Deslogando' ||
-      user.status === 'Logado',
-    error: user.status === 'Erro'
-  }
+  const [error, setError] = useState<boolean>(false)
+  const [institutions, setInstitutions] = useState<IInstitutionInfo[]>([])
+  useEffect(() => {
+    api.getInstitutions().then(({ data }) => {
+      setInstitutions(data)
+    })
+  }, [])
 
   const handleLogin = async () => {
     setLoading(true)
+    setError(false)
     const { username, password } = credentials
     const token = parseCookies().token
     const { institution, url } = options
@@ -67,6 +64,7 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
         handleLogin()
       } else {
         setLoading(false)
+        setError(true)
       }
     }
   }
@@ -101,9 +99,9 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
                   optionsHooks: {
                     options, setOptions
                   },
-                  error: conditionals.error
+                  error: error
                 }}
-                institutions={props.institutions}
+                institutions={institutions}
               />
             </Collapse>
             <Collapse in={loading}>
@@ -121,14 +119,4 @@ export default function LoginPage (props: { institutions: IInstitutionInfo[] }) 
       </Grid>
     </MainGrid>
   )
-}
-
-export async function getServerSideProps () {
-  const response = await api.getInstitutions()
-
-  return {
-    props: {
-      institutions: response.data
-    }
-  }
 }
