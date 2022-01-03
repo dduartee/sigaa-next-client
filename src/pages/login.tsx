@@ -6,16 +6,30 @@ import { IInstitutionInfo } from '@services/api/types/Institutions'
 import api from '@services/api'
 import { LoginOptions, LoginRequest } from '@services/api/types/Login'
 import { useRouter } from 'next/router'
-import { destroyCookie, parseCookies, setCookie } from 'nookies'
+import { destroyCookie } from 'nookies'
 import MainGrid from '@components/MainGrid'
+import { ServerStatus } from '@pages'
+import { userAtom, userReducer } from '@jotai/User'
+import { useReducerAtom } from 'jotai/utils'
+import { bondsAtom, bondsReducer } from '@jotai/Bonds'
+import NoSsr from '@mui/base/NoSsr'
+import { credentialsAtom, credentialsReducer } from '@jotai/Credentials'
+import Head from 'next/head'
 
 export default function LoginPage () {
   const router = useRouter()
-  const [credentials, setCredentials] = useState<{ username: string, password: string, token: undefined }>({ username: '', password: '', token: undefined })
+  const [{ username, token }, credentialsDispatch] = useReducerAtom(credentialsAtom, credentialsReducer)
+  const [credentials, setCredentials] = useState<any>({
+    username: username,
+    token: token,
+    password: undefined
+  })
   const [options, setOptions] = useState<LoginOptions & { rememberMe: boolean }>({ institution: '', url: '', rememberMe: false })
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
   const [institutions, setInstitutions] = useState<IInstitutionInfo[]>([])
+  const [, userDispatch] = useReducerAtom(userAtom, userReducer)
+  const [, bondsDispatch] = useReducerAtom(bondsAtom, bondsReducer)
   useEffect(() => {
     api.getInstitutions().then(({ data }) => {
       setInstitutions(data)
@@ -23,10 +37,11 @@ export default function LoginPage () {
   }, [])
 
   const handleLogin = async () => {
+    userDispatch({ type: 'RESET_USER' })
+    bondsDispatch({ type: 'RESET_BONDS' })
     setLoading(true)
     setError(false)
     const { username, password } = credentials
-    const token = parseCookies().token
     const { institution, url } = options
     const loginRequest: LoginRequest = {
       username,
@@ -45,16 +60,10 @@ export default function LoginPage () {
     const { success, data, message } = await api.doLogin(loginRequest)
     if (success && data) {
       const { token, bonds, user } = data
-      setCookie(null, 'token', token, {
-        maxAge: options.rememberMe ? 60 * 60 * 24 * 1 : undefined,
-        path: '/'
-      })
-      setCookie(null, 'username', user.username, {
-        maxAge: options.rememberMe ? 60 * 60 * 24 * 1 : undefined,
-        path: '/'
-      })
-      localStorage.setItem('user', JSON.stringify({ ...user, createdAt: new Date().toISOString() }))
-      localStorage.setItem('bonds', JSON.stringify({ ...bonds, createdAt: new Date().toISOString() }))
+      // sort bonds by bond.active, true first
+      credentialsDispatch({ type: 'SET_CREDENTIALS', payload: { username, token } })
+      userDispatch({ type: 'SET_USER', payload: user })
+      bondsDispatch({ type: 'SET_BONDS', payload: bonds })
       router.push('/bonds')
     } else {
       console.error(message)
@@ -69,54 +78,62 @@ export default function LoginPage () {
     }
   }
   return (
-    <MainGrid>
-      <Grid
-        item
-        sx={{ m: 4 }}
-        width={'100%'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        display={'flex'}
-      >
-        <Card
-          variant="elevation"
-          sx={{
-            overflow: 'visible',
-            borderRadius: '9px',
-            width: '300px'
-          }}
+    <>
+      <Head>
+        <title>Login - sigaa-next-client</title>
+      </Head>
+      <MainGrid>
+        <Grid
+          item
+          sx={{ m: 4 }}
+          width={'100%'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          display={'flex'}
         >
-          <CardContent>
-            <Collapse
-              in={!loading}
-            >
-              <LoginForm
-                hooks={{
-                  credentialsHooks: {
-                    credentials,
-                    setCredentials
-                  },
-                  optionsHooks: {
-                    options, setOptions
-                  },
-                  error: error
-                }}
-                institutions={institutions}
-              />
+          <Card
+            variant="elevation"
+            sx={{
+              overflow: 'visible',
+              borderRadius: '9px',
+              width: '300px'
+            }}
+          >
+            <CardContent>
+              <Collapse
+                in={!loading}
+              >
+                <NoSsr>
+                  <LoginForm
+                    hooks={{
+                      credentialsHooks: {
+                        credentials,
+                        setCredentials
+                      },
+                      optionsHooks: {
+                        options, setOptions
+                      },
+                      error: error
+                    }}
+                    institutions={institutions}
+                  />
+                </NoSsr>
+              </Collapse>
+              <Collapse in={loading}>
+                <Box display={'flex'} justifyContent={'center'}>
+                  <CircularProgress />
+                </Box>
+              </Collapse>
+            </CardContent>
+            <Collapse in={!loading}>
+              <CardActions>
+                <LoginActions handleLogin={handleLogin} />
+              </CardActions>
             </Collapse>
-            <Collapse in={loading}>
-              <Box display={'flex'} justifyContent={'center'}>
-                <CircularProgress />
-              </Box>
-            </Collapse>
-          </CardContent>
-          <Collapse in={!loading}>
-            <CardActions>
-              <LoginActions handleLogin={handleLogin} />
-            </CardActions>
-          </Collapse>
-        </Card>
-      </Grid>
-    </MainGrid>
+          </Card>
+          <ServerStatus />
+        </Grid>
+      </MainGrid>
+    </>
   )
 }

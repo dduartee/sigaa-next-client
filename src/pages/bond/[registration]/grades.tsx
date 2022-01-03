@@ -1,73 +1,72 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
 import useTabHandler from '@hooks/useTabHandler'
-import { User } from '@services/api/types/User'
-import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
-import { parseCookies } from 'nookies'
 import { Course } from '@services/api/types/Courses'
 import api from '@services/api'
 import MainGrid from '@components/MainGrid'
 import { Box } from '@mui/system'
+import { useEffect, useState } from 'react'
+import { credentialsAtom, credentialsReducer } from '@jotai/Credentials'
+import { userAtom, userReducer } from '@jotai/User'
+import { useReducerAtom } from 'jotai/utils'
+import Head from 'next/head'
 
-export default function GradesPage (props: { coursesWithGrades: Course[], user: User }) {
+export default function GradesPage () {
   const { query } = useRouter()
   const { tab, setTab } = useTabHandler({ page: 'grades' })
+  const [{ username, token }] = useReducerAtom(credentialsAtom, credentialsReducer)
+  const [user] = useReducerAtom(userAtom, userReducer)
+  const [coursesWithGrades, setCoursesWithGrades] = useState<Course[]>([])
   const registration = query.registration as string
+  useEffect(() => {
+    if (registration) {
+      api.getGrades({ username, token }, registration).then(({ message, success, data }) => {
+        if (success && data) {
+          setCoursesWithGrades(data.courses)
+          console.log(data.courses)
+        } else {
+          console.error(message)
+          setCoursesWithGrades([])
+        }
+      })
+    }
+  }, [registration, token, username])
   return (
     <>
-    <MainGrid>
-      <Box width="90%" display="flex">
-      <h3>Grades</h3>
-      <p>{registration}</p>
-      <div>
-        {props.coursesWithGrades.map(course => (
-          <><div key={course.id}>
-            <h4>{course.title}</h4>
-            {course.gradeGroups?.map(gradeGroup => (
-              <><div key={gradeGroup.name}>
-                <h5>{gradeGroup.name}</h5>
-                <p>{gradeGroup.value}</p>
-              </div></>
+      <Head>
+        <title>Notas - {registration} - sigaa-next-client</title>
+      </Head>
+      <MainGrid>
+        <Box width="90%" display="flex">
+          <h3>Grades</h3>
+          <p>{registration}</p>
+          <div>
+            {coursesWithGrades.map(course => (
+              <>
+                <div key={course.id}>
+                  <h4>{course.title}</h4>
+                  {course.gradeGroups?.map(gradeGroup => (
+                    <>
+                      <div key={gradeGroup.name}>
+                        <h5>{gradeGroup.name}</h5>
+                        <p>{gradeGroup.value}</p>
+                      </div>
+                    </>
+                  ))}
+                </div>
+              </>
             ))}
-          </div></>
-        ))}
-      </div>
-      </Box>
+          </div>
+        </Box>
       </MainGrid>
       <BottomTabs
         tabHook={{
           tab, setTab
         }}
-        tabsData={primaryActionTabs(registration, props.user.profilePictureURL)}
+        tabsData={primaryActionTabs(registration, user.profilePictureURL)}
       />
-        </>
+    </>
   )
-}
-
-export async function getServerSideProps (context: GetServerSidePropsContext) {
-  const cookies = parseCookies(context)
-  const credentials = {
-    token: cookies.token,
-    username: cookies.username
-  }
-  const userResponse = await api.getUser(credentials)
-  const user = userResponse.data?.user
-  const gradesResponse = await api.getGrades(credentials, context.query.registration as string)
-  if (gradesResponse.success && gradesResponse.data) {
-    return {
-      props: {
-        coursesWithGrades: gradesResponse.data.courses as Course[],
-        user
-      }
-    }
-  } else {
-    console.error(gradesResponse.message)
-    return {
-      props: {
-        coursesWithGrades: []
-      }
-    }
-  }
 }
 
 export interface Grade { name: string; value?: number; }

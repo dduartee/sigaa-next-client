@@ -19,13 +19,13 @@ export default function LoginForm (
     HTMLFormElement
   > & {
     hooks: {
-      credentialsHooks : {
-        credentials: {username: string, password: string, token: undefined};
-        setCredentials: (credentials: {username: string, password: string, token: undefined}) => void;
+      credentialsHooks: {
+        credentials: { username: string, password: string, token: undefined };
+        setCredentials: (credentials: { username: string, password: string, token: undefined }) => void;
       },
       optionsHooks: {
-        options: LoginOptions & {rememberMe: boolean};
-        setOptions: (options: LoginOptions & {rememberMe: boolean}) => void;
+        options: LoginOptions & { rememberMe: boolean };
+        setOptions: (options: LoginOptions & { rememberMe: boolean }) => void;
       },
       error: boolean;
     },

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { CardContent } from '@mui/material'
 
-export function ProfileHeader (props: { Profile: {fullName: string, profilePictureURL: string}; }) {
+export function ProfileHeader (props: { Profile: { fullName: string, profilePictureURL: string }; }) {
   const { Profile } = props
   return (
     <CardContent

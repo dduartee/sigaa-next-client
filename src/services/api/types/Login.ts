@@ -21,6 +21,9 @@ export type withPassword = {
     token?: undefined;
 }
 export type LoginCredentials = withToken | withPassword;
+export type CredentialsProps = {
+    credentials: withToken;
+}
 export interface LoginOptions {
     institution: string;
     url: string;

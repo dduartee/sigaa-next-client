@@ -6,9 +6,7 @@ import { BondsRequest, BondsResponse } from './types/Bonds'
 import { UserRequest, UserResponse } from './types/User'
 import { InstitutionsResponse } from './types/Institutions'
 import { GradesRequest, GradesResponse } from './types/Grades'
-// create a type for username: string, token: string, password: undefined
-
-// create a class for api
+import { WakeupResponse } from './types/Wakeup'
 class Api {
     api: AxiosInstance;
 
@@ -63,6 +61,11 @@ class Api {
 
     async getGrades (data: GradesRequest, registration: string): Promise<GradesResponse> {
       const response = await this.post<GradesRequest, GradesResponse>(`/bonds/${registration}/grades`, data)
+      return response.data
+    }
+
+    async wakeup () {
+      const response = await this.get<WakeupResponse>('/wakeup')
       return response.data
     }
 }

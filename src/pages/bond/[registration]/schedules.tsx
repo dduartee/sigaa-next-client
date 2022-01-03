@@ -1,37 +1,26 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
-import { userInitialState } from '@contexts/User'
-import useCachedUser from '@hooks/useCachedUser'
+import MainGrid from '@components/MainGrid'
 import useTabHandler from '@hooks/useTabHandler'
-import api from '@services/api'
-import { withToken } from '@services/api/types/Login'
-import { GetServerSidePropsContext } from 'next'
+import { userAtom, userReducer } from '@jotai/User'
+import { useReducerAtom } from 'jotai/utils'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { parseCookies } from 'nookies'
-import { useEffect } from 'react'
 
-export default function SchedulePage (props: {schedule: any, credentials: withToken}) {
+export default function SchedulePage () {
   const { query } = useRouter()
   const { tab, setTab } = useTabHandler({ page: 'schedules' })
   const registration = query.registration as string
-  const { user, setUser, valid: validUser, setValid: setValidUser } = useCachedUser()
-  useEffect(() => {
-    if (validUser === false) {
-      api.getUser(props.credentials).then(response => {
-        if (response.success && response.data) {
-          localStorage.setItem('user', JSON.stringify(response.data))
-          setUser(response.data.user)
-          setValidUser(true)
-        } else {
-          console.error(response.message)
-          setUser(userInitialState)
-        }
-      })
-    }
-  }, [props.credentials, setUser, setValidUser, validUser])
+  // const [credentials] = useReducerAtom(credentialsAtom, credentialsReducer)
+  const [user] = useReducerAtom(userAtom, userReducer)
   return (
     <>
-      <h3>Schedules</h3>
-      <p>{registration}</p>
+      <Head>
+        <title>Horários - {registration} - sigaa-next-client</title>
+      </Head>
+      <MainGrid>
+        <h3>Schedules</h3>
+        <p>{registration}</p>
+      </MainGrid>
       <BottomTabs
         tabHook={{
           tab, setTab
@@ -40,17 +29,4 @@ export default function SchedulePage (props: {schedule: any, credentials: withTo
       />
     </>
   )
-}
-export async function getServerSideProps (context: GetServerSidePropsContext) {
-  const cookies = parseCookies(context)
-  const credentials = {
-    token: cookies.token,
-    username: cookies.username
-  }
-  return {
-    props: {
-      news: [],
-      credentials
-    }
-  }
 }

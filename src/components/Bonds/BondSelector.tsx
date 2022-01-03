@@ -39,12 +39,13 @@ export function BondSelector (props: {
             ) => {
               if (!value) {
                 setCurrentBond(bonds[0].registration)
+              } else {
+                setCurrentBond(value)
               }
-              setCurrentBond(value)
             }}
             orientation="vertical"
           >
-            {bonds?.map((value, index) => {
+            {bonds.map((value, index) => {
               return (
                 <ToggleButton
                   sx={{

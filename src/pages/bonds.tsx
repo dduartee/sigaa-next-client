@@ -1,130 +1,109 @@
 import BondActions from '@components/Bonds/BondActions'
-import { BondSelector } from '@components/Bonds/BondSelector'
 import { ProfileHeader } from '@components/Bonds/ProfileHeader'
-
 import {
   Card,
   CardActions,
   CardContent,
   Collapse,
-  Grid
+  Grid,
+  NoSsr
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import api from '@services/api'
-import { Bond } from '@services/api/types/Bonds'
-import { GetServerSidePropsContext } from 'next'
-import { parseCookies, destroyCookie } from 'nookies'
 import { useRouter } from 'next/router'
 import MainGrid from '@components/MainGrid'
-import { withToken } from '@services/api/types/Login'
-import { userInitialState } from '@contexts/User'
-import useCachedUser from '@hooks/useCachedUser'
-export default function BondsPage (props: { bonds: Bond[], credentials: withToken }) {
-  const [currentBond, setCurrentBond] = useState<string>(props.bonds[0].registration)
-  const { user, setUser, valid: validUser, setValid: setValidUser } = useCachedUser()
+import { userAtom, userReducer } from '@jotai/User'
+import { useReducerAtom } from 'jotai/utils'
+import { bondsAtom, bondsReducer } from '@jotai/Bonds'
+import { credentialsAtom, credentialsReducer } from '@jotai/Credentials'
+import { BondSelector } from '@components/Bonds/BondSelector'
+import Head from 'next/head'
+
+export default function BondsPage () {
+  const [user, userDispatch] = useReducerAtom(userAtom, userReducer)
+  const [bonds, bondsDispatch] = useReducerAtom(bondsAtom, bondsReducer)
+  const [credentials] = useReducerAtom(credentialsAtom, credentialsReducer)
+  const [currentBond, setCurrentBond] = useState<string>('')
+  const { token, username } = credentials
   useEffect(() => {
-    props.bonds.map(async bond => {
-      const getCoursesResponse = await api.getCourses(props.credentials, bond.registration)
-      if (getCoursesResponse.success) {
-        localStorage.setItem(`courses@${bond.registration}`, JSON.stringify(getCoursesResponse.data?.bond.courses))
-      } else {
-        console.error(getCoursesResponse.message)
-      }
-    })
-  }, [props.bonds, props.credentials])
-  useEffect(() => {
-    if (validUser === false) {
-      api.getUser(props.credentials).then(response => {
-        if (response.success && response.data) {
-          localStorage.setItem('user', JSON.stringify(response.data))
-          setUser(response.data.user)
-          setValidUser(true)
+    if (username && token) {
+      api.getBonds({ username, token }).then(({ message, success, data }) => {
+        if (success && data) {
+          setCurrentBond(data.bonds[0].registration)
+          data.bonds.map(async bond => {
+            const getCoursesResponse = await api.getCourses({ username, token }, bond.registration)
+            if (getCoursesResponse.success && getCoursesResponse.data) {
+              bondsDispatch({
+                type: 'PUSH_COURSES',
+                payload: {
+                  registration: bond.registration,
+                  courses: getCoursesResponse.data.bond.courses
+                }
+              })
+            } else console.error(getCoursesResponse.message)
+          })
         } else {
-          console.error(response.message)
-          setUser(userInitialState)
+          console.error(message)
+          bondsDispatch({ type: 'RESET_BONDS' })
         }
       })
     }
-  }, [props.credentials, setUser, setValidUser, validUser])
+  }, [bondsDispatch, token, username])
   const router = useRouter()
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('bonds')
-    destroyCookie(null, 'token')
-    destroyCookie(null, 'username')
+    userDispatch({ type: 'RESET_USER' })
     router.push('/')
   }
   return (
-    <MainGrid>
-      <Grid
-        item
-        sx={{ m: 4 }}
-        width={'100%'}
-        justifyContent={'center'}
-        alignItems={'center'}
-        display={'flex'}
-      >
-        <Card
-          variant="elevation"
-          sx={{
-            overflow: 'visible',
-            borderRadius: '9px',
-            maxWidth: '300px'
-          }}
+    <>
+      <Head>
+        <title>Vinculos - sigaa-next-client</title>
+      </Head>
+      <MainGrid>
+        <Grid
+          item
+          sx={{ m: 4 }}
+          width={'100%'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          display={'flex'}
         >
-          <Collapse
-            in={true}
+          <Card
+            variant="elevation"
+            sx={{
+              overflow: 'visible',
+              borderRadius: '9px',
+              maxWidth: '300px'
+            }}
           >
-            <CardContent>
-              <ProfileHeader Profile={{
-                fullName: user.fullName,
-                profilePictureURL: user.profilePictureURL
-              }}
-              />
-              <BondSelector
-                bonds={props.bonds}
-                setCurrentBond={setCurrentBond}
-                currentBond={currentBond}
-              />
-            </CardContent>
-          </Collapse>
-          <Collapse
-            in={true}
-          >
-            <CardActions>
-              <BondActions
-                handleLogout={handleLogout}
-                currentBond={currentBond}
-              />
-            </CardActions>
-          </Collapse>
-        </Card>
-      </Grid>
-    </MainGrid>
+            <NoSsr>
+              <Collapse
+                in={true}
+              >
+                <CardContent>
+                  <ProfileHeader Profile={user}
+                  />
+                  <BondSelector
+                    bonds={bonds}
+                    setCurrentBond={setCurrentBond}
+                    currentBond={currentBond}
+                  />
+                </CardContent>
+              </Collapse>
+              <Collapse
+                in={true}
+              >
+                <CardActions>
+                  <BondActions
+                    handleLogout={handleLogout}
+                    currentBond={currentBond}
+                  />
+                </CardActions>
+              </Collapse>
+            </NoSsr>
+          </Card>
+        </Grid>
+      </MainGrid>
+    </>
   )
-}
-
-export async function getServerSideProps (context: GetServerSidePropsContext) {
-  const cookies = parseCookies(context)
-  const credentials = {
-    username: cookies.username,
-    token: cookies.token
-  }
-  const response = await api.getBonds(credentials)
-  if (response.success && response.data) {
-    return {
-      props: {
-        bonds: response.data.bonds,
-        credentials
-      }
-    }
-  } else {
-    console.error(response.message)
-    return {
-      props: {
-        bonds: [],
-        credentials
-      }
-    }
-  }
 }

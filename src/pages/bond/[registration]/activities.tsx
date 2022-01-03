@@ -1,41 +1,31 @@
 import BottomTabs, { primaryActionTabs } from '@components/BottomTabs'
+import MainGrid from '@components/MainGrid'
 import useTabHandler from '@hooks/useTabHandler'
-import api from '@services/api'
-import { User } from '@services/api/types/User'
-import { GetServerSidePropsContext } from 'next'
+import { userAtom, userReducer } from '@jotai/User'
+import { useReducerAtom } from 'jotai/utils'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { parseCookies } from 'nookies'
 
-export default function ActivitiesPage (props: {activities: any, user: User}) {
+export default function ActivitiesPage () {
   const { query } = useRouter()
   const { tab, setTab } = useTabHandler({ page: 'activities' })
+  const [user] = useReducerAtom(userAtom, userReducer)
   const registration = query.registration as string
   return (
     <>
-      <h3>Activities</h3>
-      <p>{registration}</p>
+      <Head>
+        <title>Atividades - sigaa-next-client</title>
+      </Head>
+      <MainGrid>
+        <h3>Activities</h3>
+        <p>{registration}</p>
+      </MainGrid>
       <BottomTabs
         tabHook={{
           tab, setTab
         }}
-        tabsData={primaryActionTabs(registration, props.user.profilePictureURL)}
+        tabsData={primaryActionTabs(registration, user.profilePictureURL)}
       />
     </>
   )
-}
-
-export async function getServerSideProps (context: GetServerSidePropsContext) {
-  const cookies = parseCookies(context)
-  const credentials = {
-    token: cookies.token,
-    username: cookies.username,
-    password: undefined
-  }
-  const user = await api.getUser(credentials)
-  return {
-    props: {
-      activities: [],
-      user
-    }
-  }
 }

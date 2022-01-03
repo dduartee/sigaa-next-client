@@ -1,6 +1,6 @@
 {
   "name": "sigaa-next-client",
-  "version": "0.5.6",
+  "version": "0.6.0",
   "main": "src/index.js",
   "scripts": {
     "dev": "next dev",
@@ -17,14 +17,18 @@
     "@emotion/react": "latest",
     "@emotion/server": "latest",
     "@emotion/styled": "latest",
+    "@mui/base": "^5.0.0-alpha.62",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
     "axios": "^0.24.0",
+    "jotai": "^1.4.9",
+    "mobx": "^6.3.10",
     "next": "latest",
     "nookies": "^2.5.2",
     "perfect-scrollbar": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "swr": "^1.1.2"
   },
   "devDependencies": {
     "@types/react": "latest",

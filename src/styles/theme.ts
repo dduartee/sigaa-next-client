@@ -1,53 +1,53 @@
-import { createTheme, ThemeOptions } from "@mui/material/styles";
-import darkScrollbar from "@mui/material/darkScrollbar";
+import { createTheme, ThemeOptions } from '@mui/material/styles'
+import darkScrollbar from '@mui/material/darkScrollbar'
 
 export const themeOptions: ThemeOptions = {
   typography: {
-    fontFamily: "Noto Sans Display",
+    fontFamily: 'Noto Sans Display'
   },
   palette: {
-    mode: "dark",
+    mode: 'dark',
     primary: {
-      main: "#268E36",
-      contrastText: "#ffffff",
+      main: '#268E36',
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: "#1B7D2B",
+      main: '#1B7D2B'
     },
     background: {
-      paper: "#1c1c1c",
-      default: "#151515",
-    },
+      paper: '#1c1c1c',
+      default: '#151515'
+    }
   },
   components: {
     MuiCardContent: {
       styleOverrides: {
         root: {
-          paddingTop: "1em",
-          paddingBottom: "1em",
-          ":last-child": {
-            paddingBottom: "1em",
-          },
-        },
-      },
+          paddingTop: '1em',
+          paddingBottom: '1em',
+          ':last-child': {
+            paddingBottom: '1em'
+          }
+        }
+      }
     },
     MuiCssBaseline: {
       styleOverrides: {
-        body: darkScrollbar(),
-      },
+        body: darkScrollbar()
+      }
     },
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          "div[dir=rtl] &": {
-            transform: "scaleX(-1)",
-          },
-        },
-      },
-    },
-  },
-};
+          'div[dir=rtl] &': {
+            transform: 'scaleX(-1)'
+          }
+        }
+      }
+    }
+  }
+}
 // Create a theme instance.
-const theme = createTheme(themeOptions);
+const theme = createTheme(themeOptions)
 
-export default theme;
+export default theme

@@ -41,14 +41,14 @@ export const primaryActionTabs = (registration: string, profilePictureURL: strin
   {
     label: 'Perfil',
     icon: <img
-    src={profilePictureURL}
-    alt="profilePictureURL"
-    style={{
-      borderRadius: '50%',
-      userSelect: 'none',
-      width: '1.5rem',
-      height: '1.5rem'
-    }}
+      src={profilePictureURL}
+      alt="profilePictureURL"
+      style={{
+        borderRadius: '50%',
+        userSelect: 'none',
+        width: '1.5rem',
+        height: '1.5rem'
+      }}
     />,
     value: TabOrder.profile,
     to: '/profile'
@@ -104,15 +104,15 @@ export const secondaryActionTabs = (
   {
     label: 'Perfil',
     icon: <img
-    src={profilePictureURL}
-    alt="profilePictureURL"
-    style={{
-      borderRadius: '50%',
-      userSelect: 'none',
-      width: '1.5rem',
-      height: '1.5rem'
-    }}
-    />,
+        src={profilePictureURL}
+        alt="profilePictureURL"
+        style={{
+          borderRadius: '50%',
+          userSelect: 'none',
+          width: '1.5rem',
+          height: '1.5rem'
+        }}
+      />,
     value: TabOrder.profile,
     to: '/profile'
   },
