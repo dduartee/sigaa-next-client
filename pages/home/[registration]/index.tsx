@@ -71,7 +71,6 @@ export default function RegistrationPage({
             !activitiesLoading || data ? (
               <>
                 <Activities data={data} loading={activitiesLoading} />
-                <Courses data={data} />
               </>
             ) : (
               null

@@ -35,7 +35,7 @@ function InitializeHooks({ registration }: { registration: string }) {
   const [loading, setLoading] = useState(false);
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
-    order: 2,
+    order: 1,
     setLoading,
     registration,
     valid,
@@ -69,7 +69,7 @@ export default function GradesPage({ registration }: { registration: string }) {
     setValid,
     setLoading,
     setPartialLoading,
-    setTab
+    setTab,
   } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
@@ -82,7 +82,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         },
         socket
       );
-      setPartialLoading(true)
+      setPartialLoading(true);
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [valid]);
@@ -192,11 +192,13 @@ function Grades({
           )}
         </TableBody>
       </CollapsibleTable>
-      {partialLoading ? (
-        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
-      ) : (
-        <p>Notas não são atualizadas em tempo real.</p>
-      )}
+      <Box display={"flex"} justifyContent={"center"}>
+        {partialLoading ? (
+          <CircularProgress style={{ margin: "1rem" }} />
+        ) : (
+          <p></p>
+        )}
+      </Box>
     </React.Fragment>
   );
 }

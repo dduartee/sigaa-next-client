@@ -10,42 +10,54 @@ import {
 } from "@material-ui/core";
 import { KeyboardArrowDown } from "@material-ui/icons";
 import moment from "moment";
-export default function Activities({ data, loading }: { data: Bond[], loading: boolean }) {
-
-
+export default function Activities({
+  data,
+  loading,
+}: {
+  data: Bond[];
+  loading: boolean;
+}) {
   return (
     <>
+      <Typography textAlign="center" fontWeight="500" fontSize={"1.5rem"}>
+        Principais atividades
+      </Typography>
       <Typography
-        variant="h4"
         gutterBottom
-        component="h2"
-        margin="1rem"
+        margin=".5rem"
         textAlign="center"
         fontWeight="500"
+        fontSize={"1.5rem"}
       >
-        Principais atividades (15 dias)
+        (15 dias)
       </Typography>
-      {
-        loading?
-        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
-        :
-      data?.map((bond: Bond) => {
-        const activities = orderByDone(orderByDate(bond.activities))
-        return activities?.map((activity: Activity, index) => {
-          const diff = getDiffDate(activity.date);
-          const date = moment(activity.date).utcOffset(0).format("DD/MM/YYYY HH:mm")
-          if (diff <= 0) {
-            return (
-              <ActivityCollapse
-                key={index}
-                activity={activity}
-                diffday={diff}
-                date={date}
-              />
-            );
-          }
-        });
-      })}
+      <Box display={"flex"} justifyContent={"center"}>
+        {loading ? (
+          <CircularProgress style={{ margin: "1rem" }} />
+        ) : (
+          <Box>
+            {data?.map((bond: Bond) => {
+              const activities = orderByDone(orderByDate(bond.activities));
+              return activities?.map((activity: Activity, index) => {
+                const diff = getDiffDate(activity.date);
+                const date = moment(activity.date)
+                  .utcOffset(0)
+                  .format("DD/MM/YYYY HH:mm");
+                if (diff <= 0) {
+                  return (
+                    <ActivityCollapse
+                      key={index}
+                      activity={activity}
+                      diffday={diff}
+                      date={date}
+                    />
+                  );
+                }
+              });
+            })}
+          </Box>
+        )}
+      </Box>
     </>
   );
 }
@@ -59,7 +71,7 @@ function ActivityCollapse({
   date: string;
 }) {
   const done = activity.done;
-  const diff = Math.abs(diffday)
+  const diff = Math.abs(diffday);
   let type;
   switch (activity.type) {
     case "exam":
@@ -72,8 +84,8 @@ function ActivityCollapse({
       type = "Questionário";
       break;
   }
-  const today = diff === 0
-  const oneDay = diff === 1
+  const today = diff === 0;
+  const oneDay = diff === 1;
   return (
     <Box>
       <Box
@@ -87,7 +99,11 @@ function ActivityCollapse({
       >
         <Box display="flex" margin="0.5rem">
           <Typography variant="h6" gutterBottom component="h2">
-          {done?<s>{`${activity.course.title} - ${type}: ${activity.description}`}</s>:<span>{`${activity.course.title} - ${type}: ${activity.description}`}</span>}
+            {done ? (
+              <s>{`${activity.course.title} - ${type}: ${activity.description}`}</s>
+            ) : (
+              <span>{`${activity.course.title} - ${type}: ${activity.description}`}</span>
+            )}
           </Typography>
         </Box>
         <Box
@@ -102,7 +118,9 @@ function ActivityCollapse({
             margin="0.2rem"
             sx={{ whiteSpace: "nowrap" }}
           >
-            {`(${today ? "": diff}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}
+            {`(${today ? "" : diff}${
+              today ? "Hoje" : oneDay ? " dia" : " dias"
+            })`}
           </Typography>
           <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
             {`${date}`}

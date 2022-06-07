@@ -9,6 +9,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import TextField from "@material-ui/core/TextField";
 import makeStyles from "@material-ui/styles/makeStyles";
 import { UserContext } from "@context/user";
+import { Typography } from "@material-ui/core";
 
 function ResponsiveDrawer({
   handler,
@@ -27,8 +28,8 @@ function ResponsiveDrawer({
           ml: { sm: `${width}px` },
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <div>
+        <Toolbar>
+          <div style={{position: "absolute"}}>
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -39,6 +40,9 @@ function ResponsiveDrawer({
               <MenuIcon />
             </IconButton>
           </div>
+          <Typography variant="h2" fontSize="2rem" textAlign="center" width="100%">
+              sigaa-next-client
+            </Typography>
         </Toolbar>
       </AppBar>
     </Box>

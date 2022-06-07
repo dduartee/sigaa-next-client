@@ -7,7 +7,7 @@ import {
   IconButton,
   Typography,
 } from "@material-ui/core";
-import { KeyboardArrowDown } from "@material-ui/icons";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import moment from "moment";
 export default function Homeworks({
   data,
@@ -39,11 +39,13 @@ export default function Homeworks({
           })
         )
       )}
-      {partialLoading ? (
-        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
-      ) : (
-        <p>Tarefas não são atualizadas em tempo real.</p>
-      )}
+      <Box display={"flex"} justifyContent={"center"}>
+        {partialLoading ? (
+          <CircularProgress style={{ margin: "1rem" }} />
+        ) : (
+          <p></p>
+        )}
+      </Box>
     </>
   );
 }
@@ -115,7 +117,7 @@ function HomeworkCollapse({
           size="medium"
           onClick={() => getDescriptionAndOpen()}
         >
-          {open ? <div></div> : <KeyboardArrowDown />}
+          {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </IconButton>
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>

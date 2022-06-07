@@ -27,7 +27,7 @@ function InitializeHooks({ registration }: { registration: string }) {
   const [loading, setLoading] = useState(false);
   const { data } = useCourseEvents(setLoading);
   const { tab, setTab } = useTabHandler({
-    order: 1,
+    order: 2,
     setLoading,
     registration,
     valid,
