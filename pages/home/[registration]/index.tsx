@@ -1,25 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { LoadingContext } from "@context/loading";
-import useCourseEvents, {
-  emitCourseList,
-} from "@hooks/courses/useCourseEvents";
+import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import AccordionCourse from "@components/Home/AccordionCourse";
 import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProviders from "@components/homeProvider";
 import { emitActivitiesList } from "@hooks/useBondsEvents";
-import Homeworks from "@components/Homeworks/Content";
 import Activities from "@components/Activities/Content";
 
 function InitializeHooks({ registration }: { registration: string }) {
@@ -27,7 +20,8 @@ function InitializeHooks({ registration }: { registration: string }) {
   useTokenHandler(setValid);
   const { user } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const { data } = useCourseEvents();
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
+  const { data } = useCourseEvents(setActivitiesLoading);
   const { tab, setTab } = useTabHandler({
     order: 0,
     setLoading,
@@ -35,7 +29,7 @@ function InitializeHooks({ registration }: { registration: string }) {
     valid,
   });
   useAPIHandler();
-  return { valid, loading, user, data, tab, setValid, setLoading, setTab };
+  return { valid, loading, user, data, tab,activitiesLoading, setActivitiesLoading, setValid, setLoading, setTab };
 }
 export default function RegistrationPage({
   registration,
@@ -44,7 +38,7 @@ export default function RegistrationPage({
 }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const { valid, data, loading, user, tab, setLoading, setTab } =
+  const { valid, data, loading, user, tab, activitiesLoading, setActivitiesLoading, setTab } =
     InitializeHooks({
       registration,
     });
@@ -55,6 +49,7 @@ export default function RegistrationPage({
         { token: localStorage.getItem("token"), registration, inactive: false },
         socket
       );
+      setActivitiesLoading(true)
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     }
   }, [valid]);
@@ -72,7 +67,15 @@ export default function RegistrationPage({
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Activities data={data} />
+          {
+            !activitiesLoading || data ? (
+              <>
+                <Activities data={data} loading={activitiesLoading} />
+              </>
+            ) : (
+              null
+            )}
+
         </Box>
       </HomeProviders>
     </>

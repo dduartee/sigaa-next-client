@@ -1,21 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box, Typography } from "@material-ui/core";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { LoadingContext } from "@context/loading";
 import useCourseEvents, {
   emitCourseList,
 } from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
-import AccordionCourse from "@components/Home/AccordionCourse";
-import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProviders from "@components/homeProvider";
 
@@ -24,7 +18,7 @@ function InitializeHooks({ registration }: { registration: string }) {
   useTokenHandler(setValid);
   const { user } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const { data } = useCourseEvents();
+  const { data } = useCourseEvents(setLoading);
   const { tab, setTab } = useTabHandler({
     order: 4,
     setLoading,

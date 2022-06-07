@@ -1,17 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { LoadingContext } from "@context/loading";
-import useCourseEvents, {
-  emitCourseList,
-} from "@hooks/courses/useCourseEvents";
 import { Bond, Course } from "@types";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -42,15 +35,16 @@ function InitializeHooks({ registration }: { registration: string }) {
   const [loading, setLoading] = useState(false);
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
-    order: 2,
+    order: 1,
     setLoading,
     registration,
     valid,
   });
-  const { data, partialLoading } = useGradesEvents();
+  const { data, partialLoading, setPartialLoading } = useGradesEvents();
   return {
     data,
     partialLoading,
+    setPartialLoading,
     loading,
     setLoading,
     user,
@@ -74,6 +68,7 @@ export default function GradesPage({ registration }: { registration: string }) {
     setUser,
     setValid,
     setLoading,
+    setPartialLoading,
     setTab,
   } = InitializeHooks({ registration });
   useEffect(() => {
@@ -87,6 +82,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         },
         socket
       );
+      setPartialLoading(true);
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [valid]);
@@ -196,11 +192,13 @@ function Grades({
           )}
         </TableBody>
       </CollapsibleTable>
-      {partialLoading ? (
-        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
-      ) : (
-        <p>Notas não são atualizadas em tempo real.</p>
-      )}
+      <Box display={"flex"} justifyContent={"center"}>
+        {partialLoading ? (
+          <CircularProgress style={{ margin: "1rem" }} />
+        ) : (
+          <p></p>
+        )}
+      </Box>
     </React.Fragment>
   );
 }

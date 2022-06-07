@@ -3,29 +3,21 @@ import AppBar from "@material-ui/core/AppBar";
 import Box from "@material-ui/core/Box";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
+import Avatar from "@material-ui/core/Avatar";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import TextField from "@material-ui/core/TextField";
 import makeStyles from "@material-ui/styles/makeStyles";
-const useStyles = makeStyles({
-  profilePicture: {
-    width: "75px",
-    height: "75px",
-    objectFit: "cover",
-    borderRadius: "50%",
-    userSelect: "none",
-  },
-});
+import { UserContext } from "@context/user";
+import { Typography } from "@material-ui/core";
+
 function ResponsiveDrawer({
   handler,
   width,
-  profilePictureURL,
 }: {
   handler: () => void;
   width: number;
-  profilePictureURL: string | undefined;
 }) {
-  const styles = useStyles();
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -36,8 +28,8 @@ function ResponsiveDrawer({
           ml: { sm: `${width}px` },
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <div>
+        <Toolbar>
+          <div style={{position: "absolute"}}>
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -48,23 +40,9 @@ function ResponsiveDrawer({
               <MenuIcon />
             </IconButton>
           </div>
-          <div style={{ width: "25rem" }}>
-            <TextField
-              id="pesquisar"
-              label=""
-              variant="outlined"
-              color="primary"
-              margin="normal"
-              size="small"
-              placeholder="Pesquisar "
-              fullWidth
-            />
-          </div>
-          <div>
-            <IconButton>
-              <img src={profilePictureURL} className={styles.profilePicture} />
-            </IconButton>
-          </div>
+          <Typography variant="h2" fontSize="2rem" textAlign="center" width="100%">
+              sigaa-next-client
+            </Typography>
         </Toolbar>
       </AppBar>
     </Box>

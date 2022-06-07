@@ -14,6 +14,7 @@ import {
   FormHelperText,
   Link,
   Box,
+  Switch,
 } from "@material-ui/core";
 import { AccountCircle, Lock, Send, ArrowBack } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
@@ -165,6 +166,8 @@ function Index(): JSX.Element {
     hasBondAndIsLoggedIn: data[0].program && status === "Logado" ? true : false,
     userIsWaiting: status === "Logando" || status === "Deslogando",
   };
+  const [activeParticles, setActiveParticles] = useState(true)
+  
   return (
     <NoSsr>
       <Head>
@@ -172,7 +175,7 @@ function Index(): JSX.Element {
       </Head>
       <Fade in={true} timeout={1000}>
         <Grid className={styles.container}>
-          <Particulas />
+          <Particulas disable={!activeParticles} />
           <Box className={styles.boxContainer}>
             <Paper
               elevation={4}
@@ -332,6 +335,13 @@ function Index(): JSX.Element {
                   onMouseLeave={toggleGithubIcon}
                 />
               </Link>
+              <Box display="flex" flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+                Particulas
+                <Switch checked={activeParticles} onChange={() => {
+                  // toggle setActiveParticles
+                  setActiveParticles(!activeParticles)
+                }}/>
+                </Box>
             </Box>
           </Box>
         </Grid>

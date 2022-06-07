@@ -12,6 +12,8 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import InboxIcon from "@material-ui/icons/Inbox";
 import { Home } from "@material-ui/icons";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Avatar, IconButton } from "@material-ui/core";
+import { UserContext } from "@context/user";
 function ResponsiveDrawer({
   handler,
   open,
@@ -25,9 +27,14 @@ function ResponsiveDrawer({
   width: number;
   tab: number;
 }) {
+  const {profilePictureURL} = React.useContext(UserContext);
   const drawer = (
     <div>
-      <Toolbar sx={{ height: "91px" }} />
+      <Toolbar sx={{ height: "90px", display: "flex", justifyContent: "center" }}>
+        <IconButton>
+          <Avatar src={profilePictureURL} sx={{ width: "60px", height: "60px" }} variant="circular" />
+        </IconButton>
+      </Toolbar>
       <List sx={{ padding: "0px" }}>
         <Tabs
           orientation="vertical"
@@ -38,11 +45,11 @@ function ResponsiveDrawer({
           onChange={tabChanger}
         >
           <Tab label="Inicio" icon={<Home />} />
+          <Tab label="Notas" icon={<EqualizerIcon />} />
           <Tab label="Horários" icon={<CalendarTodayIcon />} />
-          <Tab label="Desempenho" icon={<EqualizerIcon />} />
           <Tab label="Tarefas" icon={<AssignmentIcon />} />
-          <Tab label="Noticias" icon={<InboxIcon />} />
-          <Tab label="Voltar" icon={<ArrowBackIcon />} />
+          <Tab label="Noticias" icon={<InboxIcon />} disabled />
+          <Tab label="Sair" icon={<ArrowBackIcon />} />
         </Tabs>
       </List>
     </div>

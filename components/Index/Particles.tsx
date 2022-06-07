@@ -9,96 +9,105 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Particulas(): JSX.Element {
+export default function Particulas({
+  disable,
+}: {
+  disable: boolean;
+}): JSX.Element {
   const styles = useStyles();
+
   return (
     <div style={{ width: "100%", height: "100%" }} className={styles.particles}>
-      <Particles
-        style={{ height: "100%" }}
-        options={{
-          background: {
-            color: {
-              value: "#212121",
-            },
-          },
-          fpsLimit: 45,
-          interactivity: {
-            detectsOn: "window",
-            events: {
-              onClick: {
-                enable: true,
-                mode: "repulse",
+      {disable ? (
+        <></>
+      ) : (
+        <Particles
+          style={{ height: "100%" }}
+          options={{
+            background: {
+              color: {
+                value: "#212121",
               },
-              onHover: {
-                enable: true,
-                mode: "grab",
-                parallax: {
+            },
+            fpsLimit: 45,
+            interactivity: {
+              detectsOn: "window",
+              events: {
+                onClick: {
                   enable: true,
-                  smooth: 100,
+                  mode: "repulse",
+                },
+                onHover: {
+                  enable: true,
+                  mode: "grab",
+                  parallax: {
+                    enable: true,
+                    smooth: 100,
+                  },
+                },
+                resize: true,
+              },
+              modes: {
+                grab: {
+                  distance: 200,
+                  lineLinked: {
+                    blink: true,
+                    color: "#25964a",
+                    consent: true,
+                    opacity: 1,
+                  },
+                },
+                repulse: {
+                  distance: 250,
+                  duration: 2,
                 },
               },
-              resize: true,
             },
-            modes: {
-              grab: {
-                distance: 200,
-                lineLinked: {
-                  blink: true,
-                  color: "#25964a",
-                  consent: true,
-                  opacity: 1,
-                },
+            particles: {
+              color: {
+                value: "#74b88b",
               },
-              repulse: {
-                distance: 250,
-                duration: 2,
-              },
-            },
-          },
-          particles: {
-            color: {
-              value: "#74b88b",
-            },
-            links: {
-              color: "#207e3f",
-              distance: 150,
-              enable: true,
-              opacity: 1,
-              width: 1,
-            },
-            collisions: {
-              enable: true,
-              mode: "bounce",
-            },
-            move: {
-              direction: "none",
-              enable: true,
-              outMode: "bounce",
-              random: false,
-              speed: 3,
-              straight: true,
-            },
-            number: {
-              density: {
+              links: {
+                color: "#207e3f",
+                distance: 150,
                 enable: true,
-                value_area: 100,
+                opacity: 1,
+                width: 1,
               },
-              value: 5,
+              collisions: {
+                enable: true,
+                mode: "bounce",
+              },
+              move: {
+                direction: "none",
+                enable: true,
+                outMode: "bounce",
+                random: false,
+                speed: 3,
+                straight: true,
+              },
+              number: {
+                density: {
+                  enable: true,
+                  value_area: 100,
+                },
+                value: 5,
+              },
+              opacity: {
+                value: 1,
+              },
+              shape: {
+                type: "circle",
+              },
+              size: {
+                random: true,
+                value: 7,
+              },
             },
-            opacity: {
-              value: 1,
-            },
-            shape: {
-              type: "circle",
-            },
-            size: {
-              random: true,
-              value: 7,
-            },
-          },
-          detectRetina: true,
-        }}
-      />
+            detectRetina: true,
+          }}
+        />
+      )}
     </div>
   );
 }
