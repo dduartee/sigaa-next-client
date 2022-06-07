@@ -10,30 +10,36 @@ import {
 } from "@material-ui/core";
 import { KeyboardArrowDown } from "@material-ui/icons";
 import moment from "moment";
-export default function Activities({ data }: { data: Bond[] }) {
+export default function Activities({ data, loading }: { data: Bond[], loading: boolean }) {
+
+
   return (
     <>
       <Typography
         variant="h4"
         gutterBottom
-        component="h1"
+        component="h2"
         margin="1rem"
         textAlign="center"
         fontWeight="500"
       >
-        Atividades
+        Principais atividades (15 dias)
       </Typography>
-      {data?.map((bond: Bond) => {
-        const activities = orderByDate(bond.activities);
+      {
+        loading?
+        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
+        :
+      data?.map((bond: Bond) => {
+        const activities = orderByDone(orderByDate(bond.activities))
         return activities?.map((activity: Activity, index) => {
           const diff = getDiffDate(activity.date);
-          const date = moment(activity.date).format("DD/MM/YYYY");
-          if (diff < 0) {
+          const date = moment(activity.date).utcOffset(0).format("DD/MM/YYYY HH:mm")
+          if (diff <= 0) {
             return (
               <ActivityCollapse
                 key={index}
                 activity={activity}
-                diff={diff}
+                diffday={diff}
                 date={date}
               />
             );
@@ -45,13 +51,15 @@ export default function Activities({ data }: { data: Bond[] }) {
 }
 function ActivityCollapse({
   activity,
-  diff,
+  diffday,
   date,
 }: {
   activity: Activity;
-  diff: number;
+  diffday: number;
   date: string;
 }) {
+  const done = activity.done;
+  const diff = Math.abs(diffday)
   let type;
   switch (activity.type) {
     case "exam":
@@ -64,6 +72,8 @@ function ActivityCollapse({
       type = "Questionário";
       break;
   }
+  const today = diff === 0
+  const oneDay = diff === 1
   return (
     <Box>
       <Box
@@ -77,7 +87,7 @@ function ActivityCollapse({
       >
         <Box display="flex" margin="0.5rem">
           <Typography variant="h6" gutterBottom component="h2">
-            {`${activity.course.title} - ${type}: ${activity.description}`}
+          {done?<s>{`${activity.course.title} - ${type}: ${activity.description}`}</s>:<span>{`${activity.course.title} - ${type}: ${activity.description}`}</span>}
           </Typography>
         </Box>
         <Box
@@ -92,7 +102,7 @@ function ActivityCollapse({
             margin="0.2rem"
             sx={{ whiteSpace: "nowrap" }}
           >
-            {`(${Math.abs(diff)} dias)`}
+            {`(${today ? "": diff}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}
           </Typography>
           <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
             {`${date}`}
@@ -112,5 +122,11 @@ function orderByDate(activities: Activity[]) {
     const aDate = new Date(a.date);
     const bDate = new Date(b.date);
     return aDate < bDate ? -1 : aDate > bDate ? 1 : 0;
+  });
+}
+
+function orderByDone(activities: Activity[]) {
+  return activities.sort((a, b) => {
+    return a.done < b.done ? -1 : a.done > b.done ? 1 : 0;
   });
 }

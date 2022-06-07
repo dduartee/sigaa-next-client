@@ -21,14 +21,13 @@ const StyledContent = styled(Box)(({ theme }) => ({
 export default function HomeTemplate({
   children,
   tab,
-  setTab,
+  setTab
 }: {
   children: React.ReactNode;
   tab: number;
   setTab: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const user = useContext(UserContext);
   const tabChanger = (event: any, newValue: number) => {
     setTab(newValue);
   };
@@ -44,7 +43,6 @@ export default function HomeTemplate({
         <CustomNavBar
           handler={handleDrawerToggle}
           width={drawerWidth}
-          profilePictureURL={user.profilePictureURL}
         />
         <CustomDrawer
           tabChanger={tabChanger}

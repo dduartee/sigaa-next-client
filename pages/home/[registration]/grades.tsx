@@ -1,17 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { LoadingContext } from "@context/loading";
-import useCourseEvents, {
-  emitCourseList,
-} from "@hooks/courses/useCourseEvents";
 import { Bond, Course } from "@types";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -47,10 +40,11 @@ function InitializeHooks({ registration }: { registration: string }) {
     registration,
     valid,
   });
-  const { data, partialLoading } = useGradesEvents();
+  const { data, partialLoading, setPartialLoading } = useGradesEvents();
   return {
     data,
     partialLoading,
+    setPartialLoading,
     loading,
     setLoading,
     user,
@@ -74,7 +68,8 @@ export default function GradesPage({ registration }: { registration: string }) {
     setUser,
     setValid,
     setLoading,
-    setTab,
+    setPartialLoading,
+    setTab
   } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
@@ -87,6 +82,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         },
         socket
       );
+      setPartialLoading(true)
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [valid]);

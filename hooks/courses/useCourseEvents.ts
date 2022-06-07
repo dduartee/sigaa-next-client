@@ -2,7 +2,7 @@ import { Bond, UserInfo, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
-export default function useCourseEvents() {
+export default function useCourseEvents(setLoading: React.Dispatch<React.SetStateAction<boolean>>) {
   const [data, setData] = useState<Bond[]>([
     {
       program: "",
@@ -18,13 +18,13 @@ export default function useCourseEvents() {
     socket.on("courses::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
       setData(bondsJSON);
+      setLoading(false)
     });
     socket.on("activities::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
       setData(bondsJSON);
-      console.log(bondsJSON)
+      setLoading(false)
     });
-    return () => {};
   }, [setData]);
 
   return { data, setData, partialLoading, setPartialLoading };

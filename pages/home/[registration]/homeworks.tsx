@@ -1,17 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import Home from "@templates/Home";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { UserContext } from "@context/user";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { DataContext } from "@context/data";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { LoadingContext } from "@context/loading";
-import useCourseEvents, {
-  emitCourseList,
-} from "@hooks/courses/useCourseEvents";
 import { Bond, Course, Homework } from "@types";
 import {
   Box,
@@ -82,7 +75,7 @@ export default function HomeworksPage({
         {
           token: localStorage.getItem("token"),
           registration,
-          fullHW: false,
+          fullHW: true,
           inactive: false,
           cache: true,
         },

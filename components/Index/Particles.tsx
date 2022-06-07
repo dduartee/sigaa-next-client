@@ -11,6 +11,9 @@ const useStyles = makeStyles({
 
 export default function Particulas(): JSX.Element {
   const styles = useStyles();
+  /**
+   * 
+   
   return (
     <div style={{ width: "100%", height: "100%" }} className={styles.particles}>
       <Particles
@@ -101,4 +104,8 @@ export default function Particulas(): JSX.Element {
       />
     </div>
   );
+  */
+  return (
+    <></>
+  )
 }
