@@ -160,10 +160,10 @@ function Index(): JSX.Element {
     hasFullNameAndIsLoggedIn:
       (user.fullName ? true : false) && (status === "Logado" ? true : false),
     hasBondAndIsLoggedIn: data[0].program && status === "Logado" ? true : false,
-    userIsWaiting: status === "Logando" || status === "Deslogando",
+    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user.fullName || data[0]?.program)) ? true : false,
   };
   const [activeParticles, setActiveParticles] = useState(true)
-  
+
   return (
     <NoSsr>
       <Head>
@@ -336,8 +336,8 @@ function Index(): JSX.Element {
                 <Switch checked={activeParticles} onChange={() => {
                   // toggle setActiveParticles
                   setActiveParticles(!activeParticles)
-                }}/>
-                </Box>
+                }} />
+              </Box>
             </Box>
           </Box>
         </Grid>
