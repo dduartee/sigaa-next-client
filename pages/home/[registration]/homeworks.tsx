@@ -27,7 +27,7 @@ function InitializeHooks({ registration }: { registration: string }) {
   useTokenHandler(setValid);
   const { user, setUser } = useUserHandler({ valid });
   const [loading, setLoading] = useState(false);
-  const { data, partialLoading, partialLoadingDescription } =
+  const { data, partialLoading, partialLoadingDescription, setPartialLoading } =
     useHomeworksEvents();
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
@@ -43,6 +43,7 @@ function InitializeHooks({ registration }: { registration: string }) {
     setLoading,
     data,
     partialLoading,
+    setPartialLoading,
     partialLoadingDescription,
     tab,
     setTab,
@@ -64,6 +65,7 @@ export default function HomeworksPage({
     setLoading,
     data,
     partialLoading,
+    setPartialLoading,
     partialLoadingDescription,
     tab,
     setTab,
@@ -81,6 +83,7 @@ export default function HomeworksPage({
         },
         socket
       );
+      setPartialLoading(true)
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [valid]);
@@ -144,11 +147,13 @@ function Homeworks({
           })
         )
       )}
-      {partialLoading ? (
-        <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
-      ) : (
-        <p>Tarefas não são atualizadas em tempo real.</p>
-      )}
+      <Box display={"flex"} justifyContent={"center"}>
+        {partialLoading ? (
+          <CircularProgress style={{ margin: "1rem" }} />
+        ) : (
+          <p></p>
+        )}
+      </Box>
     </>
   );
 }
