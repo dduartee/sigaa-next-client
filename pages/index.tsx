@@ -98,7 +98,6 @@ function Index(): JSX.Element {
   const { error, setError } = useAPIHandler();
   useEffect(() => {
     if (valid) {
-      console.log({ valid });
       setCredentialsMerge({
         name: "token",
         value: localStorage.getItem("token"),
@@ -111,9 +110,6 @@ function Index(): JSX.Element {
     }
   }, [valid, socket]);
   useEffect(() => {
-    socket.onAny((...args: any[]) => {
-      console.log(args);
-    });
     socket.on("auth::store", (token: string) => {
       localStorage.setItem("token", token);
       setCredentialsMerge({ name: "token", value: token });
@@ -279,7 +275,7 @@ function Index(): JSX.Element {
               <CardBottom>
                 {conditionals.userIsWaiting ? ( // usuario esta "esperando" o login ou logout
                   <CircularProgress style={{ alignSelf: "center" }} />
-                ) : conditionals.isLoggedIn ? ( // usuario esta logado
+                ) : conditionals.hasBondAndIsLoggedIn ? ( // usuario esta logado
                   <Grid
                     justifyContent="center"
                     alignContent="center"
