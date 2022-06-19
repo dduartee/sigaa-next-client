@@ -160,7 +160,7 @@ function Index(): JSX.Element {
     hasFullNameAndIsLoggedIn:
       (user.fullName ? true : false) && (status === "Logado" ? true : false),
     hasBondAndIsLoggedIn: data[0].program && status === "Logado" ? true : false,
-    userIsWaiting: status === "Logando" || status === "Deslogando" || !(data[0].program && user.fullName && !(status === "Logado" ? true : false)),
+    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user.fullName || data[0].program)) ? true : false,
   };
   const [activeParticles, setActiveParticles] = useState(true)
 
