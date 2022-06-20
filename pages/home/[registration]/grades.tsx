@@ -78,6 +78,7 @@ export default function GradesPage({ registration }: { registration: string }) {
           registration,
           id: "grades",
           cache: true,
+          inactive: true,
           token: localStorage.getItem("token"),
         },
         socket

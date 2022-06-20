@@ -46,7 +46,7 @@ export default function RegistrationPage({
     if (!valid) window.location.href = "/";
     else {
       emitActivitiesList(
-        { token: localStorage.getItem("token"), registration, inactive: false },
+        { token: localStorage.getItem("token"), registration, inactive: true },
         socket
       );
       setActivitiesLoading(true)

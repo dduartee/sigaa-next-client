@@ -34,9 +34,9 @@ export default function useGradesEvents() {
 export function emitGradesList(params: {
   token: string | null;
   registration: string;
+  inactive?: boolean;
   id: string;
   cache: boolean;
 }, socket: Socket) {
-  console.log("grades::list")
   socket.emit('grades::list', params)
 }

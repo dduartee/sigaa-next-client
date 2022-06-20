@@ -43,7 +43,7 @@ export default function RegistrationPage({
     if (!valid) window.location.href = "/";
     else {
       emitCourseList(
-        { token: localStorage.getItem("token"), registration },
+        { token: localStorage.getItem("token"), registration, inactive: true },
         socket
       );
       emitUserInfo({ token: localStorage.getItem("token") }, socket);

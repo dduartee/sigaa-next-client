@@ -78,7 +78,7 @@ export default function HomeworksPage({
           token: localStorage.getItem("token"),
           registration,
           fullHW: true,
-          inactive: false,
+          inactive: true,
           cache: true,
         },
         socket

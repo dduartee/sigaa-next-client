@@ -51,7 +51,7 @@ export default function SchedulesPage({ registration }: { registration: string }
   useEffect(() => {
     if (valid) {
       emitCourseList(
-        { token: localStorage.getItem("token"), registration },
+        { token: localStorage.getItem("token"), registration, inactive: true },
         socket
       );
       emitUserInfo({ token: localStorage.getItem("token") }, socket);

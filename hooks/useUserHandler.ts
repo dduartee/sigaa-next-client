@@ -23,7 +23,7 @@ export default function useUserHandler({ valid }: { valid: boolean }) {
         emitBondList(
           {
             token: localStorage.getItem("token"),
-            inactive: false,
+            inactive: true,
           },
           socket
         );

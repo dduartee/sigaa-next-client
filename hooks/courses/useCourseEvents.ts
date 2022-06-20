@@ -34,6 +34,7 @@ export function emitCourseList(
   params: {
     token: string | null;
     registration: string;
+    inactive: boolean;
   },
   socket: Socket
 ) {
