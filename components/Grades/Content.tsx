@@ -109,7 +109,7 @@ export default function Grades({
             </StyledTableRow>
           </TableHead>
           <TableBody>
-            {periods.map((period, key) => (
+            {periods?.map((period, key) => (
               <Period
                 period={period}
                 program={bond.program}
