@@ -14,10 +14,7 @@ import {
   TableContainer,
   Typography,
 } from "@material-ui/core";
-import {
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-} from "@material-ui/icons";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -90,11 +87,14 @@ export default function Grades({
   const [coursesByPeriod, setCoursesByPeriod] = React.useState<
     Map<string, Course[]>
   >(new Map<string, Course[]>());
-  const [periods] = React.useState<string[]>(Array.from(coursesByPeriod.keys()));
+  const [periods, setPeriods] = React.useState<string[]>();
   useEffect(() => {
     setGradesIndex(formatGradesIndex(bond));
     setCoursesByPeriod(groupBy(bond.courses, (course) => course.period));
   }, [bond]);
+  useEffect(() => {
+    setPeriods(Array.from(coursesByPeriod.keys()));
+  }, [coursesByPeriod]);
   return (
     <React.Fragment>
       <TableContainer>
@@ -245,7 +245,7 @@ function CourseRow(props: { course: Course; gradesIndex: string[] }) {
               </Typography>
               <Table>
                 <TableHead>
-                  <StyledTableRow >
+                  <StyledTableRow>
                     {course?.grades?.map((gradeGroup, key) =>
                       gradeGroup.grades?.map((grade, key) => {
                         return (
