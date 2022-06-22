@@ -90,16 +90,11 @@ export default function Grades({
   const [coursesByPeriod, setCoursesByPeriod] = React.useState<
     Map<string, Course[]>
   >(new Map<string, Course[]>());
-  const [periods, setPeriods] = React.useState<string[]>([]);
+  const [periods] = React.useState<string[]>(Array.from(coursesByPeriod.keys()));
   useEffect(() => {
     setGradesIndex(formatGradesIndex(bond));
     setCoursesByPeriod(groupBy(bond.courses, (course) => course.period));
   }, [bond]);
-  useEffect(() => {
-    for (const period of coursesByPeriod.keys()) {
-      setPeriods((prev) => [...prev, period]);
-    }
-  }, [coursesByPeriod]);
   return (
     <React.Fragment>
       <TableContainer>
