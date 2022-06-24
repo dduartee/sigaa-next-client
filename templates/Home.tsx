@@ -13,7 +13,7 @@ import { LoadingContext } from "@context/loading";
 
 const StyledContent = styled(Box)(({ theme }) => ({
   width: "80%",
-  [theme.breakpoints.down(1024)]: {
+  [theme.breakpoints.down(1140)]: {
     width: "100%",
   },
 }));

@@ -1,3 +1,3 @@
 {
-  "SOCKET_URL": "wss://sigaa-socket-api.herokuapp.com"
+  "SOCKET_URL": "wss://api.sigaa-next.duckdns.org"
 }
