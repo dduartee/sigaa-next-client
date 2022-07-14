@@ -27,8 +27,11 @@ export default function useHomeworksEvents() {
       setPartialLoading(false);
       setData(bondsJSON);
     });
-    return () => {};
-  }, [setData]);
+    return () => {
+      socket.off("homeworks::listPartial");
+      socket.off("homeworks::list");
+    };
+  }, [socket]);
 
   return {
     data,

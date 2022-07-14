@@ -25,8 +25,11 @@ export default function useGradesEvents() {
       setPartialLoading(true);
       setData(bondsJSON);
     });
-    return () => {};
-  }, [setData]);
+    return () => {
+      socket.off("grades::list");
+      socket.off("grades::listPartial");
+    };
+  }, [socket]);
 
   return { data, setData, partialLoading, setPartialLoading };
 }

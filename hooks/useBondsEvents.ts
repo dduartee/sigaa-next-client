@@ -17,9 +17,14 @@ export default function useBondsHandler() {
   useEffect(() => {
     socket.on("bonds::list", (data: string) => {
       const bondsJSON = JSON.parse(data);
+      console.debug(bondsJSON)
       setData(bondsJSON);
     });
-  }, []);
+    return () => {
+      socket.off("bonds::list");
+    }
+
+  }, [socket]);
   return { data };
 }
 

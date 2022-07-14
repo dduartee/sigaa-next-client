@@ -25,7 +25,11 @@ export default function useCourseEvents(setLoading: React.Dispatch<React.SetStat
       setData(bondsJSON);
       setLoading(false)
     });
-  }, [setData]);
+    return () => {
+      socket.off("courses::list");
+      socket.off("activities::list");
+    }
+  }, [setLoading, socket]);
 
   return { data, setData, partialLoading, setPartialLoading };
 }

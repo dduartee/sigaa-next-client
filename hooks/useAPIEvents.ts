@@ -1,4 +1,3 @@
-import { Bond, UserInfo, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 
@@ -13,6 +12,10 @@ export default function useAPIHandler() {
       setError(true);
       console.error(data);
     });
-  }, []);
+    return () => {
+      socket.off("api::info");
+      socket.off("api::error");
+    }
+  }, [socket]);
   return { error, setError };
 }

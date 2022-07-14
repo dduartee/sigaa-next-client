@@ -5,7 +5,8 @@ export type UserCredentials = {
 };
 export type UserInfo = {
   fullName?: string;
-  profilePictureURL?: string | undefined;
+  profilePictureURL?: string;
+  emails?: string[];
 };
 export type UserStatus = "Logado" | "Deslogado" | "Logando" | "Deslogando";
 

@@ -20,10 +20,10 @@ export default function useTabHandler({
       case 0:
         route = `/home/${registration}/`;
         break;
-        case 1:
+      case 1:
         route = `/home/${registration}/grades`;
         break;
-        case 2:
+      case 2:
         route = `/home/${registration}/schedules`;
         break;
       case 3:
@@ -36,8 +36,8 @@ export default function useTabHandler({
         route = "/";
         break;
     }
-    router.push(route, undefined,);
+    router.push(route);
     setLoading(false);
-  }, [tab, valid]);
+  }, [registration, setLoading, tab]);
   return { tab, setTab, order, valid, setLoading, registration };
 }

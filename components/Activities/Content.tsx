@@ -38,21 +38,27 @@ export default function Activities({
           <Box>
             {data?.map((bond: Bond) => {
               const activities = orderByDone(orderByDate(bond.activities));
-              return activities?.map((activity: Activity, index) => {
+              if (activities.length === 0) return (<Typography
+                textAlign="center"
+                fontWeight="500"
+                fontSize={"1.5rem"}
+                margin=".5rem"
+              >
+                Nenhuma atividade para os próximos 15 dias
+              </Typography>)
+              else return activities?.map((activity: Activity, index) => {
                 const diff = getDiffDate(activity.date);
                 const date = moment(activity.date)
                   .utcOffset(0)
                   .format("DD/MM/YYYY HH:mm");
-                if (diff <= 0) {
-                  return (
-                    <ActivityCollapse
-                      key={index}
-                      activity={activity}
-                      diffday={diff}
-                      date={date}
-                    />
-                  );
-                }
+                return (
+                  <ActivityCollapse
+                    key={index}
+                    activity={activity}
+                    diffday={diff}
+                    date={date}
+                  />
+                );
               });
             })}
           </Box>
@@ -71,7 +77,6 @@ function ActivityCollapse({
   date: string;
 }) {
   const done = activity.done;
-  const diff = Math.abs(diffday);
   let type;
   switch (activity.type) {
     case "exam":
@@ -84,8 +89,9 @@ function ActivityCollapse({
       type = "Questionário";
       break;
   }
-  const today = diff === 0;
-  const oneDay = diff === 1;
+  const today = diffday === 0;
+  const oneDay = diffday === 1;
+  const finish = diffday > 0;
   return (
     <Box>
       <Box
@@ -118,9 +124,11 @@ function ActivityCollapse({
             margin="0.2rem"
             sx={{ whiteSpace: "nowrap" }}
           >
-            {`(${today ? "" : diff}${
-              today ? "Hoje" : oneDay ? " dia" : " dias"
-            })`}
+            {!finish ? (
+              <span>{`(${today ? "" : diffday}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}</span>
+            ) : (
+              <span>{`${diffday} dias atrás`}</span>
+            )}
           </Typography>
           <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
             {`${date}`}

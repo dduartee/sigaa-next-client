@@ -11,7 +11,13 @@ export default function useUserHandler({ valid }: { valid: boolean }) {
     profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png",
   });
   const socket = useContext(SocketContext);
-
+  useEffect(() => {
+    const user = {
+      fullName: localStorage.getItem("fullName") || "",
+      profilePictureURL: localStorage.getItem("profilePictureURL") || "",
+    }
+    setUser(user);
+  }, [])
   useEffect(() => {
     socket.on("user::status", (status: UserStatus) => {
       setStatus(status);
@@ -31,9 +37,17 @@ export default function useUserHandler({ valid }: { valid: boolean }) {
     });
     socket.on("user::info", (data: string) => {
       const { fullName, profilePictureURL } = JSON.parse(data);
+      localStorage.setItem("fullName", fullName);
+      localStorage.setItem("profilePictureURL", profilePictureURL);
       setUser({ fullName, profilePictureURL });
     });
-  }, [valid, setUser, setStatus]);
+    return () => {
+      socket.off("user::status");
+      socket.off("user::login");
+      socket.off("user::info");
+    }
+
+  }, [socket]);
   return { user, status, setUser, setStatus };
 }
 
