@@ -53,7 +53,7 @@ export default function Courses({ bond, loading }: { bond: Bond | null, loading:
 function CourseContent(props: { course: Course }) {
   const [content, setContent] = React.useState<React.ReactNode>(null);
   const loadContent = () => {
-    setContent(<div>Carregando conteúdo...</div>);
+    setContent(<div></div>);
   }
   return (
     <AccordionCourse title={props.course.title} loadContent={loadContent}>
