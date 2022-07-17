@@ -1,18 +1,27 @@
-import { Bond, UserInfo, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 
 export default function useAPIHandler() {
   const socket = useContext(SocketContext);
   const [error, setError] = useState(false);
+  const [errorFeedback, setErrorFeedback] = useState("");
   useEffect(() => {
     socket.on("api::info", (data: string) => {
-      //console.info(JSON.parse(data));
+      //console.info(data);
     });
     socket.on("api::error", (data: string) => {
-      setError(true);
-      console.error(data);
+      if (data === 'SIGAA: Invalid credentials.') {
+        setError(true);
+        setErrorFeedback(data);
+      } else if(data === 'SIGAA: Session expired.') {
+        setError(false);
+        setErrorFeedback(data);
+      }
     });
-  }, []);
-  return { error, setError };
+    return () => {
+      socket.off("api::info");
+      socket.off("api::error");
+    }
+  }, [socket]);
+  return { error, setError, errorFeedback, setErrorFeedback };
 }

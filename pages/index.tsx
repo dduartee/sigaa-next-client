@@ -9,16 +9,13 @@ import {
   Fade,
   ToggleButton,
   ToggleButtonGroup,
-  Grow,
   FormControl,
   FormHelperText,
-  Link,
   Box,
-  Switch,
+  Typography,
 } from "@material-ui/core";
-import { AccountCircle, Lock, Send, ArrowBack } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
-import { UserCredentials } from "@types";
+import { AccountCircle, Lock, Send, ArrowBack, Info } from "@material-ui/icons";
+import { Bond, UserCredentials } from "@types";
 import Particulas from "@components/Index/Particles";
 import { SocketContext } from "@context/socket";
 import { Input, InputBox } from "@components/Index/Input";
@@ -30,40 +27,8 @@ import useBondsHandler from "@hooks/useBondsEvents";
 import { useRouter } from "next/router";
 import useAPIHandler from "@hooks/useAPIEvents";
 import Head from "next/head";
-const useStyles = makeStyles({
-  container: {
-    display: "flex",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100vw",
-    height: "100vh",
-  },
-  boxContainer: {
-    position: "absolute",
-    display: "flex",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
-  },
-  paperCard: {
-    display: "flex",
-    flexDirection: "column",
-    alignContent: "center",
-    width: "20rem",
-  },
-  profilePicture: {
-    width: "100px",
-    height: "100px",
-    objectFit: "cover",
-    borderRadius: "50%",
-    marginTop: "-50px",
-    userSelect: "none",
-  },
-});
-
+import { Ajuda } from "@components/Ajuda";
+import { Donate } from "@components/Donate";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -71,63 +36,67 @@ function Index(): JSX.Element {
     password: "",
     token: "",
   });
-  const [vinculo, setVinculo] = useState("");
+  const [registrationSelected, setRegistrationSelected] = useState<string>("");
+  const [openHelp, setOpenHelp] = useState<boolean>(false);
+  const [openDonate, setOpenDonate] = useState<boolean>(false);
 
-  const handleChangeVinculo = (
-    event: React.MouseEvent<HTMLElement>,
-    nextVinculo: string
-  ) => {
-    setVinculo(nextVinculo);
-  };
-  const handleChange = (event?: any) => setCredentialsMerge(event.target);
-
-  const setCredentialsMerge = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: any;
-  }) => {
-    setCredentials({ ...credentials, [name]: value } as UserCredentials);
-  };
   const socket = useContext(SocketContext);
   const [valid, setValid] = useState(false);
   useTokenHandler(setValid);
-  const { status, user, setStatus } = useUserHandler({ valid });
-  const { data } = useBondsHandler();
+  const { status, user, setStatus } = useUserHandler();
+  const { bonds } = useBondsHandler();
   const { error, setError } = useAPIHandler();
+
   useEffect(() => {
     if (valid) {
-      setCredentialsMerge({
-        name: "token",
-        value: localStorage.getItem("token"),
-      });
-      socket.emit("user::login", {
-        token: localStorage.getItem("token"),
-        username: "",
-        password: "",
-      }); // tenta logar pelo cache
+      console.debug("@validUseEffect", valid);
+      socket.emit("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo token
     }
-  }, [valid, socket]);
+  }, [valid, socket, setStatus]);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
-      localStorage.setItem("token", token);
-      setCredentialsMerge({ name: "token", value: token });
+      setCredentials({ token, password: "", username: "" })
     });
-  }, [socket, setCredentialsMerge]);
+  }, [socket]);
   useEffect(() => {
-    setVinculo(data[0].registration);
-  }, [data]);
+    if (bonds.length != 0) {
+      setRegistrationSelected(bonds[0].registration);
+    }
+  }, [bonds]);
+  const [donateTimeout, setDonateTimeout] = useState<NodeJS.Timeout>();
+  useEffect(() => {
+    if (status === "Logando") {
+      setOpenDonate(true)
+    }
+    if (bonds[0]?.registration && user?.fullName) {
+      setDonateTimeout(setTimeout(() => {
+        setOpenDonate(false)
+      }, 2500))
+    }
+    if (error) {
+      setOpenDonate(false)
+    }
+  }, [bonds, user, status, error])
+  useEffect(() => {
+    if (!openDonate && donateTimeout) {
+      clearTimeout(donateTimeout)
+    }
+  }, [donateTimeout, openDonate])
+  useEffect(() => {
+    if (!registrationSelected && bonds.length != 0) setRegistrationSelected(bonds[0].registration);
+  }, [bonds, registrationSelected]);
   const handleLogin = () => {
-    setStatus("Logando");
-    socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+    if (credentials.username && credentials.password) {
+      setStatus("Logando");
+      socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+    } else {
+      setError(true);
+    }
   };
   const handleAccess = () => {
     setStatus("Logando");
     setError(false);
-    router.push(`/home/${encodeURIComponent(vinculo)}`, undefined, {
-      shallow: true,
-    });
+    router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
   };
   const handleLogout = () => {
     setError(false);
@@ -135,215 +104,282 @@ function Index(): JSX.Element {
     setCredentials({ username: "", password: "", token: "" });
     localStorage.removeItem("token");
   };
-  const handleKeyPress = (event: any) => {
-    if (event.key === "Enter") {
-      handleLogin();
-    }
-    setError(false);
-  };
-  const [hoverGithubIcon, setHoverGithubIcon] = useState(false);
-  const toggleGithubIcon = (event: any) => {
-    setHoverGithubIcon(!hoverGithubIcon);
-  };
-  useEffect(() => {
-    if (!vinculo) setVinculo(data[0].registration);
-  }, [vinculo]);
 
-  const styles = useStyles();
   const conditionals = {
     willLogout: status === "Deslogando",
     willLogin: status === "Logando",
     isLoggedIn: status === "Logado",
-    isLoggedOut: status === "Deslogado",
-    hasFullName: user.fullName ? true : false,
-    hasBond: data[0].program ? true : false,
+    isLoggedOut: status === "Deslogado" && !openHelp,
+    hasFullName: user?.fullName ? true : false,
+    hasBond: bonds.length != 0 ? true : false,
     hasFullNameAndIsLoggedIn:
-      (user.fullName ? true : false) && (status === "Logado" ? true : false),
-    hasBondAndIsLoggedIn: data[0].program && status === "Logado" ? true : false,
-    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user.fullName || data[0]?.program)) ? true : false,
+      (user?.fullName ? true : false) && (status === "Logado" ? true : false),
+    hasBondAndIsLoggedIn: bonds.length != 0 && status === "Logado" ? true : false,
+    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user?.fullName || bonds.length != 0)) ? true : false,
   };
-  const [activeParticles, setActiveParticles] = useState(true)
 
+  const [activeParticles, setActiveParticles] = useState(true);
+  useEffect(() => {
+    localStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
+  }, [])
+  const [increaseBoxSize, setIncreaseBoxSize] = useState(openHelp || openDonate);
+  useEffect(() => setIncreaseBoxSize(openHelp || openDonate), [openHelp, openDonate])
+  const [openCardBody, setOpenCardBody] = useState(!openHelp && !openDonate);
+  useEffect(() => setOpenCardBody(!openHelp && !openDonate), [openHelp, openDonate])
   return (
     <NoSsr>
       <Head>
         <title>Login | sigaa-next-client</title>
       </Head>
-      <Fade in={true} timeout={1000}>
-        <Grid className={styles.container}>
+      <Fade in={true} timeout={500}>
+        <Grid display={"flex"}
+          alignContent={"center"}
+          justifyContent={"center"}
+          width={"100vw"}
+          height={"100vh"}>
           <Particulas disable={!activeParticles} />
-          <Box className={styles.boxContainer}>
+          <Box display={"flex"}
+            alignContent={"center"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDirection={"column"}
+            height={"100%"}
+            maxWidth={"100vw"}
+            position={"absolute"}>
             <Paper
               elevation={4}
-              className={styles.paperCard}
-              style={{ borderRadius: "10px" }}
+              sx={{
+                borderRadius: "10px",
+                boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+                display: "flex",
+                flexDirection: "column",
+                alignContent: "center",
+                width: increaseBoxSize ? "97%" : "20rem",
+                maxWidth: "700px",
+                overflowY: increaseBoxSize?"scroll":"visible",
+                height: "fit-content"
+              }}
             >
-              <Fade in={conditionals.hasFullNameAndIsLoggedIn}>
-                <Collapse
-                  in={conditionals.hasFullNameAndIsLoggedIn}
-                  sx={
-                    user.fullName
-                      ? { overflow: "visible" }
-                      : { overflow: "hidden" }
-                  }
-                >
-                  <CardHeader>
-                    <img
-                      src={user.profilePictureURL}
-                      className={styles.profilePicture}
-                    />
-                    <p style={{ fontSize: "1.25rem" }}>{user.fullName}</p>
-                  </CardHeader>
-                </Collapse>
-              </Fade>
-              <Collapse in={conditionals.isLoggedOut}>
-                <LoginBox onChange={handleChange} onKeyPress={handleKeyPress}>
-                  <InputBox
-                    icon={<AccountCircle />}
-                    input={
-                      <FormControl fullWidth>
-                        <Input
-                          label="Usuário"
-                          type="text"
-                          name="username"
-                          value={credentials.username}
-                          error={error ? true : false}
-                        />
-                        <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
-                          Seu usuário do SIGAA
-                        </FormHelperText>
-                      </FormControl>
-                    }
-                  />
-                  <InputBox
-                    icon={<Lock />}
-                    input={
-                      <FormControl fullWidth>
-                        <Input
-                          label="Senha"
-                          type="password"
-                          name="password"
-                          value={credentials.password}
-                          error={error ? true : false}
-                        />
-                        <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
-                          Sua senha do SIGAA
-                        </FormHelperText>
-                      </FormControl>
-                    }
-                  />
-                </LoginBox>
-              </Collapse>
-              <Collapse in={conditionals.hasBondAndIsLoggedIn}>
-                <Grow in={conditionals.hasBondAndIsLoggedIn} timeout={500}>
-                  <div>
-                    <p style={{ textAlign: "center" }}>
-                      Escolha um vínculo para acessar
-                    </p>
-                    <Grow in={conditionals.hasBondAndIsLoggedIn} timeout={750}>
-                      <ToggleButtonGroup
-                        exclusive
-                        aria-label=""
-                        value={vinculo}
-                        onChange={handleChangeVinculo}
-                        orientation="vertical"
+              <Collapse in={openHelp} timeout={500}>
+                {openHelp ?
+                  <Box>
+                    <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
+                    <CardBottom>
+                      <Button
+                        variant="outlined"
+                        startIcon={<ArrowBack />}
+                        onClick={() => setOpenHelp(false)}
                       >
-                        {data?.map((value, index) => {
-                          return (
-                            <ToggleButton
-                              key={index}
-                              value={value.registration}
-                              style={{
-                                marginTop: ".5rem",
-                                marginLeft: "1rem",
-                                marginRight: "1rem",
-                                marginBottom: ".5rem",
-                                border: "1px solid rgba(255, 255, 255, 0.12)",
-                                borderRadius: "4px",
-                                color: "#fff",
-                              }}
-                            >
-                              {value.program}
-                            </ToggleButton>
-                          );
-                        })}
-                      </ToggleButtonGroup>
-                    </Grow>
-                  </div>
-                </Grow>
+                        Voltar
+                      </Button>
+                    </CardBottom>
+                  </Box>
+                  : null}
               </Collapse>
-              <CardBottom>
-                {conditionals.userIsWaiting ? ( // usuario esta "esperando" o login ou logout
-                  <CircularProgress style={{ alignSelf: "center" }} />
-                ) : conditionals.hasBondAndIsLoggedIn ? ( // usuario esta logado
-                  <Grid
-                    justifyContent="center"
-                    alignContent="center"
-                    display="flex"
-                  >
-                    <Button
-                      variant="contained"
-                      startIcon={<ArrowBack direction="right" />}
-                      onClick={handleLogout}
-                      fullWidth
-                      sx={{ margin: ".25rem" }}
-                    >
-                      Sair
-                    </Button>
-                    <Button
-                      variant="contained"
-                      endIcon={<Send />}
-                      fullWidth
-                      sx={{ margin: ".25rem" }}
-                      onClick={handleAccess}
-                    >
-                      Acessar
-                    </Button>
-                  </Grid>
-                ) : conditionals.isLoggedOut ? ( // usuario esta deslogado
-                  <Button
-                    variant="outlined"
-                    endIcon={<Send />}
-                    onClick={handleLogin}
-                    fullWidth
-                  >
-                    Login
-                  </Button>
+              <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
+                {
+                  (user?.profilePictureURL && user?.fullName) ? (
+
+                    <CardHeader>
+                      <img
+                        src={user.profilePictureURL}
+                        style={{
+                          boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.4)",
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                          marginTop: "-50px",
+                          userSelect: "none",
+                        }}
+                      />
+                      <Typography fontSize="1.3rem" marginTop={2}>{user.fullName}</Typography>
+                    </CardHeader>
+                  ) : null
+                }
+              </Collapse>
+              <Collapse /** Collapse para a tela de vinculos e botoes */
+                in={conditionals.hasFullNameAndIsLoggedIn && openCardBody}
+                unmountOnExit
+              >
+                <>
+                  <BondSelection registrationSelected={registrationSelected} setRegistrationSelected={setRegistrationSelected} bonds={bonds} />
+                  <CardBottom>
+                    <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
+                  </CardBottom>
+                </>
+              </Collapse>
+              <Collapse in={conditionals.isLoggedOut}>
+                {conditionals.isLoggedOut ? (
+                  <LoginCard handleLogin={handleLogin}
+                    setOpenHelp={setOpenHelp}
+                    credentials={credentials}
+                    setCredentials={setCredentials}
+                    error={error}
+                    setError={setError} />
                 ) : null}
-              </CardBottom>
+              </Collapse>
+
+
+              {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
+                <CardBottom>
+                  <Box display={"flex"} flexDirection="column">
+                    <Collapse in={openDonate} timeout={1000}>
+                      <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem" />
+                    </Collapse>
+                    <CircularProgress style={{ alignSelf: "center" }} />
+                  </Box>
+                </CardBottom>
+              ) : null}
+
             </Paper>
-            <Box
-              position="absolute"
-              bottom="0"
-              width="100%"
-              display="flex"
-              justifyContent="center"
-            >
-              <Link href="https://github.com/dduartee/sigaa-next-client">
-                <img
-                  src={
-                    hoverGithubIcon
-                      ? "/img/GitHub-Mark-Light-64px.png"
-                      : "/img/GitHub-Mark-64px.png"
-                  }
-                  aria-label="Github"
-                  onMouseEnter={toggleGithubIcon}
-                  onMouseLeave={toggleGithubIcon}
-                />
-              </Link>
-              <Box display="flex" flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
-                Particulas
-                <Switch checked={activeParticles} onChange={() => {
-                  // toggle setActiveParticles
-                  setActiveParticles(!activeParticles)
-                }} />
-              </Box>
-            </Box>
           </Box>
         </Grid>
       </Fade>
-    </NoSsr>
+    </NoSsr >
   );
 }
 
 export default Index;
+function LoginCard(props: {
+  handleLogin: () => void;
+  setOpenHelp: (openHelp: boolean) => void;
+  setCredentials: (credentials: { username: string, password: string }) => void;
+  credentials: { username: string; password: string };
+  setError: (error: boolean) => void;
+  error: boolean;
+}) {
+  const { handleLogin, setOpenHelp, setCredentials, credentials, setError, error } = props;
+  const handleCredentialsChange = (event: React.ChangeEvent<HTMLFormElement>) => (setCredentials({ ...credentials, [event.target.name]: event.target.value }))
+  const handleEnterPress = (event: { key: string }) => {
+    if (event.key === "Enter") handleLogin();
+    setError(false);
+  };
+  return (
+    <Box>
+      <LoginBox onChange={handleCredentialsChange} onKeyPress={handleEnterPress}>
+        <InputBox
+          icon={<AccountCircle />}
+          input={
+            <FormControl>
+              <Input
+                label="Usuário"
+                type="text"
+                name="username"
+                value={credentials.username}
+                error={error ? true : false}
+              />
+              <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
+                Seu usuário do SIGAA
+              </FormHelperText>
+            </FormControl>
+          }
+        />
+        <InputBox
+          icon={<Lock />}
+          input={
+            <FormControl>
+              <Input
+                label="Senha"
+                type="password"
+                name="password"
+                value={credentials.password}
+                error={error ? true : false}
+              />
+              <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
+                Sua senha do SIGAA
+              </FormHelperText>
+            </FormControl>
+          }
+        />
+      </LoginBox>
+      <CardBottom>
+        <Box display="flex" justifyContent={"space-around"} width="100%">
+          <Button
+            variant="text"
+            endIcon={<Info />}
+            onClick={() => setOpenHelp(true)}
+          >
+            Ajuda
+          </Button>
+          <Button
+            variant="outlined"
+            endIcon={<Send />}
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+        </Box>
+      </CardBottom>
+    </Box>
+  )
+}
+function BondSelection(props: { registrationSelected: string, setRegistrationSelected: (registration: string) => void, bonds: Bond[] }) {
+  const { registrationSelected, setRegistrationSelected, bonds } = props;
+  const handleChangeRegistration = (
+    _: React.MouseEvent<HTMLElement>,
+    nextVinculo: string
+  ) => {
+    console.debug("@handleChangeRegistration", nextVinculo);
+    setRegistrationSelected(nextVinculo);
+  };
+  return (<>
+    <Typography textAlign={"center"} margin={2}>
+      Escolha um vínculo para acessar
+    </Typography>
+    <ToggleButtonGroup
+      exclusive
+      aria-label=""
+      value={registrationSelected}
+      onChange={handleChangeRegistration}
+      orientation="vertical"
+    >
+      {bonds.map((bond, index) => {
+        return (
+          <ToggleButton
+            key={index}
+            value={bond.registration}
+            style={{
+              marginTop: ".5rem",
+              marginLeft: "1rem",
+              marginRight: "1rem",
+              marginBottom: ".5rem",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "4px",
+              color: "#fff",
+            }}
+          >
+            {bond.program}
+          </ToggleButton>
+        );
+      })}
+    </ToggleButtonGroup>
+  </>)
+}
+
+function BondSelectionButtons(props: { handleLogout: () => void, handleAccess: () => void }) {
+  return <Grid
+    justifyContent="center"
+    alignContent="center"
+    display="flex"
+  >
+    <Button
+      variant="contained"
+      startIcon={<ArrowBack direction="right" />}
+      onClick={props.handleLogout}
+      fullWidth
+      sx={{ margin: ".25rem" }}
+    >
+      Sair
+    </Button>
+    <Button
+      variant="contained"
+      endIcon={<Send />}
+      fullWidth
+      sx={{ margin: ".25rem" }}
+      onClick={props.handleAccess}
+    >
+      Acessar
+    </Button>
+  </Grid>
+}

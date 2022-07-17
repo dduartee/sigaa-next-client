@@ -1,13 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box, styled } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import CustomDrawer from "@components/Home/CustomDrawer";
 import CustomNavBar from "@components/Home/CustomNavBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import { Bond, UserInfo } from "@types";
-import { DataContext } from "@context/data";
-import { UserContext } from "@context/user";
-import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import { LoadingContext } from "@context/loading";
 
@@ -54,7 +50,7 @@ export default function HomeTemplate({
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <StyledContent>
             <Toolbar />
-            <Paper sx={{ margin: "1rem", marginTop: "2.7rem" }}>
+            <Paper sx={{ margin: "1rem", marginTop: "26px" }} elevation={1}>
               {children}
             </Paper>
           </StyledContent>

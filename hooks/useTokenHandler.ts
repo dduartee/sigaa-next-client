@@ -10,7 +10,11 @@ export default function useTokenHandler(setValid: (isValid: boolean) => void) {
     });
     emitAuthValid({ token: localStorage.getItem("token") }, socket);
     socket.on("auth::valid", (valid: boolean) => setValid(valid));
-  }, []);
+    return () => {
+      socket.off("auth::store");
+      socket.off("auth::valid");
+    }
+  }, [setValid, socket]);
 }
 
 export function emitAuthValid(

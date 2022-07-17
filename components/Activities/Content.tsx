@@ -1,64 +1,79 @@
-import React from "react";
-import { Activity, Bond, Course, Homework } from "@types";
+import React, { useContext, useEffect, useState } from "react";
+import { Activity, Bond } from "@types";
 import {
   Box,
   CircularProgress,
-  Collapse,
-  IconButton,
   Paper,
   Typography,
 } from "@material-ui/core";
-import { KeyboardArrowDown } from "@material-ui/icons";
 import moment from "moment";
+import { RegistrationContext } from "@context/registration";
 export default function Activities({
-  data,
+  bond,
   loading,
 }: {
-  data: Bond[];
+  bond: Bond | null;
   loading: boolean;
 }) {
+  const registration = useContext(RegistrationContext)
+  const [activities, setActivities] = useState<Activity[] | null>(null);
+  useEffect(() => {
+    if (bond?.activities) {
+      setActivities(orderByDone(orderByDate(bond.activities)));
+    }
+  }, [bond, registration]);
+
+  useEffect(() => {
+    const activitiesCached = JSON.parse(localStorage.getItem(`activities-${registration}`) ?? "{}");
+    if (activitiesCached) {
+      const timestamp = new Date(activitiesCached.timestamp);
+      const now = new Date();
+      if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
+        setActivities(activitiesCached.activities);
+      } else {
+        localStorage.removeItem(`activities-${registration}`);
+      }
+    }
+  }, [registration]);
   return (
-    <>
-      <Typography textAlign="center" fontWeight="500" fontSize={"1.5rem"}>
+    <Box padding={2} mb={2}>
+      <Typography textAlign="center" fontWeight="500" fontSize={"1.5rem"} whiteSpace="break-spaces" mb={2}>
         Principais atividades
       </Typography>
-      <Typography
-        gutterBottom
-        margin=".5rem"
-        textAlign="center"
-        fontWeight="500"
-        fontSize={"1.5rem"}
-      >
-        (15 dias)
-      </Typography>
-      <Box display={"flex"} justifyContent={"center"}>
-        {loading ? (
+
+      <Box display={"flex"} justifyContent={"center"} borderRadius={"10px"} elevation={2}
+        component={Paper} padding={1}>
+        {loading || !activities ? (
           <CircularProgress style={{ margin: "1rem" }} />
         ) : (
           <Box>
-            {data?.map((bond: Bond) => {
-              const activities = orderByDone(orderByDate(bond.activities));
-              return activities?.map((activity: Activity, index) => {
-                const diff = getDiffDate(activity.date);
-                const date = moment(activity.date)
-                  .utcOffset(0)
-                  .format("DD/MM/YYYY HH:mm");
-                if (diff <= 0) {
-                  return (
-                    <ActivityCollapse
-                      key={index}
-                      activity={activity}
-                      diffday={diff}
-                      date={date}
-                    />
-                  );
-                }
-              });
+            {activities.length === 0 ? (
+              <Typography
+                textAlign="center"
+                fontWeight="500"
+                fontSize={"1.3rem"}
+                margin=".5rem"
+              >
+                Nenhuma atividade para os próximos 15 dias
+              </Typography>
+            ) : activities?.map((activity: Activity, index) => {
+              const diffday = getDiffDate(activity.date);
+              const date = moment(activity.date)
+                .utcOffset(0)
+                .format("DD/MM/YYYY HH:mm");
+              return (
+                <ActivityCollapse
+                  key={index}
+                  activity={activity}
+                  diffday={diffday}
+                  date={date}
+                />
+              );
             })}
           </Box>
         )}
       </Box>
-    </>
+    </Box>
   );
 }
 function ActivityCollapse({
@@ -71,7 +86,6 @@ function ActivityCollapse({
   date: string;
 }) {
   const done = activity.done;
-  const diff = Math.abs(diffday);
   let type;
   switch (activity.type) {
     case "exam":
@@ -84,8 +98,9 @@ function ActivityCollapse({
       type = "Questionário";
       break;
   }
-  const today = diff === 0;
-  const oneDay = diff === 1;
+  const today = diffday === 0;
+  const oneDay = diffday === 1;
+  const finish = diffday > 0;
   return (
     <Box>
       <Box
@@ -94,10 +109,8 @@ function ActivityCollapse({
         alignItems="center"
         justifyContent="space-between"
         m={1}
-        elevation={2}
-        component={Paper}
       >
-        <Box display="flex" margin="0.5rem">
+        <Box display="flex" margin="0.5rem" component={Paper} elevation={2}>
           <Typography variant="h6" gutterBottom component="h2">
             {done ? (
               <s>{`${activity.course.title} - ${type}: ${activity.description}`}</s>
@@ -118,9 +131,11 @@ function ActivityCollapse({
             margin="0.2rem"
             sx={{ whiteSpace: "nowrap" }}
           >
-            {`(${today ? "" : diff}${
-              today ? "Hoje" : oneDay ? " dia" : " dias"
-            })`}
+            {!finish ? (
+              <span>{`(${today ? "" : diffday}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}</span>
+            ) : (
+              <span>{`${diffday} dias atrás`}</span>
+            )}
           </Typography>
           <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
             {`${date}`}

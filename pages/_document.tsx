@@ -14,7 +14,7 @@ function getCache() {
 export default class MyDocument extends Document {
   render(): JSX.Element {
     return (
-      <Html lang="en">
+      <Html lang="pt-br">
         <Head>
           <link
             rel="stylesheet"

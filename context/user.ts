@@ -1,9 +1,11 @@
-import { UserInfo } from "@types"
+import { UserData } from "@types"
 import React from "react"
 
-export const defaultValue: UserInfo = {
+export const defaultValue: UserData = {
   fullName: "",
-  profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png"
+  profilePictureURL: "",
+  emails: [],
+  username: ""
 }
 
-export const UserContext = React.createContext<UserInfo>( defaultValue )
+export const UserContext = React.createContext<UserData | null>(null)

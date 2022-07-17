@@ -1,34 +1,34 @@
-import { DataContext } from "@context/data";
+import { RegistrationContext } from "@context/registration";
 import { LoadingContext } from "@context/loading";
 import { UserContext } from "@context/user";
 import HomeTemplate from "@templates/Home";
-import { Bond, UserInfo } from "@types";
+import { UserData } from "@types";
 import React from "react";
 
-export default function homeProvider({
+export default function HomeProvider({
   children,
   loading,
   user,
-  data,
+  registration,
   tab,
   setTab,
 }: {
   children: React.ReactNode;
   loading: boolean;
-  user: UserInfo;
-  data: Bond[];
+  user: UserData | null;
+  registration: string;
   tab: number;
-  setTab: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
 }) {
   return (
     <UserContext.Provider value={user}>
-      <DataContext.Provider value={data}>
+      <RegistrationContext.Provider value={registration}>
         <LoadingContext.Provider value={loading}>
           <HomeTemplate setTab={setTab} tab={tab}>
             {children}
           </HomeTemplate>
         </LoadingContext.Provider>
-      </DataContext.Provider>
+      </RegistrationContext.Provider>
     </UserContext.Provider>
   );
 }

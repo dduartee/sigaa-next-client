@@ -1,39 +1,63 @@
-import { Bond, UserInfo, UserStatus } from "@types";
+import { Bond } from "@types";
 import { SocketContext } from "@context/socket";
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
 
 export default function useBondsHandler() {
-  const [data, setData] = useState<Bond[]>([
-    {
-      program: "",
-      registration: "",
-      courses: [],
-      activities: []
-    },
-  ]);
+  const [bonds, setBonds] = useState<Bond[]>([]);
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-    socket.on("bonds::list", (data: string) => {
-      const bondsJSON = JSON.parse(data);
-      setData(bondsJSON);
+    socket.on("bonds::list", (bonds: Bond[]) => {
+      // bonds can be duplicated, so we need to remove them
+      setBonds(bonds.filter((bond, index) => bonds.findIndex(b => b.registration === bond.registration) === index));
     });
-  }, []);
-  return { data };
+    return () => {
+      socket.off("bonds::list");
+    }
+
+  }, [socket]);
+  return { bonds };
 }
 
-export function emitBondList(params: {
+export function emitBondList(query: {
   token: string | null;
   inactive: boolean;
+  cache: boolean;
 }, socket: Socket) {
-  socket.emit("bonds::list", params);
+  socket.emit("bonds::list", query);
 }
 
-export function emitActivitiesList(params: {
+export function emitActivitiesList(query: {
   token: string | null;
   inactive: boolean;
-  registration: string
+  registration: string;
+  cache: boolean;
 }, socket: Socket) {
-  socket.emit("activities::list", params);
+  socket.emit("activities::list", query);
+}
+export function emitCourseList(
+  params: {
+    token: string | null;
+    registration: string;
+    inactive: boolean;
+    allPeriods: boolean;
+    cache: boolean;
+  },
+  socket: Socket
+) {
+  socket.emit("courses::list", params);
+}
+export function emitCourseDetails(
+  params: {
+    token: string | null;
+    registration: string;
+    inactive: boolean;
+    allPeriods: boolean;
+    id: string;
+    cache: boolean;
+  },
+  socket: Socket
+) {
+  socket.emit("courses::details", params);
 }

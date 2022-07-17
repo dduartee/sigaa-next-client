@@ -1,36 +1,34 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
 import {
-  Box,
+  Box, CircularProgress,
 } from "@material-ui/core";
 import Head from "next/head";
 import useGradesEvents, {
   emitGradesList,
 } from "@hooks/courses/useGradesEvents";
 import useTabHandler from "@hooks/useTabHandler";
-import HomeProviders from "@components/homeProvider";
+import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
 
 function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
-  const { user, setUser } = useUserHandler({ valid });
+  const { user, setUser } = useUserHandler();
   const [loading, setLoading] = useState(false);
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
     order: 1,
-    setLoading,
     registration,
     valid,
   });
-  const { data, partialLoading, setPartialLoading } = useGradesEvents();
+  const { bond, partialLoading, setPartialLoading } = useGradesEvents();
   return {
-    data,
+    bond,
     partialLoading,
     setPartialLoading,
     loading,
@@ -44,18 +42,14 @@ function InitializeHooks({ registration }: { registration: string }) {
   };
 }
 export default function GradesPage({ registration }: { registration: string }) {
-  const router = useRouter();
   const socket = useContext(SocketContext);
   const {
-    data,
+    bond,
     partialLoading,
     loading,
     user,
     valid,
     tab,
-    setUser,
-    setValid,
-    setLoading,
     setPartialLoading,
     setTab,
   } = InitializeHooks({ registration });
@@ -73,24 +67,30 @@ export default function GradesPage({ registration }: { registration: string }) {
       setPartialLoading(true);
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
-  }, [valid]);
-  const bond = data[0]
+  }, [registration, setPartialLoading, socket, valid]);
   return (
     <>
       <Head>
         <title>Notas | sigaa-next-client</title>
       </Head>
-      <HomeProviders
-        data={data}
+      <HomeProvider
         loading={loading}
+        registration={registration}
         user={user}
         setTab={setTab}
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Grades bond={bond} partialLoading={partialLoading} />
+          {
+            partialLoading ? (
+              <Box display={"flex"} justifyContent={"center"}>
+                <CircularProgress style={{ margin: "1rem" }} />
+              </Box>
+            ) : null
+          }
         </Box>
-      </HomeProviders>
+      </HomeProvider>
     </>
   );
 }

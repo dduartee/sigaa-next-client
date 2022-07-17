@@ -27,12 +27,12 @@ function ResponsiveDrawer({
   width: number;
   tab: number;
 }) {
-  const {profilePictureURL} = React.useContext(UserContext);
+  const user = React.useContext(UserContext);
   const drawer = (
     <div>
       <Toolbar sx={{ height: "90px", display: "flex", justifyContent: "center" }}>
         <IconButton>
-          <Avatar src={profilePictureURL} sx={{ width: "60px", height: "60px" }} variant="circular" />
+          <Avatar src={user?.profilePictureURL} sx={{ width: "60px", height: "60px" }} variant="circular" />
         </IconButton>
       </Toolbar>
       <List sx={{ padding: "0px" }}>
@@ -47,9 +47,13 @@ function ResponsiveDrawer({
           <Tab label="Inicio" icon={<Home />} />
           <Tab label="Notas" icon={<EqualizerIcon />} />
           <Tab label="Horários" icon={<CalendarTodayIcon />} />
-          <Tab label="Tarefas" icon={<AssignmentIcon />} />
-          <Tab label="Noticias" icon={<InboxIcon />} disabled />
-          <Tab label="Sair" icon={<ArrowBackIcon />} />
+          {
+            /*
+            <Tab label="Tarefas" icon={<AssignmentIcon />} disabled/>
+            <Tab label="Noticias" icon={<InboxIcon />} disabled />
+            */
+          }
+            <Tab label="Voltar" icon={<ArrowBackIcon />} />
         </Tabs>
       </List>
     </div>
@@ -77,6 +81,7 @@ function ResponsiveDrawer({
               width: width,
             },
           }}
+          elevation={1}
         >
           {drawer}
         </Drawer>
