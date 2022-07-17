@@ -2,34 +2,31 @@ import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Box } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
-import AccordionCourse from "@components/Home/AccordionCourse";
-import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
-import HomeProviders from "@components/homeProvider";
-import { emitActivitiesList } from "@hooks/useBondsEvents";
-import Activities from "@components/Activities/Content";
+import HomeProvider from "@components/HomeProvider";
+import { Bond } from "@types";
+import { emitCourseList } from "@hooks/useBondsEvents";
 
 function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
-  const { user } = useUserHandler({ valid });
+  const { user } = useUserHandler();
   const [loading, setLoading] = useState(false);
-  const [activitiesLoading, setActivitiesLoading] = useState(false);
-  const { data } = useCourseEvents(setActivitiesLoading);
+  const [bond, setBond] = useState<Bond | null>(null);
+  useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 0,
-    setLoading,
+    order: 4,
     registration,
     valid,
   });
   useAPIHandler();
-  return { valid, loading, user, data, tab,activitiesLoading, setActivitiesLoading, setValid, setLoading, setTab };
+  return { valid, loading, user, bond, tab, setValid, setLoading, setTab };
 }
 export default function RegistrationPage({
   registration,
@@ -38,46 +35,39 @@ export default function RegistrationPage({
 }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const { valid, data, loading, user, tab, activitiesLoading, setActivitiesLoading, setTab } =
+  const { valid, bond, loading, user, tab, setLoading, setTab } =
     InitializeHooks({
       registration,
     });
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
-      emitActivitiesList(
-        { token: localStorage.getItem("token"), registration, inactive: false },
+      emitCourseList(
+        { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: false },
         socket
       );
-      setActivitiesLoading(true)
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
     }
-  }, [valid]);
+  }, [registration, socket, valid]);
 
   return (
     <>
       <Head>
-        <title>Inicio | sigaa-next-client</title>
+        <title>Notícias | sigaa-next-client</title>
       </Head>
-      <HomeProviders
-        data={data}
+      <HomeProvider
         loading={loading}
         user={user}
+        registration={registration}
         setTab={setTab}
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {
-            !activitiesLoading || data ? (
-              <>
-                <Activities data={data} loading={activitiesLoading} />
-              </>
-            ) : (
-              null
-            )}
-
+          <Typography variant="h4" component="h1">
+            ainda não implementado &gt;:(
+          </Typography>
         </Box>
-      </HomeProviders>
+      </HomeProvider>
     </>
   );
 }
@@ -87,17 +77,3 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-function Courses({ data }: { data: Bond[] }) {
-  return (
-    <>
-      <Head>
-        <title>Matérias | sigaa-next-client</title>
-      </Head>
-      {data?.map(({ courses }) =>
-        courses?.map((course, key) => (
-          <AccordionCourse key={key} title={course.title}></AccordionCourse>
-        ))
-      )}
-    </>
-  );
-}

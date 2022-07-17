@@ -1,45 +1,57 @@
-import { Bond, UserInfo, UserStatus } from "@types";
+import { Bond, UserData, UserStatus } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
 import { emitBondList } from "./useBondsEvents";
 
-export default function useUserHandler({ valid }: { valid: boolean }) {
+export default function useUserHandler() {
   const [status, setStatus] = useState<UserStatus>("Deslogado");
-  const [user, setUser] = useState<UserInfo>({
-    fullName: "",
-    profilePictureURL: "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png",
-  });
+  const [user, setUser] = useState<UserData | null>(null);
   const socket = useContext(SocketContext);
   useEffect(() => {
-    const user = {
-      fullName: localStorage.getItem("fullName") || "",
-      profilePictureURL: localStorage.getItem("profilePictureURL") || "",
+    const fullName = localStorage.getItem("fullName");
+    const profilePictureURL = localStorage.getItem("profilePictureURL");
+    const emails = JSON.parse(localStorage.getItem("emails") || "[]") as string[];
+    const username = localStorage.getItem("username");
+    if (fullName && profilePictureURL && emails && username) {
+      setUser({
+        username,
+        fullName,
+        profilePictureURL,
+        emails
+      });
+    } else {
+      setUser(null)
     }
-    setUser(user);
   }, [])
   useEffect(() => {
     socket.on("user::status", (status: UserStatus) => {
       setStatus(status);
     });
-    socket.on("user::login", (data: string) => {
-      const { logado } = JSON.parse(data);
+    socket.on("user::login", (logado: boolean) => {
       if (logado) {
         emitUserInfo({ token: localStorage.getItem("token") }, socket);
         emitBondList(
           {
             token: localStorage.getItem("token"),
             inactive: false,
+            cache: false
           },
           socket
         );
       }
     });
-    socket.on("user::info", (data: string) => {
-      const { fullName, profilePictureURL } = JSON.parse(data);
+    socket.on("user::info", ({ fullName, emails, profilePictureURL, username }: UserData) => {
       localStorage.setItem("fullName", fullName);
       localStorage.setItem("profilePictureURL", profilePictureURL);
-      setUser({ fullName, profilePictureURL });
+      localStorage.setItem("emails", JSON.stringify(emails));
+      localStorage.setItem("username", username);
+      setUser({
+        username,
+        fullName,
+        profilePictureURL,
+        emails
+      })
     });
     return () => {
       socket.off("user::status");

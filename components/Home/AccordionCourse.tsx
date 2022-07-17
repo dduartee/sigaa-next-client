@@ -8,14 +8,27 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 export default function AccordionCourse({
   title,
   children,
+  loadContent,
 }: {
   title: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  loadContent: () => void;
 }) {
   return (
-    <Accordion sx={{marginBottom: "1rem", border: 0}}>
+    <Accordion sx={{
+      marginBottom: ".8rem",
+      border: 0,
+      ":first-of-type": {
+        borderTopLeftRadius: "10px",
+        borderTopRightRadius: "10px",
+      },
+      borderRadius: "10px",
+      "::before": {
+        height: "0px"
+      }
+    }} elevation={2} onChange={() => loadContent()}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon color="primary" />}
+        expandIcon={<ExpandMoreIcon />}
         color="primary"
       >
         <Typography>{title}</Typography>

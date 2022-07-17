@@ -1,29 +1,20 @@
-import { Bond, UserInfo, UserStatus } from "@types";
+import { Bond } from "@types";
 import { SocketContext } from "@context/socket";
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
 export default function useGradesEvents() {
-  const [data, setData] = useState<Bond[]>([
-    {
-      program: "",
-      registration: "",
-      courses: [],
-      activities: [],
-    },
-  ]);
+  const [bond, setBond] = useState<Bond | null>(null);
   const [partialLoading, setPartialLoading] = useState(false);
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-    socket.on("grades::list", (data: string) => {
-      const bondsJSON = JSON.parse(data);
+    socket.on("grades::list", (bond: Bond) => {
       setPartialLoading(false);
-      setData(bondsJSON);
+      setBond(bond);
     });
-    socket.on("grades::listPartial", (data: string) => {
-      const bondsJSON = JSON.parse(data);
+    socket.on("grades::listPartial", (bond: Bond) => {
       setPartialLoading(true);
-      setData(bondsJSON);
+      setBond(bond);
     });
     return () => {
       socket.off("grades::list");
@@ -31,7 +22,7 @@ export default function useGradesEvents() {
     };
   }, [socket]);
 
-  return { data, setData, partialLoading, setPartialLoading };
+  return { bond, setBond, partialLoading, setPartialLoading };
 }
 
 export function emitGradesList(params: {

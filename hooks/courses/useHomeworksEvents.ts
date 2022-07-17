@@ -1,31 +1,23 @@
-import { Bond, UserInfo, UserStatus } from "@types";
+import { Bond } from "@types";
 import { SocketContext } from "@context/socket";
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
 export default function useHomeworksEvents() {
-  const [data, setData] = useState<Bond[]>([
-    {
-      program: "",
-      registration: "",
-      courses: [],
-      activities: [],
-    },
-  ]);
+  const [bond, setBond] = useState<Bond | null>(null);
   const [partialLoading, setPartialLoading] = useState(false);
   const [partialLoadingDescription, setPartialLoadingDescription] =
     useState(false);
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-    socket.on("homeworks::listPartial", (data) => {
-      const bondsJSON = JSON.parse(data);
+    socket.on("homeworks::listPartial", (bond: Bond) => {
       setPartialLoading(true);
-      setData(bondsJSON);
+      setBond(bond);
     });
-    socket.on("homeworks::list", (data) => {
-      const bondsJSON = JSON.parse(data);
+    socket.on("homeworks::list", (bond: Bond) => {
       setPartialLoading(false);
-      setData(bondsJSON);
+      console.debug(bond)
+      setBond(bond);
     });
     return () => {
       socket.off("homeworks::listPartial");
@@ -34,8 +26,8 @@ export default function useHomeworksEvents() {
   }, [socket]);
 
   return {
-    data,
-    setData,
+    bond,
+    setBond,
     partialLoading,
     setPartialLoading,
     partialLoadingDescription,

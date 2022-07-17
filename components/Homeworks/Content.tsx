@@ -10,34 +10,32 @@ import {
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import moment from "moment";
 export default function Homeworks({
-  data,
+  bond,
   partialLoading,
   partialLoadingDescription,
 }: {
-  data: Bond[];
+  bond: Bond | null
   partialLoading: boolean;
   partialLoadingDescription: boolean;
 }) {
   return (
     <>
-      {data?.map((bond: Bond) =>
-        bond.courses?.map((course: Course) =>
-          course.homeworks?.map((homework: Homework, index) => {
-            const { diferenca, status } = getNewest(homework);
-            return status != "Finalizado" ? (
-              <HomeworkCollapse
-                key={index}
-                course={course}
-                homework={homework}
-                diff={diferenca}
-                status={status}
-                code={course.code}
-                partialLoading={partialLoading}
-                partialLoadingDescription={partialLoadingDescription}
-              />
-            ) : null;
-          })
-        )
+      {bond?.courses?.map((course: Course) =>
+        course.homeworks?.map((homework: Homework, index) => {
+          const { diferenca, status } = getNewest(homework);
+          return status != "Finalizado" ? (
+            <HomeworkCollapse
+              key={index}
+              course={course}
+              homework={homework}
+              diff={diferenca}
+              status={status}
+              code={course.code}
+              partialLoading={partialLoading}
+              partialLoadingDescription={partialLoadingDescription}
+            />
+          ) : (null);
+        })
       )}
       <Box display={"flex"} justifyContent={"center"}>
         {partialLoading ? (
@@ -54,8 +52,6 @@ function HomeworkCollapse({
   course,
   code,
   diff,
-  status,
-  partialLoading,
   partialLoadingDescription,
 }: {
   homework: Homework;
@@ -72,12 +68,12 @@ function HomeworkCollapse({
     setOpen(true);
     setWait(true);
     /*socket.emit("homeworks::specific", {
-          code,
-          fullHW: true, // quando true retorna todas as informações sendo mais devagar, quando false retorna somente titulo e datas
-          inactive: true, // retorna vinculos inativos ou não (EXPERIMENTAL)
-          cache: true,
-          token: localStorage.getItem("token"), // obrigatório
-        });*/
+        code,
+        fullHW: true, // quando true retorna todas as informações sendo mais devagar, quando false retorna somente titulo e datas
+        inactive: true, // retorna vinculos inativos ou não (EXPERIMENTAL)
+        cache: true,
+        token: localStorage.getItem("token"), // obrigatório
+      });*/
     console.log("buscando " + code);
   }
   return (
@@ -87,8 +83,8 @@ function HomeworkCollapse({
           diff == 0
             ? "hsl(350, 100%, 32%)"
             : diff <= 3
-            ? "hsl(32, 90%, 40%)"
-            : "hsl(139, 60%, 23%)",
+              ? "hsl(32, 90%, 40%)"
+              : "hsl(139, 60%, 23%)",
         borderRadius: "4px",
         margin: "1rem",
       }}
@@ -117,7 +113,7 @@ function HomeworkCollapse({
           size="medium"
           onClick={() => getDescriptionAndOpen()}
         >
-          {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          {open ? <div></div> : <KeyboardArrowDown />}
         </IconButton>
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>

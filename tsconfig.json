@@ -28,7 +28,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/home/...slug.tsx", "formatSchedule.js", "formatSchedule.js", "formatSchedule.js"  ],
+, "pages/bond/...slug.tsx", "formatSchedule.js", "formatSchedule.js", "formatSchedule.js"  ],
   "exclude": [
     "node_modules"
   ]

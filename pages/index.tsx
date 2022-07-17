@@ -43,8 +43,8 @@ function Index(): JSX.Element {
   const socket = useContext(SocketContext);
   const [valid, setValid] = useState(false);
   useTokenHandler(setValid);
-  const { status, user, setStatus } = useUserHandler({valid});
-  const { data: bonds } = useBondsHandler();
+  const { status, user, setStatus } = useUserHandler();
+  const { bonds } = useBondsHandler();
   const { error, setError } = useAPIHandler();
 
   useEffect(() => {
@@ -59,19 +59,24 @@ function Index(): JSX.Element {
     });
   }, [socket]);
   useEffect(() => {
-    setRegistrationSelected(bonds[0].registration);
+    if (bonds.length != 0) {
+      setRegistrationSelected(bonds[0].registration);
+    }
   }, [bonds]);
   const [donateTimeout, setDonateTimeout] = useState<NodeJS.Timeout>();
   useEffect(() => {
     if (status === "Logando") {
       setOpenDonate(true)
     }
-    if (bonds[0].registration && user.fullName) {
+    if (bonds[0]?.registration && user?.fullName) {
       setDonateTimeout(setTimeout(() => {
         setOpenDonate(false)
-      }, 3000))
+      }, 2500))
     }
-  }, [bonds, user, status])
+    if (error) {
+      setOpenDonate(false)
+    }
+  }, [bonds, user, status, error])
   useEffect(() => {
     if (!openDonate && donateTimeout) {
       clearTimeout(donateTimeout)
@@ -81,13 +86,17 @@ function Index(): JSX.Element {
     if (!registrationSelected && bonds.length != 0) setRegistrationSelected(bonds[0].registration);
   }, [bonds, registrationSelected]);
   const handleLogin = () => {
-    setStatus("Logando");
-    socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+    if (credentials.username && credentials.password) {
+      setStatus("Logando");
+      socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+    } else {
+      setError(true);
+    }
   };
   const handleAccess = () => {
     setStatus("Logando");
     setError(false);
-    router.push(`/home/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
+    router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
   };
   const handleLogout = () => {
     setError(false);
@@ -101,12 +110,12 @@ function Index(): JSX.Element {
     willLogin: status === "Logando",
     isLoggedIn: status === "Logado",
     isLoggedOut: status === "Deslogado" && !openHelp,
-    hasFullName: user.fullName ? true : false,
+    hasFullName: user?.fullName ? true : false,
     hasBond: bonds.length != 0 ? true : false,
     hasFullNameAndIsLoggedIn:
-      (user.fullName ? true : false) && (status === "Logado" ? true : false),
+      (user?.fullName ? true : false) && (status === "Logado" ? true : false),
     hasBondAndIsLoggedIn: bonds.length != 0 && status === "Logado" ? true : false,
-    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user.fullName || bonds.length != 0)) ? true : false,
+    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user?.fullName || bonds.length != 0)) ? true : false,
   };
 
   const [activeParticles, setActiveParticles] = useState(true);
@@ -145,9 +154,10 @@ function Index(): JSX.Element {
                 display: "flex",
                 flexDirection: "column",
                 alignContent: "center",
-                width: increaseBoxSize ? "99%" : "20rem",
+                width: increaseBoxSize ? "97%" : "20rem",
                 maxWidth: "700px",
-                overflow: "visible"
+                overflow: increaseBoxSize?"scroll":"visible",
+                height: "fit-content"
               }}
             >
               <Collapse in={openHelp} timeout={500}>
@@ -167,21 +177,26 @@ function Index(): JSX.Element {
                   : null}
               </Collapse>
               <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
-                <CardHeader>
-                  <img
-                    src={user.profilePictureURL}
-                    style={{
-                      boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.4)",
-                      width: "100px",
-                      height: "100px",
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      marginTop: "-50px",
-                      userSelect: "none",
-                    }}
-                  />
-                  <Typography fontSize="1.3rem" marginTop={2}>{user.fullName}</Typography>
-                </CardHeader>
+                {
+                  (user?.profilePictureURL && user?.fullName) ? (
+
+                    <CardHeader>
+                      <img
+                        src={user.profilePictureURL}
+                        style={{
+                          boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.4)",
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                          marginTop: "-50px",
+                          userSelect: "none",
+                        }}
+                      />
+                      <Typography fontSize="1.3rem" marginTop={2}>{user.fullName}</Typography>
+                    </CardHeader>
+                  ) : null
+                }
               </Collapse>
               <Collapse /** Collapse para a tela de vinculos e botoes */
                 in={conditionals.hasFullNameAndIsLoggedIn && openCardBody}

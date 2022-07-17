@@ -53,7 +53,7 @@ function groupBy<K, V>(array: V[], grouper: (item: V) => K) {
 }
 function formatGradesIndex(bond: Bond) {
   const gradesIndex: string[] = [];
-  bond.courses?.map((course, key) =>
+  bond.courses?.map((course) =>
     course.grades?.map((gradeGroup) => {
       const exists = gradesIndex.includes(gradeGroup.name);
       if (!exists) gradesIndex.push(gradeGroup.name);
@@ -80,7 +80,7 @@ export default function Grades({
   bond,
   partialLoading,
 }: {
-  bond: Bond;
+  bond: Bond | null
   partialLoading: boolean;
 }) {
   const [gradesIndex, setGradesIndex] = React.useState<string[]>([]);
@@ -89,59 +89,53 @@ export default function Grades({
   >(new Map<string, Course[]>());
   const [periods, setPeriods] = React.useState<string[]>();
   useEffect(() => {
-    setGradesIndex(formatGradesIndex(bond));
-    setCoursesByPeriod(groupBy(bond.courses, (course) => course.period));
+    if (bond?.courses) {
+      setGradesIndex(formatGradesIndex(bond));
+      setCoursesByPeriod(groupBy(bond.courses, (course) => course.period));
+    }
   }, [bond]);
   useEffect(() => {
     setPeriods(Array.from(coursesByPeriod.keys()));
   }, [coursesByPeriod]);
   return (
     <React.Fragment>
-      <TableContainer>
-        <CollapsibleTable>
-          <TableHead>
-            <StyledTableRow>
-              <StyledTableCell />
-              <StyledTableCell>Período</StyledTableCell>
-              {gradesIndex.map((_, key) => (
-                <StyledTableCell key={key} width={"100%"}></StyledTableCell>
+      {bond ? (
+        <TableContainer>
+          <CollapsibleTable>
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell />
+                <StyledTableCell>Período</StyledTableCell>
+                {gradesIndex.map((_, key) => (
+                  <StyledTableCell key={key} width={"100%"}></StyledTableCell>
+                ))}
+              </StyledTableRow>
+            </TableHead>
+            <TableBody>
+              {periods?.map((period, key) => (
+                <Period
+                  period={period}
+                  key={key}
+                  coursesByPeriod={coursesByPeriod}
+                  gradesIndex={gradesIndex}
+                />
               ))}
-            </StyledTableRow>
-          </TableHead>
-          <TableBody>
-            {periods?.map((period, key) => (
-              <Period
-                period={period}
-                program={bond.program}
-                key={key}
-                coursesByPeriod={coursesByPeriod}
-                gradesIndex={gradesIndex}
-              />
-            ))}
-          </TableBody>
-        </CollapsibleTable>
-      </TableContainer>
+            </TableBody>
+          </CollapsibleTable>
+        </TableContainer>
+      ) : null}
 
-      <Box display={"flex"} justifyContent={"center"}>
-        {partialLoading ? (
-          <CircularProgress style={{ margin: "1rem" }} />
-        ) : (
-          <p></p>
-        )}
-      </Box>
     </React.Fragment>
-  );
+  )
 }
 function Period({
   period,
   coursesByPeriod,
   gradesIndex,
-  program,
 }: {
   period: string;
   coursesByPeriod: Map<string, Course[]>;
   gradesIndex: string[];
-  program: string;
 }) {
   const courses = coursesByPeriod.get(period) ?? [];
   const [openPeriod, setOpenPeriod] = React.useState<boolean>(true);
@@ -246,7 +240,7 @@ function CourseRow(props: { course: Course; gradesIndex: string[] }) {
               <Table>
                 <TableHead>
                   <StyledTableRow>
-                    {course?.grades?.map((gradeGroup, key) =>
+                    {course?.grades?.map((gradeGroup) =>
                       gradeGroup.grades?.map((grade, key) => {
                         return (
                           <StyledTableCell key={key}>
@@ -261,7 +255,7 @@ function CourseRow(props: { course: Course; gradesIndex: string[] }) {
                 </TableHead>
                 <TableBody>
                   <StyledTableRow>
-                    {course?.grades?.map((gradeGroup, key) =>
+                    {course?.grades?.map((gradeGroup) =>
                       gradeGroup.grades?.map((grade, key) => (
                         <StyledTableCell key={key}>
                           {grade.value?.toPrecision(2)}

@@ -2,72 +2,79 @@ import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Box, Typography } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents, {
-  emitCourseList,
 } from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
+import { Bond } from "@types";
+import "moment/locale/pt-br";
+import {
+  ScheduleComponent,
+  Inject,
+  Week,
+} from "@syncfusion/ej2-react-schedule";
 import useTabHandler from "@hooks/useTabHandler";
-import HomeProviders from "@components/homeProvider";
-
+import HomeProvider from "@components/HomeProvider";
+import moment from "moment";
+import Schedules from "@components/Schedules/Content";
+import { emitCourseList } from "@hooks/useBondsEvents";
 function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
-  const { user } = useUserHandler({ valid });
+  const { user, setUser } = useUserHandler();
   const [loading, setLoading] = useState(false);
-  const { data } = useCourseEvents(setLoading);
+  const [bond, setBond] = useState<Bond | null>(null);
+  useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 4,
-    setLoading,
+    order: 2,
     registration,
     valid,
   });
   useAPIHandler();
-  return { valid, loading, user, data, tab, setValid, setLoading, setTab };
+  return {
+    valid,
+    user,
+    loading,
+    bond,
+    tab,
+    setTab,
+  };
 }
-export default function RegistrationPage({
-  registration,
-}: {
-  registration: string;
-}) {
+export default function SchedulesPage({ registration }: { registration: string }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const { valid, data, loading, user, tab, setLoading, setTab } =
-  InitializeHooks({
-      registration,
-    });
+  const { valid, user, loading, bond, tab, setTab } = InitializeHooks({
+    registration,
+  });
   useEffect(() => {
-    if (!valid) window.location.href = "/";
-    else {
+    if (valid) {
       emitCourseList(
-        { token: localStorage.getItem("token"), registration },
+        { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: false },
         socket
       );
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
-    }
-  }, [valid]);
+    } else window.location.href = "/";
+  }, [registration, socket, valid]);
 
   return (
     <>
       <Head>
-        <title>Matérias | sigaa-next-client</title>
+        <title>Horários | sigaa-next-client</title>
       </Head>
-      <HomeProviders
-        data={data}
+      <HomeProvider
         loading={loading}
         user={user}
+        registration={registration}
         setTab={setTab}
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Typography variant="h4" component="h1">
-              ainda não implementado &gt;:(
-          </Typography>
+          <Schedules bond={bond} />
         </Box>
-      </HomeProviders>
+      </HomeProvider>
     </>
   );
 }
@@ -76,4 +83,3 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: context.query,
   };
 }
-
