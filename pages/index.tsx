@@ -156,7 +156,7 @@ function Index(): JSX.Element {
                 alignContent: "center",
                 width: increaseBoxSize ? "97%" : "20rem",
                 maxWidth: "700px",
-                overflow: increaseBoxSize?"scroll":"visible",
+                overflowY: increaseBoxSize?"scroll":"visible",
                 height: "fit-content"
               }}
             >
