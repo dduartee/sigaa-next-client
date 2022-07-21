@@ -8,8 +8,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import InboxIcon from "@material-ui/icons/Inbox";
 import { Home } from "@material-ui/icons";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Avatar, IconButton } from "@material-ui/core";

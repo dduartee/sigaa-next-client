@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import Head from "next/head";
 import AccordionCourse from "@components/Home/AccordionCourse";
 import { Bond, Course } from "@types";
 import { Box, CircularProgress, Paper, Typography } from "@material-ui/core";

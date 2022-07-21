@@ -11,14 +11,8 @@ import useCourseEvents, {
 import Head from "next/head";
 import { Bond } from "@types";
 import "moment/locale/pt-br";
-import {
-  ScheduleComponent,
-  Inject,
-  Week,
-} from "@syncfusion/ej2-react-schedule";
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
-import moment from "moment";
 import Schedules from "@components/Schedules/Content";
 import { emitCourseList } from "@hooks/useBondsEvents";
 function InitializeHooks({ registration }: { registration: string }) {

@@ -1,4 +1,4 @@
-import { Box, Link, Switch, Typography } from "@material-ui/core";
+import { Box, Switch, Typography } from "@material-ui/core";
 import { Email } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Donate } from "./Donate";

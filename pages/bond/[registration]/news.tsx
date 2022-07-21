@@ -35,7 +35,7 @@ export default function RegistrationPage({
 }) {
   const router = useRouter();
   const socket = useContext(SocketContext);
-  const { valid, bond, loading, user, tab, setLoading, setTab } =
+  const { valid, bond, loading, user, tab, setTab } =
     InitializeHooks({
       registration,
     });

@@ -132,7 +132,7 @@ function ActivityCollapse({
             sx={{ whiteSpace: "nowrap" }}
           >
             {!finish ? (
-              <span>{`(${today ? "" : diffday}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}</span>
+              <span>{`(${today ? "" : Math.abs(diffday)}${today ? "Hoje" : oneDay ? " dia" : " dias"})`}</span>
             ) : (
               <span>{`${diffday} dias atrás`}</span>
             )}
