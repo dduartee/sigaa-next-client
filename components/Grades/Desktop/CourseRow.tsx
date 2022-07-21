@@ -16,7 +16,7 @@ export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
   const [open, setOpen] = React.useState(false);
   useEffect(() => {
     course.grades?.map((gradeGroup) => {
-      if (gradeGroup.subGrades)
+      if (gradeGroup.subGrades?.length !== 0)
         setSubGrade(true);
     });
   }, [course.grades]);
