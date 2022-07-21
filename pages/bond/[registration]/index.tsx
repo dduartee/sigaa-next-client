@@ -41,7 +41,6 @@ export default function RegistrationPage({
 }: {
   registration: string;
 }) {
-  const router = useRouter();
   const socket = useContext(SocketContext);
   const { valid, bond, user, tab, activitiesLoading, coursesLoading, setActivitiesLoading, setCoursesLoading, setTab } =
     InitializeHooks({

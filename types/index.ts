@@ -68,16 +68,16 @@ export interface SubGradeWeightedAverage extends SubGrade {
 
 export interface GradeGroupOnlyAverage extends Grade {
   type: "only-average";
-  grades: null;
+  subGrades: null;
 }
 
 export interface GradeGroupWeightedAverage extends Grade {
-  grades: SubGradeWeightedAverage[];
+  subGrades: SubGradeWeightedAverage[];
   type: "weighted-average";
 }
 
 export interface GradeGroupSumOfGrades extends Grade {
-  grades: SubGradeSumOfGrades[];
+  subGrades: SubGradeSumOfGrades[];
   type: "sum-of-grades";
 }
 

@@ -34,18 +34,20 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
   }, [registration]);
   const [scheduleData, setScheduleData] = React.useState<SchedulerData[]>([]);
   useEffect(() => {
-    courses?.map((course) => {
-      const schedules = parseSchedule(course.schedule ?? null);
-      schedules.map((schedule) => {
-        setScheduleData(prev => [...prev, {
-          StartTime: schedule.startDate,
-          EndTime: schedule.endDate,
-          Subject: course.title,
-          Id: course.id,
-        }]);
+    if (scheduleData.length == 0) {
+      courses?.map((course) => {
+        const schedules = parseSchedule(course.schedule ?? null);
+        schedules.map((schedule) => {
+          setScheduleData(prev => [...prev, {
+            StartTime: schedule.startDate,
+            EndTime: schedule.endDate,
+            Subject: course.title,
+            Id: course.id,
+          }]);
+        });
       });
-    });
-  }, [bond]);
+    }
+  }, [bond, courses, scheduleData.length]);
   useEffect(() => {
     Schedule.Inject(Day, Week);
     const scheduleObj = new Schedule({
