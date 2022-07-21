@@ -77,7 +77,7 @@ export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
                   <StyledTableRow>
                     {course?.grades?.map((gradeGroup) => gradeGroup.subGrades?.map((grade, key) => (
                       <StyledTableCell key={key}>
-                        {grade.value?.toPrecision(2)}
+                        {grade.value !== undefined? grade.value?.toPrecision(2): "-"}
                       </StyledTableCell>
                     ))
                     )}
