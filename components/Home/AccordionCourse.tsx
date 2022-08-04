@@ -26,9 +26,11 @@ export default function AccordionCourse({
       "::before": {
         height: "0px"
       }
-    }} elevation={2} onChange={() => loadContent()}>
+    }} elevation={2} 
+    //onChange={() => loadContent()}
+    >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        //expandIcon={<ExpandMoreIcon />}
         color="primary"
       >
         <Typography>{title}</Typography>

@@ -25,20 +25,20 @@ function ResponsiveDrawer({
         }}
       >
         <Toolbar>
-          <div style={{position: "absolute"}}>
+          <div style={{ position: "absolute" }}>
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="start"
               onClick={handler}
-              sx={{ mr: 0, display: { sm: "none" } }}
+              sx={{ mr: 0, display: { sm: "none" }, fontSize: "1rem" }}
             >
               <MenuIcon />
             </IconButton>
           </div>
           <Typography variant="h2" fontSize="2rem" textAlign="center" width="100%">
-              sigaa-next
-            </Typography>
+            sigaa-next
+          </Typography>
         </Toolbar>
       </AppBar>
     </Box>

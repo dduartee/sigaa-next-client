@@ -110,7 +110,7 @@ function ActivityCollapse({
         justifyContent="space-between"
         m={1}
       >
-        <Box display="flex" margin="0.5rem" component={Paper} elevation={2}>
+        <Box display="flex" margin="0.5rem">
           <Typography variant="h6" gutterBottom component="h2">
             {done ? (
               <s>{`${activity.course.title} - ${type}: ${activity.description}`}</s>

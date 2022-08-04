@@ -55,14 +55,17 @@ export default function RegistrationPage({
         socket
       );
       setActivitiesLoading(true)
+    }
+  }, [registration, setActivitiesLoading, setCoursesLoading, socket, valid]);
+  useEffect(() => {
+    if (bond?.activities) {
       emitCourseList(
         { token: localStorage.getItem("token"), registration, inactive: false, allPeriods: false, cache: false },
         socket
       )
       setCoursesLoading(true)
     }
-  }, [registration, setActivitiesLoading, setCoursesLoading, socket, valid]);
-
+  }, [bond?.activities, registration, setCoursesLoading, socket]);
   return (
     <>
       <Head>

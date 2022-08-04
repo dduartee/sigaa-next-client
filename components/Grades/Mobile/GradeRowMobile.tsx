@@ -22,6 +22,8 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
   const gradeGroup = grades?.find(
     (gradeGroup) => gradeGroup.name === index
   );
+  const hideGradeGroup = (!gradeGroup?.value || (gradeGroup?.subGrades?.length === 0 && gradeGroup.type !== "only-average")) ? grades.indexOf(gradeGroup as GradeGroup) !== 0 : false;
+  if (hideGradeGroup) return null;
   return (
     <>
       <StyledTableRow>
@@ -51,11 +53,12 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
           <Collapse in={open && subGrade} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1, mb: 3 }}>
               <Typography variant="caption" gutterBottom component="div">
-                Notas individuais
+                Notas {gradeGroup?.type === "sum-of-grades" ? "da soma" : "da média"}
               </Typography>
               <CollapsibleTable>
                 <TableBody>
                   {gradeGroup?.subGrades?.map((grade, key) => {
+                    if (grade.value === undefined) return null;
                     return (
                       <StyledTableRow key={key}>
                         <StyledTableCell>
