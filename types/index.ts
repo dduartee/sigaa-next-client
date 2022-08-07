@@ -49,42 +49,22 @@ export type Homework = {
   haveGrade: boolean | null;
 };
 
-export interface Grade {
-  name: string;
-  value?: number;
+export type GradeGroup = {
+  type: 'sum-of-grades'|'only-average'|'weighted-average',
+  value: number,
+  name: string,
+  subGrades: SumOfGrades[] | WeightedAverage[]
 }
-
-export interface SubGrade extends Grade {
-  code: string;
+export type SumOfGrades = {
+  name: string,
+  code: string,
+  value: number,
+  maxValue: number,
 }
-
-export interface SubGradeSumOfGrades extends SubGrade {
-  maxValue?: number;
+export type WeightedAverage = {
+  name: string,
+  code: string,
+  value: number,
+  weight: number,
 }
-
-export interface SubGradeWeightedAverage extends SubGrade {
-  weight?: number;
-}
-
-export interface GradeGroupOnlyAverage extends Grade {
-  type: "only-average";
-  subGrades: null;
-}
-
-export interface GradeGroupWeightedAverage extends Grade {
-  subGrades: SubGradeWeightedAverage[];
-  type: "weighted-average";
-}
-
-export interface GradeGroupSumOfGrades extends Grade {
-  subGrades: SubGradeSumOfGrades[];
-  type: "sum-of-grades";
-}
-
-export declare type GradeGroup =
-  | GradeGroupSumOfGrades
-  | GradeGroupOnlyAverage
-  | GradeGroupWeightedAverage;
-
-
 export type Error = "SIGAA: Invalid credentials.";

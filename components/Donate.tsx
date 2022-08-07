@@ -6,8 +6,10 @@ export function Donate(props: { email: string, fontSize: string, fontSizeEmail: 
             <PixIcon width={props.iconWidth} />
             <Typography m={1} fontSize={props.fontSize}>
                 Se é útil para você, ajude a manter o projeto funcionando!<br />
-                Faça um simples PIX para o email <span style={{fontSize: props.fontSizeEmail}}>{props.email}</span>
-            {props.children}
+                Faça um simples PIX para o email <span style={{ fontSize: props.fontSizeEmail }}>{props.email}</span>
+                <Typography>
+                    {props.children}
+                </Typography>
             </Typography>
         </Box>
     )

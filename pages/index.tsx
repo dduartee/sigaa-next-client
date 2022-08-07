@@ -29,6 +29,7 @@ import useAPIHandler from "@hooks/useAPIEvents";
 import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
+import { formatFullName } from "@components/Home/CustomDrawer";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -193,7 +194,7 @@ function Index(): JSX.Element {
                           userSelect: "none",
                         }}
                       />
-                      <Typography fontSize="1.3rem" marginTop={2}>{user.fullName}</Typography>
+                      <Typography fontSize="1.3rem" marginTop={2}>{formatFullName(user.fullName)}</Typography>
                     </CardHeader>
                   ) : null
                 }
@@ -225,7 +226,9 @@ function Index(): JSX.Element {
                 <CardBottom>
                   <Box display={"flex"} flexDirection="column">
                     <Collapse in={openDonate} timeout={1000}>
-                      <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem" />
+                      <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem">
+                        Veja mais na aba ajuda...
+                      </Donate>
                     </Collapse>
                     <CircularProgress style={{ alignSelf: "center" }} />
                   </Box>

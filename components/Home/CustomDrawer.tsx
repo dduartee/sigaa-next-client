@@ -10,8 +10,11 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import { Home } from "@material-ui/icons";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { Avatar, IconButton } from "@material-ui/core";
+import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
+export function formatFullName(fullName: string) {
+  return fullName.toLowerCase().split(" ").map((name) => name.charAt(0).toUpperCase() + name.slice(1)).join(" ");
+}
 function ResponsiveDrawer({
   handler,
   open,
@@ -26,12 +29,25 @@ function ResponsiveDrawer({
   tab: number;
 }) {
   const user = React.useContext(UserContext);
+  const [anchorEl, setAnchorEl] = React.useState<(EventTarget & HTMLButtonElement) | null>(null);
   const drawer = (
     <div>
       <Toolbar sx={{ height: "90px", display: "flex", justifyContent: "center" }}>
-        <IconButton>
+        <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
           <Avatar src={user?.profilePictureURL} sx={{ width: "60px", height: "60px" }} variant="circular" />
         </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          keepMounted
+          open={!!anchorEl}
+          onClose={() => setAnchorEl(null)}
+        >
+          <Box m={1}>
+            <Typography fontSize={"1rem"}>Usuário: {user?.username}</Typography>
+            <Typography fontSize={"1rem"}>Nome: {formatFullName(user?.fullName ?? "")}</Typography>
+            <Typography fontSize={"1rem"}>Email: {user?.emails[0]}</Typography>
+          </Box>
+        </Menu>
       </Toolbar>
       <List sx={{ padding: "0px" }}>
         <Tabs
@@ -51,7 +67,7 @@ function ResponsiveDrawer({
             <Tab label="Noticias" icon={<InboxIcon />} disabled />
             */
           }
-            <Tab label="Voltar" icon={<ArrowBackIcon />} />
+          <Tab label="Voltar" icon={<ArrowBackIcon />} />
         </Tabs>
       </List>
     </div>
