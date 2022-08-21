@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Course } from "@types";
+import { Course, SumOfGrades, WeightedAverage } from "@types";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
@@ -62,10 +62,25 @@ export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
                 <TableHead>
                   <StyledTableRow>
                     {course?.grades?.map((gradeGroup) => gradeGroup.subGrades?.map((grade, key) => {
+                      const weights = [] as number[];
+                      if (gradeGroup?.type === "weighted-average") {
+                        const subGrades = gradeGroup.subGrades as WeightedAverage[]
+                        subGrades.map((subGrade) => weights.push(subGrade.weight))
+                      }
+                      const maxValues = [] as number[];
+                      if (gradeGroup?.type === "sum-of-grades") {
+                        const subGrades = gradeGroup.subGrades as SumOfGrades[]
+                        subGrades.map((subGrade) => maxValues.push(subGrade.maxValue))
+                      }
                       return (
                         <StyledTableCell key={key}>
                           <Typography fontSize={".9rem"}>
                             {grade?.name}
+                            <Typography variant="caption" style={{
+                              lineBreak: "loose",
+                              whiteSpace: "nowrap"
+                            }}>{gradeGroup.type === "weighted-average" ? ` (Peso ${weights[key]})` : null}
+                              {gradeGroup.type === "sum-of-grades" ? ` (Máx ${maxValues[key]})` : null}</Typography>
                           </Typography>
                         </StyledTableCell>
                       );
@@ -77,7 +92,7 @@ export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
                   <StyledTableRow>
                     {course?.grades?.map((gradeGroup) => gradeGroup.subGrades?.map((grade, key) => (
                       <StyledTableCell key={key}>
-                        {grade.value !== undefined? grade.value?.toPrecision(2): "-"}
+                        {grade.value !== undefined ? grade.value?.toPrecision(2) : "-"}
                       </StyledTableCell>
                     ))
                     )}

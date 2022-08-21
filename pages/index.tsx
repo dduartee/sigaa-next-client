@@ -72,7 +72,7 @@ function Index(): JSX.Element {
     if (bonds[0]?.registration && user?.fullName) {
       setDonateTimeout(setTimeout(() => {
         setOpenDonate(false)
-      }, 2500))
+      }, 1500))
     }
     if (error) {
       setOpenDonate(false)
@@ -97,7 +97,8 @@ function Index(): JSX.Element {
   const handleAccess = () => {
     setStatus("Logando");
     setError(false);
-    router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
+    window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
+    //router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
   };
   const handleLogout = () => {
     setError(false);
@@ -157,7 +158,7 @@ function Index(): JSX.Element {
                 alignContent: "center",
                 width: increaseBoxSize ? "97%" : "20rem",
                 maxWidth: "700px",
-                overflowY: increaseBoxSize?"scroll":"visible",
+                overflowY: increaseBoxSize ? "scroll" : "visible",
                 height: "fit-content"
               }}
             >

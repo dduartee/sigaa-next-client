@@ -22,8 +22,21 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
   const gradeGroup = grades?.find(
     (gradeGroup) => gradeGroup.name === index
   );
-  const hideGradeGroup = (!gradeGroup?.value || (gradeGroup?.subGrades?.length === 0 && gradeGroup.type !== "only-average")) ? grades.indexOf(gradeGroup as GradeGroup) !== 0 : false;
-  if (hideGradeGroup) return null;
+  // se a média não for calculada
+  if (!gradeGroup) {
+    return null;
+  } else {
+    if (!gradeGroup.value) {
+      // se não tiver subnotas e o tipo for somente a média
+      if (gradeGroup.subGrades?.length === 0) {
+        return null
+      } else {
+        if (gradeGroup.subGrades?.map((subGrade) => subGrade.value).filter((value) => value !== undefined).length === 0) {
+          return null
+        }
+      }
+    }
+  }
   const weights = [] as number[];
   if (gradeGroup?.type === "weighted-average") {
     const subGrades = gradeGroup.subGrades as WeightedAverage[]
@@ -33,9 +46,6 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
   if (gradeGroup?.type === "sum-of-grades") {
     const subGrades = gradeGroup.subGrades as SumOfGrades[]
     subGrades.map((subGrade) => maxValues.push(subGrade.maxValue))
-  }
-  function GradeRow() {
-    return
   }
   return (
     <>
@@ -71,27 +81,27 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
               <CollapsibleTable>
                 <TableBody>
                   {gradeGroup?.subGrades.map((grade, key) => {
-                      if (grade.value === undefined) return <></>;
-                      return (
-                        <StyledTableRow key={key}>
-                          <StyledTableCell>
-                            <Typography fontSize={".9rem"}>
-                              {grade.name}
-                              <Typography variant="caption" style={{
-                                lineBreak: "loose",
-                                whiteSpace: "nowrap"
-                              }}>{gradeGroup.type === "weighted-average" ? ` (Peso ${weights[key]})` : null}
-                                {gradeGroup.type === "sum-of-grades" ? ` (Máx ${maxValues[key]})` : null}</Typography>
-                            </Typography>
-                          </StyledTableCell>
-                          <StyledTableCell align="center">
-                            <Typography fontSize={"1rem"}>
-                              {grade.value !== undefined ? grade?.value?.toPrecision(2) : "-"}
-                            </Typography>
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    })
+                    if (grade.value === undefined) return <></>;
+                    return (
+                      <StyledTableRow key={key}>
+                        <StyledTableCell>
+                          <Typography fontSize={".9rem"}>
+                            {grade.name}
+                            <Typography variant="caption" style={{
+                              lineBreak: "loose",
+                              whiteSpace: "nowrap"
+                            }}>{gradeGroup.type === "weighted-average" ? ` (Peso ${weights[key]})` : null}
+                              {gradeGroup.type === "sum-of-grades" ? ` (Máx ${maxValues[key]})` : null}</Typography>
+                          </Typography>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Typography fontSize={"1rem"}>
+                            {grade.value !== undefined ? grade?.value?.toPrecision(2) : "-"}
+                          </Typography>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })
                   }
                 </TableBody>
               </CollapsibleTable>
