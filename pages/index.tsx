@@ -129,118 +129,126 @@ function Index(): JSX.Element {
   const [openCardBody, setOpenCardBody] = useState(!openHelp && !openDonate);
   useEffect(() => setOpenCardBody(!openHelp && !openDonate), [openHelp, openDonate])
   return (
-    <NoSsr>
+    <>
       <Head>
         <title>Login | sigaa-next-client</title>
+        <meta name='description' content="SIGAA de forma rápida e prática" />
+        <meta property="og:title" content="sigaa-next" />
+        <meta property="og:description" content="SIGAA de forma rápida e prática" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://sigaa-next-client.vercel.app/" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
-      <Fade in={true} timeout={500}>
-        <Grid display={"flex"}
-          alignContent={"center"}
-          justifyContent={"center"}
-          width={"100vw"}
-          height={"100vh"}>
-          <Particulas disable={!activeParticles} />
-          <Box display={"flex"}
+      <NoSsr>
+        <Fade in={true} timeout={500}>
+          <Grid display={"flex"}
             alignContent={"center"}
             justifyContent={"center"}
-            alignItems={"center"}
-            flexDirection={"column"}
-            height={"100%"}
-            maxWidth={"100vw"}
-            position={"absolute"}>
-            <Paper
-              elevation={4}
-              sx={{
-                borderRadius: "10px",
-                boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
-                display: "flex",
-                flexDirection: "column",
-                alignContent: "center",
-                width: increaseBoxSize ? "97%" : "20rem",
-                maxWidth: "700px",
-                overflowY: increaseBoxSize ? "scroll" : "visible",
-                height: "fit-content"
-              }}
-            >
-              <Collapse in={openHelp} timeout={500}>
-                {openHelp ?
-                  <Box>
-                    <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
-                    <CardBottom>
-                      <Button
-                        variant="outlined"
-                        startIcon={<ArrowBack />}
-                        onClick={() => setOpenHelp(false)}
-                      >
-                        Voltar
-                      </Button>
-                    </CardBottom>
-                  </Box>
-                  : null}
-              </Collapse>
-              <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
-                {
-                  (user?.profilePictureURL && user?.fullName) ? (
-
-                    <CardHeader>
-                      <img
-                        src={user.profilePictureURL}
-                        style={{
-                          boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.4)",
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "cover",
-                          borderRadius: "50%",
-                          marginTop: "-50px",
-                          userSelect: "none",
-                        }}
-                      />
-                      <Typography fontSize="1.3rem" marginTop={2}>{formatFullName(user.fullName)}</Typography>
-                    </CardHeader>
-                  ) : null
-                }
-              </Collapse>
-              <Collapse /** Collapse para a tela de vinculos e botoes */
-                in={conditionals.hasFullNameAndIsLoggedIn && openCardBody}
-                unmountOnExit
+            width={"100vw"}
+            height={"100vh"}>
+            <Particulas disable={!activeParticles} />
+            <Box display={"flex"}
+              alignContent={"center"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              flexDirection={"column"}
+              height={"100%"}
+              maxWidth={"100vw"}
+              position={"absolute"}>
+              <Paper
+                elevation={4}
+                sx={{
+                  borderRadius: "10px",
+                  boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignContent: "center",
+                  width: increaseBoxSize ? "97%" : "20rem",
+                  maxWidth: "700px",
+                  overflowY: increaseBoxSize ? "scroll" : "visible",
+                  height: "fit-content"
+                }}
               >
-                <>
-                  <BondSelection registrationSelected={registrationSelected} setRegistrationSelected={setRegistrationSelected} bonds={bonds} />
+                <Collapse in={openHelp} timeout={500}>
+                  {openHelp ?
+                    <Box>
+                      <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
+                      <CardBottom>
+                        <Button
+                          variant="outlined"
+                          startIcon={<ArrowBack />}
+                          onClick={() => setOpenHelp(false)}
+                        >
+                          Voltar
+                        </Button>
+                      </CardBottom>
+                    </Box>
+                    : null}
+                </Collapse>
+                <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
+                  {
+                    (user?.profilePictureURL && user?.fullName) ? (
+
+                      <CardHeader>
+                        <img
+                          src={user.profilePictureURL}
+                          style={{
+                            boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.4)",
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            marginTop: "-50px",
+                            userSelect: "none",
+                          }}
+                        />
+                        <Typography fontSize="1.3rem" marginTop={2}>{formatFullName(user.fullName)}</Typography>
+                      </CardHeader>
+                    ) : null
+                  }
+                </Collapse>
+                <Collapse /** Collapse para a tela de vinculos e botoes */
+                  in={conditionals.hasFullNameAndIsLoggedIn && openCardBody}
+                  unmountOnExit
+                >
+                  <>
+                    <BondSelection registrationSelected={registrationSelected} setRegistrationSelected={setRegistrationSelected} bonds={bonds} />
+                    <CardBottom>
+                      <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
+                    </CardBottom>
+                  </>
+                </Collapse>
+                <Collapse in={conditionals.isLoggedOut}>
+                  {conditionals.isLoggedOut ? (
+                    <LoginCard handleLogin={handleLogin}
+                      setOpenHelp={setOpenHelp}
+                      credentials={credentials}
+                      setCredentials={setCredentials}
+                      error={error}
+                      setError={setError} />
+                  ) : null}
+                </Collapse>
+
+
+                {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
                   <CardBottom>
-                    <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
+                    <Box display={"flex"} flexDirection="column">
+                      <Collapse in={openDonate} timeout={1000}>
+                        <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem">
+                          Veja mais na aba ajuda...
+                        </Donate>
+                      </Collapse>
+                      <CircularProgress style={{ alignSelf: "center" }} />
+                    </Box>
                   </CardBottom>
-                </>
-              </Collapse>
-              <Collapse in={conditionals.isLoggedOut}>
-                {conditionals.isLoggedOut ? (
-                  <LoginCard handleLogin={handleLogin}
-                    setOpenHelp={setOpenHelp}
-                    credentials={credentials}
-                    setCredentials={setCredentials}
-                    error={error}
-                    setError={setError} />
                 ) : null}
-              </Collapse>
 
-
-              {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
-                <CardBottom>
-                  <Box display={"flex"} flexDirection="column">
-                    <Collapse in={openDonate} timeout={1000}>
-                      <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem">
-                        Veja mais na aba ajuda...
-                      </Donate>
-                    </Collapse>
-                    <CircularProgress style={{ alignSelf: "center" }} />
-                  </Box>
-                </CardBottom>
-              ) : null}
-
-            </Paper>
-          </Box>
-        </Grid>
-      </Fade>
-    </NoSsr >
+              </Paper>
+            </Box>
+          </Grid>
+        </Fade>
+      </NoSsr >
+    </>
   );
 }
 
