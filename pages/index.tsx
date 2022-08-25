@@ -137,7 +137,6 @@ function Index(): JSX.Element {
         <meta property="og:description" content="SIGAA de forma rápida e prática" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://sigaa-next-client.vercel.app/" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
       <NoSsr>
         <Fade in={true} timeout={500}>
