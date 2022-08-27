@@ -104,7 +104,7 @@ function Index(): JSX.Element {
     setError(false);
     socket.emit("user::logoff", { token: localStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
-    localStorage.removeItem("token");
+    localStorage.clear();
   };
 
   const conditionals = {
