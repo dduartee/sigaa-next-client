@@ -28,7 +28,7 @@ export default function useUserHandler() {
     socket.on("user::status", (status: UserStatus) => {
       setStatus(status);
     });
-    socket.on("user::login", (logado: boolean) => {
+    socket.on("user::login", ({logado}) => {
       if (logado) {
         emitUserInfo({ token: localStorage.getItem("token") }, socket);
         emitBondList(
