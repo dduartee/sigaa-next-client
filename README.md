@@ -4,18 +4,21 @@
 ### Este projeto está hospedado em [sigaa-next-client.vercel.app](https://sigaa-next-client.vercel.app/). <br>
 </div>
 
+## Objetivo do projeto
 
-## Disclaimer
-
-O código em si, integra a sigaa-socket-api a qual integra a [sigaa-api](https://github.com/GeovaneSchmitz/sigaa-api)
-que é uma biblioteca Web Scraping, feita para acessar o [SIGAA](https://sigaa.ifsc.edu.br) (Sistema Integrado de Gestão de Atividades Acadêmicas) e retirar dados e retornar para o usuário.
-
-Este projeto foi desenvolvido com base nas informações apresentadas em acessos realizados no SIGAA. Por isso pode ocorrer incompatibilidades entre os dados mostrados no SIGAA e os dados apresentados no site.
+O principal objetivo do projeto é melhorar a usabilidade do estudante para visualizar as informações do SIGAA, como por exemplo, todas as notas de todas as matérias em uma única página, horários, tarefas e além de outras funcionalidades que serão implementadas, como visualização de frequências, tópicos de aula, arquivos, entre outros.
 <br>
-Qualquer dúvida, entre em contato.<br>
-Email: gabrielkduarte234@gmail.com <br>
-Ou abra uma [issue](https://github.com/dduartee/sigaa-next-client/issues/new) no GitHub.
 
+## Como contribuir
+
+![PIX](https://user-images.githubusercontent.com/33992396/99478349-ff1b1280-2932-11eb-8776-1942bbe1a52a.png)
+
+Para manter o projeto funcionando 24h e atualizado, estamos aceitando doações! 
+<h2>email: sigaanext@gmail.com</h2>
 <br>
+
+## Problemas ou sugestões
+
+Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issue [aqui](https://github.com/dduartee/sigaa-next-client/issues/new).
 
 ![completo](docs/images/Completo.png)
