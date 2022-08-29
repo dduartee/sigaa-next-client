@@ -36,14 +36,16 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
   useEffect(() => {
     if (scheduleData.length == 0) {
       courses?.map((course) => {
-        const schedules = parseSchedule(course.schedule ?? null);
-        schedules.map((schedule) => {
-          setScheduleData(prev => [...prev, {
-            StartTime: schedule.startDate,
-            EndTime: schedule.endDate,
-            Subject: course.title,
-            Id: course.id,
-          }]);
+        const schedulesData = generateScheduleData(course.schedule ?? "");
+        schedulesData.map((weekDaySchedules) => {
+          weekDaySchedules.map((weekDaySchedule) => {
+            setScheduleData(prev => [...prev, {
+              StartTime: weekDaySchedule.startDate,
+              EndTime: weekDaySchedule.endDate,
+              Subject: course.title,
+              Id: course.id,
+            }]);
+          })
         });
       });
     }
@@ -89,34 +91,48 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
     </div >
   );
 }
-
-function parseSchedule(schedule: string | null) {
-  const schedules = schedule?.split(" ") ?? []
-  return schedules.map(schedule => {
-    if (!schedule) return { startDate: new Date("January 01, 1970 00:00:00"), endDate: new Date("January 01, 1970 00:00:00") };
-    const periodo = schedule.substr(1, 1);
-    const diaSemana = parseInt(schedule.substr(0, 1)) - 1;
-    const horarios = schedule.substr(2).split('') as any[]
-
-    const horariosM = [[], ["7:45:00", "8:40:00"], ["8:40:00", "9:35:00"], ["9:55:00", "10:50:00"], ["10:50:00", "11:45:00"]];
-    const horariosT = [[], ["13:30:00", "14:25:00"], ["14:25:00", "15:20:00"], ["15:40:00", "16:35:00"], ["16:35:00", "17:30:00"]];
-    const horariosN = [[], ["18:30:00", "19:25:00"], ["19:25:00", "20:20:00"], ["20:40:00", "21:35:00"], ["21:35:00", "22:30:00"]];
-
-    const horarioList = horarios.map(horario => {
-      switch (periodo) {
-        case "M":
-          return horariosM[horario];
-        case "T":
-          return horariosT[horario];
-        default:
-          return horariosN[horario];
-      }
+function generateScheduleData(scheduleCode: string) {
+  const schedules = scheduleCode.split(' ');
+  return schedules.map((schedule) => {
+    const timesHour = new Map<string, string[][]>()
+      .set("M", [[], ["7:45:00", "8:40:00"], ["8:40:00", "9:35:00"], ["9:55:00", "10:50:00"], ["10:50:00", "11:45:00"]])
+      .set("T", [[], ["13:30:00", "14:25:00"], ["14:25:00", "15:20:00"], ["15:40:00", "16:35:00"], ["16:35:00", "17:30:00"]])
+      .set("N", [[], ["18:30:00", "19:25:00"], ["19:25:00", "20:20:00"], ["20:40:00", "21:35:00"], ["21:35:00", "22:30:00"]]);
+    // schedule can be "2T3", "3M12 4M34" or "43M12"
+    const [period] = schedule.match(/[A-Z]/) ?? [];
+    const [weekDays] = schedule.match(/^[0-9]+/) ?? []
+    const [, times] = schedule.match(/[0-9]+/g) ?? [];
+    if (!period || !weekDays || !times) {
+      return []
+    }
+    // scheduleData
+    /**
+     * [
+     * {
+     * "period": "M",
+     * "weekDay": "4",
+     * "times": ["1", "2"]
+     * },
+     * {
+     * "period": "M",
+     * "weekDay": "6",
+     * "times": ["1", "2"]
+     * }
+     * ]
+     */
+    const scheduleData = weekDays.split("").map(weekDay => {
+      const weekDayDate = moment().weekday(parseInt(weekDay) - 1).format('DD/MM/YYYY');
+      return times.split("").map(time => {
+        const [startTime, endTime] = timesHour.get(period)?.[parseInt(time)] ?? [];
+        if (!startTime || !endTime) return { startDate: new Date("January 01, 1970 00:00:00"), endDate: new Date("January 01, 1970 00:00:00") }
+        const startDate = moment(`${weekDayDate} ${startTime}`, 'DD/MM/YYYY HH:mm:ss').toDate();
+        const endDate = moment(`${weekDayDate} ${endTime}`, 'DD/MM/YYYY HH:mm:ss').toDate();
+        return {
+          startDate,
+          endDate,
+        }
+      })
     })
-
-    const dayMonthYear = moment().weekday(diaSemana).format('DD/MM/YYYY');
-    const startDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`);
-    horarioList.reverse()[0].reverse();
-    const endDate = new Date(`${dayMonthYear.split("/").reverse().join("/")} ${horarioList[0][0]}`)
-    return { startDate, endDate };
-  });
+    return scheduleData
+  }).flat()
 }
