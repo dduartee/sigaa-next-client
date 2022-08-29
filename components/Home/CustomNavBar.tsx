@@ -5,7 +5,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
-import { Typography } from "@material-ui/core";
 
 function ResponsiveDrawer({
   handler,
@@ -36,9 +35,10 @@ function ResponsiveDrawer({
               <MenuIcon />
             </IconButton>
           </div>
-          <Typography variant="h2" fontSize="2rem" textAlign="center" width="100%">
-            sigaa-next
-          </Typography>
+          <Box textAlign={"center"} width="100%" padding={2}>
+            <img src="/img/logo.png" height="50rem"/>
+          </Box>
+
         </Toolbar>
       </AppBar>
     </Box>
