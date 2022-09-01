@@ -23,7 +23,6 @@ Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issu
 
 
 
-# Páginas
 <br>
 <div align="center">
 
