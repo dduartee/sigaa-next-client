@@ -27,7 +27,7 @@ Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issu
 <br>
 <div align="center">
 
-## Login, Ajuda e Vinculos
+<h2>Login, Ajuda e Vinculos</h2>
 <img src="docs/images/Login.png" width="300" />
 <img src="docs/images/Ajuda.png" width="300" />
 <img src="docs/images/Vinculos.png" width="300" />
@@ -35,7 +35,7 @@ Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issu
 <br>
 <div align="center">
 
-## Página inicial e menu
+<h2>Página inicial e menu</h2>
 <img src="docs/images/Atividades.png" width="300" />
 <img src="docs/images/Matérias.png" width="300" />
 <img src="docs/images/Menu.png" width="300" />
@@ -44,7 +44,7 @@ Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issu
 <br>
 <div align="center">
 
-## Horários e Notas
+<h2>Horários e Notas</h2>
 <img src="docs/images/Horários.png" width="300" />
 <img src="docs/images/Notas.png" width="300" />
 <img src="docs/images/Notas2.png" width="300" />
