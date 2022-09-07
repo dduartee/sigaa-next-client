@@ -3,10 +3,6 @@ import { Email } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Donate } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {
-    const [hoverGithubIcon, setHoverGithubIcon] = useState(false);
-    const toggleGithubIcon = () => {
-        setHoverGithubIcon(!hoverGithubIcon);
-    };
     useEffect(() => {
         localStorage.setItem("particles", props.activeParticles.toString());
     }, [props.activeParticles]);
@@ -32,20 +28,14 @@ export function Ajuda(props: { setActiveParticles: (value: boolean) => void, act
             </ul>
             <Dados />
             <Box display={"flex"} alignItems="center" m={1}>
-                <a href="https://github.com/dduartee/sigaa-next-client">
+                <a href="https://www.instagram.com/sigaanext/">
                     <img
-                        src={
-                            hoverGithubIcon
-                                ? "/img/GitHub-Mark-Light-64px.png"
-                                : "/img/GitHub-Mark-64px.png"
-                        }
-                        aria-label="Github"
-                        onMouseEnter={toggleGithubIcon}
-                        onMouseLeave={toggleGithubIcon}
+                        src={"https://upload.wikimedia.org/wikipedia/commons/9/96/Instagram.svg"}
+                        aria-label="Instagram"
                         width={"40px"}
                     />
                 </a>
-                <Typography m={1} fontSize={"1.3rem"}>Contribua para o projeto</Typography>
+                <Typography m={1} fontSize={"1.3rem"}>Siga-nos no instagram e saiba das atualizações! @sigaanext</Typography>
             </Box>
             <Box display="flex" flexDirection={"row"} justifyContent={"start"} alignItems={"center"} m={0}>
                 <Switch checked={props.activeParticles} onChange={() => {
@@ -73,8 +63,7 @@ function Dados() {
                     </a>
                 </Typography>
             </Box>
-            <Donate email="acima!" fontSize="1.3rem" iconWidth="40px" fontSizeEmail="1.3rem">
-                <Typography fontSize={"1.0rem"} marginLeft={2}><li>Precisamos manter nossos servidores brasileiros funcionando 24h e atualizados.</li></Typography>
+            <Donate email="acima!" fontSize="1.1rem" iconWidth="40px" fontSizeEmail="1.1rem">
             </Donate>
         </Box>
 

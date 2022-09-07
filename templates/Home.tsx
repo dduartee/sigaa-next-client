@@ -50,9 +50,9 @@ export default function HomeTemplate({
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <StyledContent>
             <Toolbar />
-            <Paper sx={{ margin: "1rem", marginTop: "26px" }} elevation={1}>
+            <Box component={Paper} sx={{ margin: ".6rem", marginTop: "30px" }} elevation={1} display="flex" justifyContent={"center"}>
               {children}
-            </Paper>
+            </Box>
           </StyledContent>
         </Box>
       </Box>

@@ -22,12 +22,24 @@ export type Bond = {
 };
 export type Activity = {
   type: "homework" | "exam" | "quiz";
-  description: string;
+  title: string;
   date: string;
   course: {
     title: string;
   };
   done: boolean;
+}
+export type File = {
+  id: string,
+  title: string,
+  description: string,
+  key: string,
+}
+export type News = {
+  id: string,
+  title: string,
+  date: string,
+  content?: string
 }
 export type Course = {
   id: string;
@@ -37,20 +49,27 @@ export type Course = {
   period: string;
   numberOfStudents: number;
   grades?: GradeGroup[];
-  news?: any[]
-  homeworks?: any[];
+  news?: News[]
+  homeworks?: Homework[];
 }
 export type Homework = {
-  title: string;
-  description: string | null;
-  startDate: string;
-  endDate: string;
-  isGroup: boolean | null;
-  haveGrade: boolean | null;
-};
+  id: string,
+  title: string,
+  startDate: string,
+  endDate: string,
+  haveGrade?: boolean,
+  isGroup?: boolean,
+  content?: string
+  attachment?: {
+    id: string;
+    title: string;
+    description: string;
+    key: string;
+  }
+}
 
 export type GradeGroup = {
-  type: 'sum-of-grades'|'only-average'|'weighted-average',
+  type: 'sum-of-grades' | 'only-average' | 'weighted-average',
   value: number,
   name: string,
   subGrades: SumOfGrades[] | WeightedAverage[]

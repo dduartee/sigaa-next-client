@@ -118,7 +118,7 @@ function HomeworkCollapse({
       </Box>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Box sx={{ margin: "1rem", whiteSpace: "pre-wrap" }}>
-          {homework.description}
+          {homework.content}
           {partialLoadingDescription ? (
             <CircularProgress style={{ alignSelf: "center", margin: "1rem" }} />
           ) : (

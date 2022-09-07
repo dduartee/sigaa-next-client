@@ -66,6 +66,11 @@ export default function RegistrationPage({
       setCoursesLoading(true)
     }
   }, [bond?.activities, registration, setCoursesLoading, socket]);
+  useEffect(() => {
+    if (bond?.courses) {
+      setCoursesLoading(false)
+    }
+  }, [bond?.activities, bond?.courses, registration, setCoursesLoading, socket]);
   return (
     <>
       <Head>
@@ -78,7 +83,7 @@ export default function RegistrationPage({
         setTab={setTab}
         tab={tab}
       >
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box sx={{ flexGrow: 1, p: 1 }}  display={"flex"} flexDirection="column" alignItems={"center"} maxWidth={"80%"}>
           <Activities bond={bond} loading={activitiesLoading} />
           <Courses bond={bond} loading={coursesLoading} />
         </Box>
