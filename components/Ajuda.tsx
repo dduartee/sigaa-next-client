@@ -1,6 +1,6 @@
 import { Box, Switch, Typography } from "@material-ui/core";
 import { Email } from "@material-ui/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Donate } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {
     useEffect(() => {

@@ -17,8 +17,8 @@ export type Bond = {
   period: string;
   type: "student";
   active: boolean;
-  courses: Course[] | [];
-  activities: Activity[] | [];
+  courses: Course[];
+  activities: Activity[];
 };
 export type Activity = {
   type: "homework" | "exam" | "quiz";
@@ -51,6 +51,15 @@ export type Course = {
   grades?: GradeGroup[];
   news?: News[]
   homeworks?: Homework[];
+  absences?: Absences;
+}
+export type Absences = {
+  list: {
+    date: string;
+    numOfAbsences: number;
+  }[]
+  total: number;
+  max: number;
 }
 export type Homework = {
   id: string,

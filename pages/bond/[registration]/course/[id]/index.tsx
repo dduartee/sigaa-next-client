@@ -2,12 +2,12 @@ import { GetServerSidePropsContext } from "next";
 import React from "react";
 export default function CodePage({
   registration,
-  code,
+  id,
 }: {
   registration: string;
-  code: string;
+  id: string;
 }) {
-  return <>{code}</>;
+  return <>{registration} - {id}</>;
 }
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {

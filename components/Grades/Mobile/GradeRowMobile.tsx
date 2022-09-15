@@ -50,14 +50,14 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
   return (
     <>
       <StyledTableRow>
-        <StyledTableCell>
+        <StyledTableCell width="1rem">
           <Box width={"1rem"}>
             {subGrade ? (
               <IconButton size="small" onClick={() => setOpen(!open)}>
                 {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
               </IconButton>
             ) : (
-              <IconButton size="small" onClick={() => setOpen(!open)} />
+              <IconButton size="small" />
             )}
           </Box>
         </StyledTableCell>

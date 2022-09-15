@@ -22,6 +22,9 @@ export default function useTabHandler({
         route = `/bond/${registration}/grades`;
         break;
       case 2:
+        route = `/bond/${registration}/absences`;
+        break;
+      case 3:
         route = `/bond/${registration}/schedules`;
         break;
       /*case 3:
@@ -34,7 +37,7 @@ export default function useTabHandler({
         route = "/";
         break;
     }
-    if(route === "/") {
+    if (route === "/") {
       window.location.href = "/";
     } else {
       router.push(route);

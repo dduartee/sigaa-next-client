@@ -80,7 +80,7 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
   return (
     <div>
       <Head>
-        <title>Horários | sigaa-next-client</title>
+        <title>Horários | sigaa-next</title>
       </Head>
       <Collapse in={scheduleData.length > 0}>
         {
@@ -91,7 +91,7 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
     </div >
   );
 }
-function generateScheduleData(scheduleCode: string) {
+export function generateScheduleData(scheduleCode: string) {
   const schedules = scheduleCode.split(' ');
   return schedules.map((schedule) => {
     const timesHour = new Map<string, string[][]>()
