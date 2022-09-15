@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
@@ -74,7 +73,7 @@ export default function RegistrationPage({
   return (
     <>
       <Head>
-        <title>Inicio | sigaa-next-client</title>
+        <title>Inicio | sigaa-next</title>
       </Head>
       <HomeProvider
         loading={false}

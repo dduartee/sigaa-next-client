@@ -8,10 +8,12 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
+import HowToRegIcon from '@material-ui/icons/HowToReg';
 import { Home } from "@material-ui/icons";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
+
 export function formatFullName(fullName: string) {
   return fullName.toLowerCase().split(" ").map((name) => name.charAt(0).toUpperCase() + name.slice(1)).join(" ");
 }
@@ -23,7 +25,7 @@ function ResponsiveDrawer({
   tabChanger,
 }: {
   handler: () => void;
-  tabChanger: (event: any, newValue: number) => void;
+  tabChanger: (event: React.SyntheticEvent<Element, Event>, newValue: number) => void;
   open: boolean;
   width: number;
   tab: number;
@@ -60,6 +62,7 @@ function ResponsiveDrawer({
         >
           <Tab label="Inicio" icon={<Home />} />
           <Tab label="Notas" icon={<EqualizerIcon />} />
+          <Tab label="Frequência" icon={<HowToRegIcon />} />
           <Tab label="Horários" icon={<CalendarTodayIcon />} />
           {
             /*

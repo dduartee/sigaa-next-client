@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Bond, Course } from "@types";
-import { Accordion, AccordionSummary, Box, CircularProgress, Paper, Typography } from "@material-ui/core";
+import { Accordion, AccordionSummary, Box, CircularProgress, Typography } from "@material-ui/core";
 import { RegistrationContext } from "@context/registration";
 import { useRouter } from "next/router";
 

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
@@ -18,12 +17,12 @@ import { emitCourseList } from "@hooks/useBondsEvents";
 function InitializeHooks({ registration }: { registration: string }) {
   const [valid, setValid] = useState(true);
   useTokenHandler(setValid);
-  const { user, setUser } = useUserHandler();
-  const [loading, setLoading] = useState(false);
+  const { user } = useUserHandler();
+  const [loading] = useState(false);
   const [bond, setBond] = useState<Bond | null>(null);
   useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 2,
+    order: 3,
     registration,
     valid,
   });
@@ -38,25 +37,24 @@ function InitializeHooks({ registration }: { registration: string }) {
   };
 }
 export default function SchedulesPage({ registration }: { registration: string }) {
-  const router = useRouter();
   const socket = useContext(SocketContext);
   const { valid, user, loading, bond, tab, setTab } = InitializeHooks({
     registration,
   });
   useEffect(() => {
     if (valid) {
+      emitUserInfo({ token: localStorage.getItem("token") }, socket);
       emitCourseList(
         { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: false },
         socket
       );
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [registration, socket, valid]);
 
   return (
     <>
       <Head>
-        <title>Horários | sigaa-next-client</title>
+        <title>Horários | sigaa-next</title>
       </Head>
       <HomeProvider
         loading={loading}

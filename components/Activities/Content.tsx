@@ -8,10 +8,10 @@ import {
   Button,
   CircularProgress,
   Collapse,
-  Paper,
   Typography,
 } from "@material-ui/core";
 import moment from "moment";
+import 'moment-timezone'
 import { RegistrationContext } from "@context/registration";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { SocketContext } from "@context/socket";
@@ -70,6 +70,7 @@ export default function Activities({
             ) : activities?.map((activity: Activity, index) => {
               const days = getDiffDate(activity.date);
               const date = moment(new Date(activity.date))
+                .tz("America/Sao_Paulo")
                 .format("DD/MM/YYYY HH:mm");
               return (
                 <ActivityCollapse
@@ -262,7 +263,7 @@ function ActivityCollapse({
 }
 function getDiffDate(date: string) {
   const dateActivity = new Date(date);
-  return moment(dateActivity).diff(Date.now(), "days");
+  return moment(dateActivity).tz('America/Sao_Paulo').diff(Date.now(), "days");
 }
 function orderByDate(activities: Activity[]) {
   return activities.sort((a, b) => {

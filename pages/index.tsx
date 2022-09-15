@@ -24,14 +24,12 @@ import { CardBottom, CardHeader } from "@components/Index/Card";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler from "@hooks/useUserHandler";
 import useBondsHandler from "@hooks/useBondsEvents";
-import { useRouter } from "next/router";
 import useAPIHandler from "@hooks/useAPIEvents";
 import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
 import { formatFullName } from "@components/Home/CustomDrawer";
 function Index(): JSX.Element {
-  const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
     password: "",
@@ -50,7 +48,6 @@ function Index(): JSX.Element {
 
   useEffect(() => {
     if (valid) {
-      console.debug("@validUseEffect", valid);
       socket.emit("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo token
     }
   }, [valid, socket, setStatus]);
@@ -131,7 +128,7 @@ function Index(): JSX.Element {
   return (
     <>
       <Head>
-        <title>Login | sigaa-next-client</title>
+        <title>Login | sigaa-next</title>
         <meta name='description' content="SIGAA de forma rápida e prática" />
         <meta property="og:title" content="sigaa-next" />
         <meta property="og:description" content="SIGAA de forma rápida e prática" />

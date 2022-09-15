@@ -56,10 +56,8 @@ function getIndex(bond: Bond) {
 }
 export default function Grades({
   bond,
-  partialLoading,
 }: {
   bond: Bond | null
-  partialLoading: boolean;
 }) {
   const [index, setIndex] = React.useState<string[]>([]);
   const [coursesByPeriod, setCoursesByPeriod] = React.useState<

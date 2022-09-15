@@ -55,6 +55,7 @@ export default function GradesPage({ registration }: { registration: string }) {
   } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
+      emitUserInfo({ token: localStorage.getItem("token") }, socket);
       emitGradesList(
         {
           registration,
@@ -65,13 +66,12 @@ export default function GradesPage({ registration }: { registration: string }) {
         socket
       );
       setPartialLoading(true);
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
     } else window.location.href = "/";
   }, [registration, setPartialLoading, socket, valid]);
   return (
     <>
       <Head>
-        <title>Notas | sigaa-next-client</title>
+        <title>Notas | sigaa-next</title>
       </Head>
       <HomeProvider
         loading={loading}
@@ -81,7 +81,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         tab={tab}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Grades bond={bond} partialLoading={partialLoading} />
+          <Grades bond={bond} />
           {
             partialLoading ? (
               <Box display={"flex"} justifyContent={"center"}>
