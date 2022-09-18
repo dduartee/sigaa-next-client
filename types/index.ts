@@ -78,10 +78,10 @@ export type Homework = {
 }
 
 export type GradeGroup = {
-  type: 'sum-of-grades' | 'only-average' | 'weighted-average',
+  type: 'sum-of-grades' | 'only-average' | 'weighted-average' |'arithmetic-average' ,
   value: number,
   name: string,
-  subGrades: SumOfGrades[] | WeightedAverage[]
+  subGrades: SumOfGrades[] | WeightedAverage[] | ArithmeticAverage[]
 }
 export type SumOfGrades = {
   name: string,
@@ -94,5 +94,10 @@ export type WeightedAverage = {
   code: string,
   value: number,
   weight: number,
+}
+export type ArithmeticAverage = {
+  name: string,
+  code: string,
+  value: number,
 }
 export type Error = "SIGAA: Invalid credentials.";

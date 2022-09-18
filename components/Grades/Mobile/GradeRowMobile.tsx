@@ -76,7 +76,7 @@ export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: strin
           <Collapse in={open && subGrade} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1, mb: 3 }}>
               <Typography variant="caption" gutterBottom component="div">
-                Notas {gradeGroup?.type === "only-average" ? "da média" : (gradeGroup?.type === "sum-of-grades" ? "da soma" : "da média ponderada")}
+                Notas {gradeGroup?.type === "arithmetic-average" ? "da média aritmética" : (gradeGroup?.type === "sum-of-grades" ? "da soma" : "da média ponderada")}
               </Typography>
               <CollapsibleTable>
                 <TableBody>
