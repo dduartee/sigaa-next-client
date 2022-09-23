@@ -50,7 +50,7 @@ export default function RegistrationPage({
     else {
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
       emitActivitiesList(
-        { token: localStorage.getItem("token"), registration, inactive: true, cache: false },
+        { token: localStorage.getItem("token"), registration, inactive: true, cache: false, id: "activities", },
         socket
       );
       setActivitiesLoading(true)
@@ -59,7 +59,7 @@ export default function RegistrationPage({
   useEffect(() => {
     if (bond?.activities) {
       emitCourseList(
-        { token: localStorage.getItem("token"), registration, inactive: true, allPeriods: false, cache: false },
+        { token: localStorage.getItem("token"), registration, inactive: true, allPeriods: false, cache: false, id: "courses" },
         socket
       )
       setCoursesLoading(true)

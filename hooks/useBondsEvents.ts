@@ -33,6 +33,7 @@ export function emitActivitiesList(query: {
   inactive: boolean;
   registration: string;
   cache: boolean;
+  id: string;
 }, socket: Socket) {
   socket.emit("activities::list", query);
 }
@@ -42,6 +43,7 @@ export function emitCourseList(
     registration: string;
     inactive: boolean;
     allPeriods: boolean;
+    id: string;
     cache: boolean;
   },
   socket: Socket
