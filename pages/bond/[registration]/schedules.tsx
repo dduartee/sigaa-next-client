@@ -45,7 +45,7 @@ export default function SchedulesPage({ registration }: { registration: string }
     if (valid) {
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
       emitCourseList(
-        { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: false },
+        { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: true },
         socket
       );
     } else window.location.href = "/";

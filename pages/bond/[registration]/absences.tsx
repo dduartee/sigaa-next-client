@@ -58,6 +58,7 @@ export default function GradesPage({ registration }: { registration: string }) {
                 {
                     registration,
                     cache: true,
+                    inactive: true,
                     token: localStorage.getItem("token"),
                 },
             );

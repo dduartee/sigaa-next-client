@@ -34,7 +34,7 @@ export default function useUserHandler() {
         emitBondList(
           {
             token: localStorage.getItem("token"),
-            inactive: false,
+            inactive: true,
             cache: false
           },
           socket
