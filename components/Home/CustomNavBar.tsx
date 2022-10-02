@@ -36,7 +36,7 @@ function ResponsiveDrawer({
             </IconButton>
           </div>
           <Box textAlign={"center"} width="100%" padding={2}>
-            <img src="/img/logo.png" height="50rem"/>
+            <img src="/logo.png" height="50rem"/>
           </Box>
 
         </Toolbar>

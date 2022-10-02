@@ -1,0 +1,24 @@
+{
+    "name": "SIGAA Next: Acesse o SIGAA de forma RÁPIDA e PRÁTICA",
+    "short_name": "SIGAA Next",
+    "description": "Acesse o SIGAA de forma RÁPIDA e PRÁTICA",
+    "lang": "pt-BR",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#207e37",
+    "background_color": "#202020",
+    "icons": [
+        {
+            "src": "/loguinho-maskable.png",
+            "sizes": "280x280",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/logo-x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

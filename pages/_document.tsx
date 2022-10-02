@@ -20,6 +20,7 @@ export default class MyDocument extends Document {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+          <link rel="manifest" href="manifest.json" />
         </Head>
         <body>
           <Main />
@@ -64,11 +65,11 @@ MyDocument.getInitialProps = async (ctx) => {
     originalRenderPage({
       // Take precedence over the CacheProvider in our custom _app.js
       enhanceComponent: (Component) => (props) =>
-        (
-          <CacheProvider value={cache}>
-            <Component {...props} />
-          </CacheProvider>
-        ),
+      (
+        <CacheProvider value={cache}>
+          <Component {...props} />
+        </CacheProvider>
+      ),
     });
 
   const initialProps = await Document.getInitialProps(ctx);

@@ -135,8 +135,8 @@ function Index(): JSX.Element {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://sigaa-next-client.vercel.app/" />
         <meta property="og:image" itemProp="image" content="/og-image.png" />
-        <link rel="icon" href="/favicon.ico" />
         <meta name="google-site-verification" content="l3dA98khZkgdacKAYSDoYNF1SJy1qhZAvoVqHI3KrYE" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <NoSsr>
         <Fade in={true} timeout={500}>
@@ -147,7 +147,7 @@ function Index(): JSX.Element {
             height={"100vh"}>
             <Particulas disable={!activeParticles} />
             <Box textAlign={"center"} width="100%" padding={3} position="absolute" bottom={0}>
-              <img src="/img/logo.png" height="50rem" />
+              <img src="/logo.png" height="50rem" />
             </Box>
             <Box display={"flex"}
               alignContent={"center"}
