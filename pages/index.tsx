@@ -147,7 +147,7 @@ function Index(): JSX.Element {
             height={"100vh"}>
             <Particulas disable={!activeParticles} />
             <Box textAlign={"center"} width="100%" padding={3} position="absolute" bottom={0}>
-              <img src="/logo.png" height="50rem" />
+              <img src="/img/logo.png" height="50rem" />
             </Box>
             <Box display={"flex"}
               alignContent={"center"}

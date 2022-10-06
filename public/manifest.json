@@ -10,15 +10,16 @@
     "background_color": "#202020",
     "icons": [
         {
-            "src": "/loguinho-maskable.png",
-            "sizes": "280x280",
+            "src": "/img/minilogomaskablex512.png",
+            "sizes": "256x256",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "/logo-x512.png",
+            "src": "/img/logox512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ]
 }
