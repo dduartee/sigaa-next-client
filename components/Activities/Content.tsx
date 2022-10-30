@@ -10,8 +10,6 @@ import {
   Collapse,
   Typography,
 } from "@material-ui/core";
-import moment from "moment";
-import 'moment-timezone'
 import { RegistrationContext } from "@context/registration";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { SocketContext } from "@context/socket";
@@ -68,16 +66,14 @@ export default function Activities({
                 Nenhuma atividade para os próximos 15 dias
               </Typography>
             ) : activities?.map((activity: Activity, index) => {
-              const days = getDiffDate(activity.date);
-              const date = moment(new Date(activity.date))
-                .tz("America/Sao_Paulo")
-                .format("DD/MM/YYYY HH:mm");
+              const activityDate = new Date(activity.date);
+              const days = Math.floor((activityDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
               return (
                 <ActivityCollapse
                   key={index}
                   activity={activity}
                   days={days}
-                  date={date}
+                  date={activityDate}
                   openFinished={openFinished}
                 />
               );
@@ -107,7 +103,7 @@ function ActivityCollapse({
 }: {
   activity: Activity;
   days: number;
-  date: string;
+  date: Date;
   openFinished: boolean;
 }) {
   const [content, setContent] = useState<string | null>(null);
@@ -153,117 +149,119 @@ function ActivityCollapse({
   const finish = days < 0;
   const today = days === 0;
   const tomorrow = days === 1;
+
+  const dateString = `${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()}/${date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()}/${date.getFullYear()}`;
+  const timeString = `${date.getUTCHours() < 10 ? "0" : ""}${date.getUTCHours()}:${date.getUTCMinutes() < 10 ? "0" : ""}${date.getUTCMinutes()}`;
+
   return (
     <Box mb={2}>
-        <Collapse in={!finish || openFinished} unmountOnExit>
-
-          <Accordion sx={{
-            marginBottom: ".4rem",
-            border: 0,
-            ":first-of-type": {
-              borderTopLeftRadius: "10px",
-              borderTopRightRadius: "10px",
-              borderBottomLeftRadius: "10px",
-              borderBottomRightRadius: "10px",
-            },
-            borderRadius: "10px",
-            "::before": {
-              height: "0px"
-            }
-          }} elevation={3}
-            expanded={expanded && (activity.type === "homework")}
-            onChange={() => { loadContent(activity); setExpanded(!expanded) }}
+      <Collapse in={!finish || openFinished} unmountOnExit>
+        <Accordion sx={{
+          marginBottom: ".4rem",
+          border: 0,
+          ":first-of-type": {
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+            borderBottomLeftRadius: "10px",
+            borderBottomRightRadius: "10px",
+          },
+          borderRadius: "10px",
+          "::before": {
+            height: "0px"
+          }
+        }} elevation={3}
+          expanded={expanded && (activity.type === "homework")}
+          onChange={() => { loadContent(activity); setExpanded(!expanded) }}
+        >
+          <AccordionSummary
+            sx={{ flexDirection: "row-reverse" }}
+            expandIcon={activity.type === "homework" ? <ExpandMore /> : null}
           >
-            <AccordionSummary
-              sx={{ flexDirection: "row-reverse" }}
-              expandIcon={activity.type === "homework" ? <ExpandMore /> : null}
+            <Box
+              display="flex"
+              width="100%"
+              alignItems="center"
+              justifyContent="center"
+              flexDirection={"column"}
+              m={1}
+              sx={{
+                color: finish ? "gray" : done ? "#32A041" : "white",
+              }}
             >
-              <Box
-                display="flex"
-                width="100%"
-                alignItems="center"
-                justifyContent="center"
-                flexDirection={"column"}
-                m={1}
-                sx={{
-                  color: finish ? "gray" : done ? "#32A041" : "white",
-                }}
-              >
-                <Typography textAlign={"center"} fontWeight={"500"} fontSize="1.1rem">
-                  {activity.course.title}
-                </Typography>
-                <Box display={"flex"} flexDirection="row" justifyContent={"space-between"}>
-                  <Box display="flex" margin="0.5rem">
-                    <Typography variant="h6" gutterBottom component="h2">
-                      <span>{`${type}: ${activity.title}`}</span>
-                    </Typography>
-                  </Box>
-                  <Box
-                    display="flex"
-                    sx={{ "@media (max-width:768px)": { flexDirection: "column" } }}
-                    margin="0.5rem"
-                    textAlign={"right"}
-                  >
-                    <Typography
-                      variant="h6"
-                      gutterBottom
-                      component="h2"
-                      margin="0.2rem"
-                      sx={{
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {!finish ? (
-                        <span>{`(${today ? "Hoje" : Math.abs(days)}${today ? "" : (tomorrow ? " dia" : " dias")})`}</span>
-                      ) : (
-                        <span>{`(${Math.abs(days)}${Math.abs(days) === 1 ? " dia" : " dias"} atrás)`}</span>
-                      )}
-                    </Typography>
-                    <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
-                      {`${date}`}
-                    </Typography>
-                  </Box>
+              <Typography textAlign={"center"} fontWeight={"500"} fontSize="1.1rem">
+                {activity.course.title}
+              </Typography>
+              <Box display={"flex"} flexDirection="row" justifyContent={"space-between"}>
+                <Box display="flex" margin="0.5rem">
+                  <Typography variant="h6" gutterBottom component="h2">
+                    <span>{`${type}: ${activity.title}`}</span>
+                  </Typography>
                 </Box>
-
-              </Box>
-            </AccordionSummary>
-
-            {activity.type === "homework" ?
-              <AccordionDetails>
-                {content ?
-                  content.split("\n").map((item, key) => {
-                    return <Typography key={key} style={{
-                      marginBottom: ".3rem",
-                      display: "block",
-                    }}>{item}<br /></Typography>
-                  }) : (
-                    <Box display={"flex"} justifyContent={"center"} borderRadius={"10px"} padding={1}>
-                      <CircularProgress sx={{ margin: "1rem" }} />
-                    </Box>
-                  )}
-                <br />
-                {attachment ?
-                  <Button
-                    variant="outlined"
-                    href={`https://sigaa.ifsc.edu.br/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
-                    target="_blank"
-                    style={{ color: "#32A041", display: "flex", alignItems: "center" }}
+                <Box
+                  display="flex"
+                  sx={{ "@media (max-width:768px)": { flexDirection: "column" } }}
+                  margin="0.5rem"
+                  textAlign={"right"}
+                >
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    component="h2"
+                    margin="0.2rem"
+                    sx={{
+                      whiteSpace: "nowrap",
+                    }}
                   >
-                    <DescriptionIcon />
-                    <Typography gutterBottom={false} marginLeft={".3rem"}>Arquivo anexado</Typography>
-                  </Button>
-                  : null}
-              </AccordionDetails>
-              : null}
-          </Accordion>
-        </Collapse>
+                    {!finish ? (
+                      <span>{`(${today ? "Hoje" : Math.abs(days)}${today ? "" : (tomorrow ? " dia" : " dias")})`}</span>
+                    ) : (
+                      <span>{`(${Math.abs(days)}${Math.abs(days) === 1 ? " dia" : " dias"} atrás)`}</span>
+                    )}
+                  </Typography>
+                  <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
+                    {dateString}
+                  </Typography>
+                  <Typography variant="h6" gutterBottom component="h2" margin="0.2rem">
+                    {timeString}
+                  </Typography>
+                </Box>
+              </Box>
+
+            </Box>
+          </AccordionSummary>
+
+          {activity.type === "homework" ?
+            <AccordionDetails>
+              {content ?
+                content.split("\n").map((item, key) => {
+                  return <Typography key={key} style={{
+                    marginBottom: ".3rem",
+                    display: "block",
+                  }}>{item}<br /></Typography>
+                }) : (
+                  <Box display={"flex"} justifyContent={"center"} borderRadius={"10px"} padding={1}>
+                    <CircularProgress sx={{ margin: "1rem" }} />
+                  </Box>
+                )}
+              <br />
+              {attachment ?
+                <Button
+                  variant="outlined"
+                  href={`https://sigaa.ifsc.edu.br/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
+                  target="_blank"
+                  style={{ color: "#32A041", display: "flex", alignItems: "center" }}
+                >
+                  <DescriptionIcon />
+                  <Typography gutterBottom={false} marginLeft={".3rem"}>Arquivo anexado</Typography>
+                </Button>
+                : null}
+            </AccordionDetails>
+            : null}
+        </Accordion>
+      </Collapse>
     </Box>
 
   );
-}
-function getDiffDate(date: string) {
-  const dateActivity = new Date(date);
-  return moment(dateActivity).tz('America/Sao_Paulo').diff(Date.now(), "days");
 }
 function orderByDate(activities: Activity[]) {
   return activities.sort((a, b) => {

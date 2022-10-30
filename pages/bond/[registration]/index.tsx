@@ -49,13 +49,17 @@ export default function RegistrationPage({
     if (!valid) window.location.href = "/";
     else {
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      setActivitiesLoading(true)
+    }
+  }, [registration, setActivitiesLoading, setCoursesLoading, socket, valid]);
+  useEffect(() => {
+    if (user?.fullName) {
       emitActivitiesList(
         { token: localStorage.getItem("token"), registration, inactive: true, cache: false, id: "activities", },
         socket
       );
-      setActivitiesLoading(true)
     }
-  }, [registration, setActivitiesLoading, setCoursesLoading, socket, valid]);
+  }, [registration, socket, user?.fullName]);
   useEffect(() => {
     if (bond?.activities) {
       emitCourseList(

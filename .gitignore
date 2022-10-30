@@ -167,3 +167,8 @@ temp/
 # End of https://www.toptal.com/developers/gitignore/api/node
 
 .vscode/
+
+
+# pwa
+public/sw.**
+public/workbox-*.**
