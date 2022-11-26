@@ -44,8 +44,13 @@ export default function Activities({
   }, [registration]);
 
   return (
-    <Box padding={2} mb={1} maxWidth={"80%"} minWidth={"50%"}>
-      <Typography textAlign="center" fontWeight="500" fontSize={"1.5rem"} whiteSpace="break-spaces" mb={2}>
+    <Box padding={2} mb={1} sx={{
+      "@media (max-width:768px)": {
+        maxWidth: "100%",
+      }
+    }} maxWidth={"80%"} minWidth={"50%"}>
+      <Typography textAlign="center" fontWeight="500" fontSize={"1.5rem"} mb={2}
+      >
         Principais atividades
       </Typography>
 
@@ -55,7 +60,7 @@ export default function Activities({
             <CircularProgress style={{ margin: "1rem" }} />
           </Box>
         ) : (
-          <Box>
+          <Box width={"100%"}>
             {activities.length === 0 ? (
               <Typography
                 textAlign="center"
@@ -67,7 +72,7 @@ export default function Activities({
               </Typography>
             ) : activities?.map((activity: Activity, index) => {
               const activityDate = new Date(activity.date);
-              const days = Math.floor((activityDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              const days = Math.round((activityDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
               return (
                 <ActivityCollapse
                   key={index}
@@ -154,7 +159,7 @@ function ActivityCollapse({
   const timeString = `${date.getUTCHours() < 10 ? "0" : ""}${date.getUTCHours()}:${date.getUTCMinutes() < 10 ? "0" : ""}${date.getUTCMinutes()}`;
 
   return (
-    <Box mb={2}>
+    <Box mb={2} maxWidth={"100%"}>
       <Collapse in={!finish || openFinished} unmountOnExit>
         <Accordion sx={{
           marginBottom: ".4rem",
@@ -199,7 +204,11 @@ function ActivityCollapse({
                 </Box>
                 <Box
                   display="flex"
-                  sx={{ "@media (max-width:768px)": { flexDirection: "column" } }}
+                  sx={{
+                    "@media (max-width:768px)": {
+                      flexDirection: "column",
+                    }
+                  }}
                   margin="0.5rem"
                   textAlign={"right"}
                 >
@@ -208,9 +217,6 @@ function ActivityCollapse({
                     gutterBottom
                     component="h2"
                     margin="0.2rem"
-                    sx={{
-                      whiteSpace: "nowrap",
-                    }}
                   >
                     {!finish ? (
                       <span>{`(${today ? "Hoje" : Math.abs(days)}${today ? "" : (tomorrow ? " dia" : " dias")})`}</span>
@@ -231,13 +237,20 @@ function ActivityCollapse({
           </AccordionSummary>
 
           {activity.type === "homework" ?
-            <AccordionDetails>
+            <AccordionDetails sx={{
+              whiteSpace: "pre-line",
+            }}>
               {content ?
-                content.split("\n").map((item, key) => {
-                  return <Typography key={key} style={{
-                    marginBottom: ".3rem",
-                    display: "block",
-                  }}>{item}<br /></Typography>
+                content.split("\n").map((text, key) => {
+                  if (text.split(" ").length > 1) {
+                    return <Typography key={key} gutterBottom component="p" whiteSpace={"pre-line"} marginBottom={"1.5rem"}>
+                      {text}
+                    </Typography>
+                  } else {
+                    return <Typography key={key} gutterBottom component="p" sx={{ lineBreak: "anywhere" }} marginBottom={"1.5rem"}>
+                      {text}
+                    </Typography>
+                  }
                 }) : (
                   <Box display={"flex"} justifyContent={"center"} borderRadius={"10px"} padding={1}>
                     <CircularProgress sx={{ margin: "1rem" }} />

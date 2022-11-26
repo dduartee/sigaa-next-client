@@ -1,7 +1,6 @@
 import { Box, Switch, Typography } from "@material-ui/core";
-import { Email } from "@material-ui/icons";
 import React, { useEffect } from "react";
-import { Donate } from "./Donate";
+import { PixIcon } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {
     useEffect(() => {
         localStorage.setItem("particles", props.activeParticles.toString());
@@ -11,18 +10,19 @@ export function Ajuda(props: { setActiveParticles: (value: boolean) => void, act
             <Typography variant={"h4"} m={1}>Ajuda</Typography>
             <ul>
                 <li>
-                    <Typography fontSize={"1.1rem"}>
-                        Este projeto foi desenvolvido com base nas informações apresentadas em acessos realizados no SIGAA.
+                    <Typography fontSize={"1.1rem"} mb="1rem">
+                        Este projeto não faz parte de nenhum projeto de pesquisa ou extensão do IFSC, totalmente independente.
                     </Typography>
                 </li>
                 <li>
-                    <Typography fontSize={"1.1rem"}>
-                        Sendo assim, pode ocorrer incompatibilidades entre os dados de cada discente mostrados no SIGAA.
-                    </Typography >
+                    <Typography fontSize={"1.1rem"} mb="1rem">
+                        O desenvolvimento foi feito com base nas informações apresentadas em acessos realizados no SIGAA,
+                        portanto, não é garantido que esteja 100% correto. Sendo recomendado que você verifique as informações no SIGAA.
+                    </Typography>
                 </li>
                 <li>
-                    <Typography fontSize={"1.1rem"}>
-                        Como por exemplo, se a exibição dos horários de aula for diferente do que foi desenvolvido <b>(&quot;2T234&quot;, &quot;2M1&quot; ou até &quot;3M4 5M34&quot;)</b>, ou algo do mesmo gênero, por favor, entre em contato por discord ou email...
+                    <Typography fontSize={"1.1rem"} mb="1rem">
+                        Qualquer dúvida, sugestão ou reclamação, entre em contato pelo email do PIX.
                     </Typography>
                 </li>
             </ul>
@@ -53,18 +53,13 @@ function Dados() {
         <Box display={"flex"} alignItems="start" m={1} flexWrap={"wrap"}
             flexDirection={"column"}>
             <Box display={"flex"} alignItems="center" >
-                <img src="https://logodownload.org/wp-content/uploads/2017/11/discord-logo-icone.png" alt="discord" width={"40px"} /><Typography m={1} fontSize={"1.3rem"}>duarte#2387</Typography>
-            </Box>
-            <Box display={"flex"} alignItems="center" >
-                <Email fontSize="large" />
+                <PixIcon width="40px" />
                 <Typography m={1} fontSize={"1.3rem"}>
                     <a href="mailto:sigaanext@gmail.com" style={{ textDecoration: "none", color: "inherit" }}>
-                        sigaanext@gmail.com
+                        PIX: sigaanext@gmail.com
                     </a>
                 </Typography>
             </Box>
-            <Donate email="acima!" fontSize="1.1rem" iconWidth="40px" fontSizeEmail="1.1rem">
-            </Donate>
         </Box>
 
     );
