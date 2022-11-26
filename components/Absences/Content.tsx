@@ -20,7 +20,7 @@ export default function Absences(props: { bond: Bond | null }) {
 
 
 function CourseTableDesktop(props: { courses: Course[] }): JSX.Element {
-    return <Box m={1} mb={3} maxWidth={"40rem"}>
+    return <Box m={1} mb={3}>
         <CollapsibleTable>
             <TableHead>
                 <StyledTableRow>
@@ -28,8 +28,11 @@ function CourseTableDesktop(props: { courses: Course[] }): JSX.Element {
                     <StyledTableCell>
                         Matéria
                     </StyledTableCell>
-                    <StyledTableCell sx={{ width: "80px" }} >
+                    <StyledTableCell >
                         Faltas
+                    </StyledTableCell>
+                    <StyledTableCell >
+                        Máximo
                     </StyledTableCell>
                 </StyledTableRow>
             </TableHead>
@@ -64,11 +67,13 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
                     {course.title}
                 </StyledTableCell>
                 <StyledTableCell>
-                    <Typography fontSize={"1rem"} style={{
-                        lineBreak: "loose",
-                        whiteSpace: "nowrap"
-                    }}>
-                        {course.absences.total} / {course.absences.max}
+                    <Typography fontSize={"1rem"} textAlign={"center"} color={Math.round(course.absences.max * 0.7) <= course.absences.total ? "error" : ""}>
+                        {course.absences.total}
+                    </Typography>
+                </StyledTableCell>
+                <StyledTableCell>
+                    <Typography fontSize={"1rem"} textAlign={"center"}>
+                        {course.absences.max}
                     </Typography>
                 </StyledTableCell>
             </StyledTableRow>

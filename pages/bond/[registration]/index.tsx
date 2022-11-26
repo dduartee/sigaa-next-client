@@ -86,7 +86,7 @@ export default function RegistrationPage({
         setTab={setTab}
         tab={tab}
       >
-        <Box sx={{ flexGrow: 1, p: 1 }}  display={"flex"} flexDirection="column" alignItems={"center"} maxWidth={"80%"}>
+        <Box sx={{ flexGrow: 1, p: 1 }}  display={"flex"} flexDirection="column" alignItems={"center"} maxWidth={"100%"}>
           <Activities bond={bond} loading={activitiesLoading} />
           <Courses bond={bond} loading={coursesLoading} />
         </Box>

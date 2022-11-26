@@ -8,7 +8,7 @@ import Loading from "@components/Loading";
 import { LoadingContext } from "@context/loading";
 
 const StyledContent = styled(Box)(({ theme }) => ({
-  width: "80%",
+  width: "90%",
   [theme.breakpoints.down(1140)]: {
     width: "100%",
   },

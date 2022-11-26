@@ -69,7 +69,7 @@ function Index(): JSX.Element {
     if (bonds[0]?.registration && user?.fullName) {
       setDonateTimeout(setTimeout(() => {
         setOpenDonate(false)
-      }, 1500))
+      }, 2000))
     }
     if (error) {
       setOpenDonate(false)
@@ -129,6 +129,7 @@ function Index(): JSX.Element {
     <>
       <Head>
         <title>Login | sigaa-next</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name='description' content="SIGAA de forma rápida e prática" />
         <meta property="og:title" content="sigaa-next" />
         <meta property="og:description" content="SIGAA de forma rápida e prática" />
@@ -234,17 +235,15 @@ function Index(): JSX.Element {
 
                 {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
                   <CardBottom>
-                    <Box display={"flex"} flexDirection="column">
-                      <Collapse in={openDonate} timeout={1000}>
-                        <Donate email="sigaanext@gmail.com" fontSize="1.2rem" iconWidth="70px" fontSizeEmail="1.4rem">
-                          Veja mais na aba ajuda...
+                    <Box display={"flex"} flexDirection="column" overflow={"visible"}>
+                      <Collapse in={openDonate} timeout={1000} sx={{ overflow: 'visible' }}>
+                        <Donate email="sigaanext@gmail.com" fontSize="1.7rem" iconWidth="70px" fontSizeEmail="1.7rem">
                         </Donate>
                       </Collapse>
-                      <CircularProgress style={{ alignSelf: "center" }} />
+                      <CircularProgress style={{ alignSelf: "center", marginBottom: "1rem" }} />
                     </Box>
                   </CardBottom>
                 ) : null}
-
               </Paper>
             </Box>
           </Grid>
