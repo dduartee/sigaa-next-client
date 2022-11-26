@@ -72,7 +72,7 @@ export default function Activities({
               </Typography>
             ) : activities?.map((activity: Activity, index) => {
               const activityDate = new Date(activity.date);
-              const days = Math.floor((activityDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              const days = Math.round((activityDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
               return (
                 <ActivityCollapse
                   key={index}
