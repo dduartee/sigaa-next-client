@@ -24,7 +24,6 @@ import { CardBottom, CardHeader } from "@components/Index/Card";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler from "@hooks/useUserHandler";
 import useBondsHandler from "@hooks/useBondsEvents";
-import useAPIHandler from "@hooks/useAPIEvents";
 import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
@@ -40,11 +39,9 @@ function Index(): JSX.Element {
   const [openDonate, setOpenDonate] = useState<boolean>(false);
 
   const socket = useContext(SocketContext);
-  const [valid, setValid] = useState(false);
-  useTokenHandler(setValid);
-  const { status, user, setStatus } = useUserHandler();
+  const valid = useTokenHandler();
+  const { status, user, setStatus, errorFeedback, setErrorFeedback  } = useUserHandler();
   const { bonds } = useBondsHandler();
-  const { error, setError } = useAPIHandler();
 
   useEffect(() => {
     if (valid) {
@@ -71,10 +68,10 @@ function Index(): JSX.Element {
         setOpenDonate(false)
       }, 2000))
     }
-    if (error) {
+    if (errorFeedback) {
       setOpenDonate(false)
     }
-  }, [bonds, user, status, error])
+  }, [bonds, user, status, errorFeedback])
   useEffect(() => {
     if (!openDonate && donateTimeout) {
       clearTimeout(donateTimeout)
@@ -88,17 +85,17 @@ function Index(): JSX.Element {
       setStatus("Logando");
       socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
     } else {
-      setError(true);
+      setErrorFeedback("");
     }
   };
   const handleAccess = () => {
     setStatus("Logando");
-    setError(false);
+    setErrorFeedback("");
     window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
     //router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
   };
   const handleLogout = () => {
-    setError(false);
+    setErrorFeedback("");
     socket.emit("user::logoff", { token: localStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
     localStorage.clear();
@@ -227,8 +224,8 @@ function Index(): JSX.Element {
                       setOpenHelp={setOpenHelp}
                       credentials={credentials}
                       setCredentials={setCredentials}
-                      error={error}
-                      setError={setError} />
+                      errorFeedback={errorFeedback}
+                      setErrorFeedback={setErrorFeedback} />
                   ) : null}
                 </Collapse>
 
@@ -259,14 +256,14 @@ function LoginCard(props: {
   setOpenHelp: (openHelp: boolean) => void;
   setCredentials: (credentials: { username: string, password: string }) => void;
   credentials: { username: string; password: string };
-  setError: (error: boolean) => void;
-  error: boolean;
+  setErrorFeedback: (error: string) => void;
+  errorFeedback: string;
 }) {
-  const { handleLogin, setOpenHelp, setCredentials, credentials, setError, error } = props;
+  const { handleLogin, setOpenHelp, setCredentials, credentials, setErrorFeedback, errorFeedback } = props;
   const handleCredentialsChange = (event: React.ChangeEvent<HTMLFormElement>) => (setCredentials({ ...credentials, [event.target.name]: event.target.value }))
   const handleEnterPress = (event: { key: string }) => {
     if (event.key === "Enter") handleLogin();
-    setError(false);
+    setErrorFeedback("");
   };
   return (
     <Box>
@@ -280,7 +277,7 @@ function LoginCard(props: {
                 type="text"
                 name="username"
                 value={credentials.username}
-                error={error ? true : false}
+                error={errorFeedback ? true : false}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
                 Seu usuário do SIGAA
@@ -297,7 +294,7 @@ function LoginCard(props: {
                 type="password"
                 name="password"
                 value={credentials.password}
-                error={error ? true : false}
+                error={errorFeedback ? true : false}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
                 Sua senha do SIGAA
@@ -305,6 +302,7 @@ function LoginCard(props: {
             </FormControl>
           }
         />
+        <Typography sx={{ fontSize: "1rem" }} color="#ff4336">{errorFeedback}</Typography>
       </LoginBox>
       <CardBottom>
         <Box display="flex" justifyContent={"space-around"} width="100%">
@@ -362,7 +360,7 @@ function BondSelection(props: { registrationSelected: string, setRegistrationSel
               color: "#fff",
             }}
           >
-            {bond.program}
+            {bond.program}<br />Matrícula: {bond.registration}
           </ToggleButton>
         );
       })}

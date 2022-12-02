@@ -17,14 +17,23 @@ const StyledContent = styled(Box)(({ theme }) => ({
 export default function HomeTemplate({
   children,
   tab,
-  setTab
+  setTab,
+  tabs,
 }: {
   children: React.ReactNode;
   tab: number;
   setTab: React.Dispatch<React.SetStateAction<number>>;
+  tabs: {
+    label: string;
+    icon: JSX.Element;
+    bottom?: boolean | undefined;
+  }[];
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const tabChanger = (event: any, newValue: number) => {
+  const tabChanger = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: number
+  ) => {
     setTab(newValue);
   };
   const handleDrawerToggle = () => {
@@ -36,13 +45,11 @@ export default function HomeTemplate({
     <>
       <Loading loading={loading} />
       <Box sx={{ display: "flex" }}>
-        <CustomNavBar
-          handler={handleDrawerToggle}
-          width={drawerWidth}
-        />
+        <CustomNavBar handler={handleDrawerToggle} width={drawerWidth} />
         <CustomDrawer
           tabChanger={tabChanger}
           tab={tab}
+          tabs={tabs}
           handler={handleDrawerToggle}
           open={mobileOpen}
           width={drawerWidth}
@@ -50,7 +57,13 @@ export default function HomeTemplate({
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <StyledContent>
             <Toolbar />
-            <Box component={Paper} sx={{ margin: ".6rem", marginTop: "30px" }} elevation={1} display="flex" justifyContent={"center"}>
+            <Box
+              component={Paper}
+              sx={{ margin: ".6rem", marginTop: "30px" }}
+              elevation={1}
+              display="flex"
+              justifyContent={"center"}
+            >
               {children}
             </Box>
           </StyledContent>

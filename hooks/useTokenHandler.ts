@@ -1,25 +1,20 @@
 import { SocketContext } from "@context/socket";
-import React, { useState, useEffect, useContext } from "react";
-import { Socket } from "socket.io-client";
+import { useState, useEffect, useContext } from "react";
 
-export default function useTokenHandler(setValid: (isValid: boolean) => void) {
+export default function useTokenHandler() {
   const socket = useContext(SocketContext);
+  const [valid, setValid] = useState(true);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
       localStorage.setItem("token", token);
     });
-    emitAuthValid({ token: localStorage.getItem("token") }, socket);
     socket.on("auth::valid", (valid: boolean) => setValid(valid));
+    socket.emit("auth::valid", { token: localStorage.getItem("token") }); // pede para o servidor se o token é válido
     return () => {
       socket.off("auth::store");
       socket.off("auth::valid");
     }
   }, [setValid, socket]);
+  return valid;
 }
 
-export function emitAuthValid(
-  params: { token: string | null },
-  socket: Socket
-) {
-  socket.emit("auth::valid", params);
-}

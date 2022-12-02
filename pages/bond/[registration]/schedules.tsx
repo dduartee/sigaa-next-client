@@ -14,15 +14,15 @@ import useTabHandler from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Schedules from "@components/Schedules/Content";
 import { emitCourseList } from "@hooks/useBondsEvents";
+import { bondTabs } from "@components/Home/CustomDrawer";
 function InitializeHooks({ registration }: { registration: string }) {
-  const [valid, setValid] = useState(true);
-  useTokenHandler(setValid);
+  const valid = useTokenHandler();
   const { user } = useUserHandler();
   const [loading] = useState(false);
   const [bond, setBond] = useState<Bond | null>(null);
   useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 3,
+    order: 4,
     registration,
     valid,
   });
@@ -62,6 +62,7 @@ export default function SchedulesPage({ registration }: { registration: string }
         registration={registration}
         setTab={setTab}
         tab={tab}
+        tabs={bondTabs}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Schedules bond={bond} />

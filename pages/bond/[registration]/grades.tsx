@@ -14,10 +14,10 @@ import useGradesEvents, {
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
+import { bondTabs } from "@components/Home/CustomDrawer";
 
 function InitializeHooks({ registration }: { registration: string }) {
-  const [valid, setValid] = useState(true);
-  useTokenHandler(setValid);
+  const valid = useTokenHandler();
   const { user, setUser } = useUserHandler();
   const [loading, setLoading] = useState(false);
   useAPIHandler();
@@ -35,7 +35,6 @@ function InitializeHooks({ registration }: { registration: string }) {
     setLoading,
     user,
     setUser,
-    setValid,
     valid,
     tab,
     setTab,
@@ -80,6 +79,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         user={user}
         setTab={setTab}
         tab={tab}
+        tabs={bondTabs}
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Grades bond={bond} />

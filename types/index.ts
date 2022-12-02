@@ -29,12 +29,7 @@ export type Activity = {
   };
   done: boolean;
 }
-export type File = {
-  id: string,
-  title: string,
-  description: string,
-  key: string,
-}
+
 export type News = {
   id: string,
   title: string,
@@ -52,6 +47,71 @@ export type Course = {
   news?: News[]
   homeworks?: Homework[];
   absences?: Absences;
+  lessons?: Lesson[];
+}
+export type File = {
+  id: string;
+  title: string;
+  description: string;
+  key: string;
+  type: "file";
+}
+export type Forum = {
+  id: string;
+  title: string;
+  author: string;
+  creationDate: string;
+  numOfTopics: number;
+  flagMonitorReading: boolean;
+  file: File;
+  forumType: string;
+  description: string;
+  type: "forum";
+}
+export type Link = {
+  title: string;
+  href: string;
+  description: string;
+  type: "link";
+}
+export type Hyperlink = {
+  title: string;
+  href: string;
+  type: "hyperlink";
+}
+export type Quiz = {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  type: "quiz";
+}
+export type Survey = {
+  id: string;
+  title: string;
+  type: "survey";
+}
+export type Video = {
+  title: string;
+  src: string;
+  description: string;
+  type: "video";
+}
+export type WebContent = {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  type: "webcontent";
+}
+export type Attachments = File | Forum | Link | Quiz | Survey | Video | WebContent | Homework | Hyperlink;
+export type Lesson = {
+  id: string;
+  title: string;
+  content: string;
+  startDate: string;
+  endDate: string;
+  attachments: Attachments[];
 }
 export type Absences = {
   list: {
@@ -69,16 +129,12 @@ export type Homework = {
   haveGrade?: boolean,
   isGroup?: boolean,
   content?: string
-  attachment?: {
-    id: string;
-    title: string;
-    description: string;
-    key: string;
-  }
+  attachment?: File,
+  type: "homework"
 }
 
 export type GradeGroup = {
-  type: 'sum-of-grades' | 'only-average' | 'weighted-average' |'arithmetic-average' ,
+  type: 'sum-of-grades' | 'only-average' | 'weighted-average' | 'arithmetic-average',
   value: number,
   name: string,
   subGrades: SumOfGrades[] | WeightedAverage[] | ArithmeticAverage[]
@@ -101,3 +157,9 @@ export type ArithmeticAverage = {
   value: number,
 }
 export type Error = "SIGAA: Invalid credentials.";
+
+export type Tab = {
+  label: string;
+  icon: JSX.Element;
+  bottom?: boolean
+}

@@ -12,6 +12,7 @@ export function Donate(props: { email: string, fontSize: string, fontSizeEmail: 
         "Contribua para a causa! ✊👊🫰",
         "Divulgue o site para seus amigos! 🤗🫂",
         "Ajude a manter o site no ar! 🤯",
+        "Siga nos no instagram! @sigaanext 💖"
     ]
     const [frase] = React.useState(frases[Math.floor(Math.random() * frases.length)])
     const [copiado, setCopiado] = React.useState(0)

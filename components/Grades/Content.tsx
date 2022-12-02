@@ -33,7 +33,7 @@ export const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-function groupBy<K, V>(array: V[], grouper: (item: V) => K) {
+export function groupBy<K, V>(array: V[], grouper: (item: V) => K) {
   return array.reduce((store, item) => {
     const key = grouper(item);
     if (!store.has(key)) {

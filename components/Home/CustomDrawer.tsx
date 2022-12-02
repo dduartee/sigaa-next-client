@@ -8,35 +8,91 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
-import HowToRegIcon from '@material-ui/icons/HowToReg';
-import { Home } from "@material-ui/icons";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import HowToRegIcon from "@material-ui/icons/HowToReg";
+import { Group, Home } from "@material-ui/icons";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
+import { Tab as TabType } from "@types";
+
+export const courseTabs = [
+  {
+    label: "Voltar",
+    icon: <ArrowBackIcon />,
+  }
+]
+export const bondTabs = [
+  {
+    label: "Inicio",
+    icon: <Home />,
+  },
+  {
+    label: "Notas",
+    icon: <EqualizerIcon />,
+  },
+  {
+    label: "Frequência",
+    icon: <HowToRegIcon />,
+  },
+  {
+    label: "Turmas",
+    icon: <Group />,
+  },
+  {
+    label: "Horários",
+    icon: <CalendarTodayIcon />,
+  },
+  {
+    label: "Sair",
+    icon: <ArrowBackIcon />,
+    bottom: true,
+  },
+];
 
 export function formatFullName(fullName: string) {
-  return fullName.toLowerCase().split(" ").map((name) => name.charAt(0).toUpperCase() + name.slice(1)).join(" ");
+  return fullName
+    .toLowerCase()
+    .split(" ")
+    .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+    .join(" ");
 }
 function ResponsiveDrawer({
   handler,
   open,
   width,
+  tabs,
   tab,
   tabChanger,
 }: {
   handler: () => void;
-  tabChanger: (event: React.SyntheticEvent<Element, Event>, newValue: number) => void;
+  tabChanger: (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: number
+  ) => void;
   open: boolean;
   width: number;
   tab: number;
+  tabs: TabType[];
 }) {
   const user = React.useContext(UserContext);
-  const [anchorEl, setAnchorEl] = React.useState<(EventTarget & HTMLButtonElement) | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<
+    (EventTarget & HTMLButtonElement) | null
+  >(null);
   const drawer = (
-    <div>
-      <Toolbar sx={{ height: "90px", display: "flex", justifyContent: "center" }}>
+    <Box
+      sx={{
+        height: "100%",
+      }}
+    >
+      <Toolbar
+        sx={{ height: "90px", display: "flex", justifyContent: "center" }}
+      >
         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
-          <Avatar src={user?.profilePictureURL} sx={{ width: "60px", height: "60px" }} variant="circular" />
+          <Avatar
+            src={user?.profilePictureURL}
+            sx={{ width: "60px", height: "60px" }}
+            variant="circular"
+          />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -44,14 +100,16 @@ function ResponsiveDrawer({
           open={!!anchorEl}
           onClose={() => setAnchorEl(null)}
         >
-          <Box m={1}>
+          <Box p={1}>
             <Typography fontSize={"1rem"}>Usuário: {user?.username}</Typography>
-            <Typography fontSize={"1rem"}>Nome: {formatFullName(user?.fullName ?? "")}</Typography>
+            <Typography fontSize={"1rem"}>
+              Nome: {formatFullName(user?.fullName ?? "")}
+            </Typography>
             <Typography fontSize={"1rem"}>Email: {user?.emails[0]}</Typography>
           </Box>
         </Menu>
       </Toolbar>
-      <List sx={{ padding: "0px" }}>
+      <List sx={{ padding: "0px", height: "calc(100% - 90px)" }}>
         <Tabs
           orientation="vertical"
           variant="scrollable"
@@ -59,21 +117,25 @@ function ResponsiveDrawer({
           textColor="inherit"
           value={tab}
           onChange={tabChanger}
+          sx={{
+            height: "100%",
+          }}
         >
-          <Tab label="Inicio" icon={<Home />} />
-          <Tab label="Notas" icon={<EqualizerIcon />} />
-          <Tab label="Frequência" icon={<HowToRegIcon />} />
-          <Tab label="Horários" icon={<CalendarTodayIcon />} />
-          {
-            /*
-            <Tab label="Tarefas" icon={<AssignmentIcon />} disabled/>
-            <Tab label="Noticias" icon={<InboxIcon />} disabled />
-            */
-          }
-          <Tab label="Voltar" icon={<ArrowBackIcon />} />
+          {tabs.map((tab, index) => (
+            <Tab
+              key={index}
+              label={tab.label}
+              icon={tab.icon}
+              sx={{
+                position: tab.bottom ? "absolute" : "relative",
+                bottom: "0px",
+                width: "99px",
+              }}
+            />
+          ))}
         </Tabs>
       </List>
-    </div>
+    </Box>
   );
 
   return (

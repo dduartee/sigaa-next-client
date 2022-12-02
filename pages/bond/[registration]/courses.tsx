@@ -9,16 +9,11 @@ import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
-import { emitActivitiesList } from "@hooks/useBondsEvents";
-import Activities from "@components/Activities/Content";
+import { emitCourseList } from "@hooks/useBondsEvents";
 import HomeProvider from "@components/HomeProvider";
+import Courses from "@components/Courses/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
-export default function RegistrationPage({
-  registration,
-}: {
-  registration: string;
-}) {
-  const socket = useContext(SocketContext);
+function InitializeHooks({ registration }: { registration: string }) {
   const valid = useTokenHandler();
   const { user } = useUserHandler();
   const [bond, setBond] = useState<Bond | null>(null);
@@ -32,38 +27,80 @@ export default function RegistrationPage({
       localStorage.removeItem(`bond@${registration}`);
     }
   }, [registration]);
-  const { activitiesLoading, setActivitiesLoading } = useCourseEvents(setBond);
+  const {
+    coursesLoading,
+    setCoursesLoading,
+  } = useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 0,
+    order: 3,
     registration,
     valid,
   });
   useAPIHandler();
+  return {
+    valid,
+    user,
+    bond,
+    tab,
+    coursesLoading,
+    setCoursesLoading,
+    setTab,
+  };
+}
+export default function CoursesPage({
+  registration,
+}: {
+  registration: string;
+}) {
+  const socket = useContext(SocketContext);
+  const {
+    valid,
+    bond,
+    user,
+    tab,
+    coursesLoading,
+    setCoursesLoading,
+    setTab,
+  } = InitializeHooks({
+    registration,
+  });
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
       emitUserInfo({ token: localStorage.getItem("token") }, socket);
-      setActivitiesLoading(true);
+      setCoursesLoading(true);
     }
-  }, [registration, setActivitiesLoading, socket, valid]);
+  }, [registration, setCoursesLoading, socket, valid]);
   useEffect(() => {
     if (user?.fullName) {
-      emitActivitiesList(
-        {
-          token: localStorage.getItem("token"),
-          registration,
-          inactive: true,
-          cache: false,
-          id: "activities",
-        },
-        socket
-      );
+        emitCourseList(
+            {
+              token: localStorage.getItem("token"),
+              registration,
+              inactive: true,
+              allPeriods: false,
+              cache: true,
+              id: "courses",
+            },
+            socket
+          );
     }
   }, [registration, socket, user?.fullName]);
+  useEffect(() => {
+    if (bond?.courses) {
+      setCoursesLoading(false);
+    }
+  }, [
+    bond?.activities,
+    bond?.courses,
+    registration,
+    setCoursesLoading,
+    socket,
+  ]);
   return (
     <>
       <Head>
-        <title>Inicio | sigaa-next</title>
+        <title>Turmas | sigaa-next</title>
       </Head>
       <HomeProvider
         loading={false}
@@ -80,7 +117,7 @@ export default function RegistrationPage({
           alignItems={"center"}
           maxWidth={"100%"}
         >
-          <Activities bond={bond} loading={activitiesLoading} />
+          <Courses bond={bond} loading={coursesLoading} />
         </Box>
       </HomeProvider>
     </>
