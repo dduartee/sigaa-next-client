@@ -72,9 +72,11 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
             fontSize={"1rem"}
             textAlign={"center"}
             color={
-              Math.round(course.absences.max * 0.7) <= course.absences.total
-                ? "error"
-                : ""
+              Math.round(course.absences.max * 0.8) <= course.absences.total
+                ? "#FFFF00"
+                : course.absences.max == course.absences.total
+                ? "#FF0000"
+                : "#ff"
             }
           >
             {course.absences.total}
@@ -119,6 +121,9 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
                   })}
                 </TableBody>
               </CollapsibleTable>
+              <Typography variant="caption" gutterBottom component="div" color="GrayText">
+                Pode haver faltas não informadas.
+              </Typography>
             </Box>
           </Collapse>
         </StyledTableCell>

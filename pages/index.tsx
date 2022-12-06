@@ -63,10 +63,10 @@ function Index(): JSX.Element {
     if (status === "Logando") {
       setOpenDonate(true)
     }
-    if (bonds[0]?.registration && user?.fullName) {
+    if (bonds[0]?.registration && user?.fullName && status === "Logado") {
       setDonateTimeout(setTimeout(() => {
         setOpenDonate(false)
-      }, 2000))
+      }, 100))
     }
     if (errorFeedback) {
       setOpenDonate(false)

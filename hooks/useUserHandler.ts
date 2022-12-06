@@ -45,9 +45,8 @@ export default function useUserHandler() {
         if (error === "Credenciais inválidas") {
           setErrorFeedback("Credenciais inválidas");
         } else if (error === "eita, alguma coisa aconteceu!") {
-          setErrorFeedback("eita, alguma coisa aconteceu!");
+          setErrorFeedback("Alguma coisa não deu certo");
         } else {
-          setErrorFeedback("Erro desconhecido");
           console.error(error);
         }
       }

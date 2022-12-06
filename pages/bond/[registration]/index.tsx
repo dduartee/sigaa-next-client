@@ -53,7 +53,7 @@ export default function RegistrationPage({
           token: localStorage.getItem("token"),
           registration,
           inactive: true,
-          cache: false,
+          cache: true,
           id: "activities",
         },
         socket

@@ -20,6 +20,9 @@ export default function Courses({
   loading: boolean;
 }) {
   const router = useRouter();
+  const accessCourse = (registration: string, courseId: string) => {
+    router.push(`/bond/${registration}/course/${courseId}`);
+  };
   const registration = useContext(RegistrationContext);
   const [courses, setCourses] = React.useState<Course[] | null>(null);
   React.useEffect(() => {
@@ -42,9 +45,6 @@ export default function Courses({
       }
     }
   }, [registration]);
-  const accessCourse = (course: Course) => {
-    router.push(`/bond/${registration}/course/${course.id}`);
-  };
   return (
     <Box padding={2} minWidth={"50%"}>
       <Typography
@@ -67,12 +67,12 @@ export default function Courses({
         </Box>
       ) : (
         <Box>
-          {courses?.map((course, key) => {
+          {registration && courses?.map((course, key) => {
             return (
               <CourseContent
                 key={key}
                 course={course}
-                accessCourse={accessCourse}
+                accessCourse={() => accessCourse(registration, course.id)}
               />
             );
           })}

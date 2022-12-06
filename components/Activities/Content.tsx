@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Activity, Attachments, Bond, File, Homework } from "@types";
+import { Activity, Attachments, Bond, Course, File, Homework } from "@types";
 import {
   Accordion,
   AccordionDetails,
@@ -20,7 +20,9 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import ForumIcon from "@material-ui/icons/Forum";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
+import MoreIcon from "@material-ui/icons/More";
 import { formatContent } from "@components/Lessons/Content";
+import { NextRouter, useRouter } from "next/router";
 
 export default function Activities({
   bond,
@@ -29,9 +31,13 @@ export default function Activities({
   bond: Bond | null;
   loading: boolean;
 }) {
+  const router = useRouter();
   const [openFinished, setOpenFinished] = useState(false);
   const registration = useContext(RegistrationContext);
   const [activities, setActivities] = useState<Activity[] | null>(null);
+  const accessCourse = (registration: string, courseId: string) => {
+    router.push(`/bond/${registration}/course/${courseId}`);
+  };
   useEffect(() => {
     if (bond?.activities) {
       setActivities(orderByDone(orderByDate(bond.activities)));
@@ -109,6 +115,7 @@ export default function Activities({
                     days={days}
                     date={activityDate}
                     openFinished={openFinished}
+                    accessCourse={accessCourse}
                   />
                 );
               })
@@ -138,13 +145,16 @@ function ActivityCollapse({
   days,
   date,
   openFinished,
+  accessCourse,
 }: {
   activity: Activity;
   days: number;
   date: Date;
   openFinished: boolean;
+  accessCourse: (registration: string, courseId: string) => void;
 }) {
-  const [content, setContent] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [attachment, setAttachment] = useState<File | null>(null);
   const socket = useContext(SocketContext);
   const registration = useContext(RegistrationContext);
@@ -161,12 +171,14 @@ function ActivityCollapse({
     }
   };
   useEffect(() => {
-    socket.on("homework::content", (homework: Homework) => {
-      if (homework.title === activity.title) {
+    socket.on("homework::content", (course: Course) => {
+      const homework = course.homeworks?.find(
+        (h: Homework) => h.title === activity.title
+      );
+      if (homework) {
         setContent(homework.content ?? "");
-        if (homework.attachment) {
-          setAttachment(homework.attachment);
-        }
+        setCourseId(course.id);
+        if (homework.attachment) setAttachment(homework.attachment);
       }
     });
   }, [activity.title, socket]);
@@ -305,14 +317,31 @@ function ActivityCollapse({
             </Box>
           </AccordionSummary>
 
-          {activity.type === "homework" ? (
+          {registration && activity.type === "homework" ? (
             <AccordionDetails
               sx={{
                 whiteSpace: "pre-line",
               }}
             >
               {content ? (
-                formatContent(content)
+                <Box display={"flex"} flexDirection={"column"}>
+                  {formatContent(content)}
+                  <Box display={"flex"} flexDirection={"row"} width="100%" justifyContent={"space-around"}>
+                    {attachment ? <Attachment attachment={attachment} /> : null}
+                    <Button
+                      onClick={() => accessCourse(registration, courseId)}
+                      variant="outlined"
+                      color="primary"
+                      endIcon={<MoreIcon sx={{ transform: "scaleX(-1)" }} />}
+                      sx={{
+                        display: "flex",
+                        alignSelf: "flex-end",
+                      }}
+                    >
+                      Acessar turma
+                    </Button>
+                  </Box>
+                </Box>
               ) : (
                 <Box
                   display={"flex"}
@@ -323,8 +352,6 @@ function ActivityCollapse({
                   <CircularProgress sx={{ margin: "1rem" }} />
                 </Box>
               )}
-              <br />
-              {attachment ? <Attachment attachment={attachment} /> : null}
             </AccordionDetails>
           ) : null}
         </Accordion>
@@ -345,10 +372,14 @@ export function Attachment(props: { attachment: Attachments }) {
           style={{ color: "#32A041", display: "flex", alignItems: "center" }}
         >
           <DescriptionIcon />
-          <Typography gutterBottom={false} marginLeft={".3rem"} sx={{
-            whiteSpace: "pre-wrap",
-            lineBreak: frase ? "auto" : "anywhere",
-          }}>
+          <Typography
+            gutterBottom={false}
+            marginLeft={".3rem"}
+            sx={{
+              whiteSpace: "pre-wrap",
+              lineBreak: frase ? "auto" : "anywhere",
+            }}
+          >
             Anexo: {attachment.title}
           </Typography>
         </Button>

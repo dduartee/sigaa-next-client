@@ -40,6 +40,11 @@ export default function Lessons(props: { course?: Course; loading: boolean }) {
   useEffect(() => {
     if (lessonsByMonth) {
       const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
+      // se já estiver se passado metade do ano, inverte a ordem dos meses
+      const mesAtual = moment().month();
+      if (mesAtual > 5) {
+        lessonsByMonthKeys.reverse();
+      }
       setMonths(lessonsByMonthKeys);
     }
   }, [lessonsByMonth]);
