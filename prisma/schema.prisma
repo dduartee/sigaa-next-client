@@ -1,0 +1,41 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Institution {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String   @unique
+    acronym   String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Campi    Campus[]
+}
+
+model Campus {
+    id            String      @id @default(auto()) @map("_id") @db.ObjectId
+    name          String      @unique
+    acronym       String      @unique
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    institution   Institution @relation(fields: [institutionId], references: [id])
+    institutionId String      @db.ObjectId
+    Users         User[]
+}
+
+model User {
+    id                String   @id @default(auto()) @map("_id") @db.ObjectId
+    username          String   @unique
+    fullName          String
+    passwordHash      String
+    emails            String[]
+    profilePictureURL String
+    campus            Campus   @relation(fields: [campusId], references: [id])
+    campusId          String   @db.ObjectId
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+}
