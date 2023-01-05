@@ -4,6 +4,7 @@ import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
 import { AuthenticationParams } from "./login";
 import { BondService } from "@services/sigaa/Account/Bond/Bond";
+import cacheService from "@lib/cache";
 
 interface QueryParams {
   registration: string;
@@ -14,10 +15,12 @@ export default async function Courses(
   request: NextApiRequest,
   response: NextApiResponse<{ data: CourseDTO[] } | { error: string }>
 ) {
-  const { username, sigaaURL, JSESSIONID, active, registration } =
+  const { username, sigaaURL, token, active, registration } =
     request.body as RequestBody;
   if (!sigaaURL) response.status(400).send({ error: "Sigaa URL is required" });
-  if (JSESSIONID) {
+  if (token) {
+    const JSESSIONID = cacheService.get(token) as string;
+    if (!JSESSIONID) return response.status(400).send({ error: "Invalid token" });
     const authService = new AuthService();
     const accountService = await authService.rehydrate({
       JSESSIONID,
