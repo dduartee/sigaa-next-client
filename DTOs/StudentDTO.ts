@@ -7,21 +7,21 @@ export interface IStudentDTOProps {
 export interface IStudentDTO {
   toJSON(): IStudentDTOProps;
 }
-type Student = {
+export type StudentDTOInput = {
   username: string;
   fullName: string;
   emails: string[];
-  profilePictureURL: URL;
+  profilePictureURL: URL | string;
 };
 export class StudentDTO implements IStudentDTO {
-  constructor(public student: Student) {}
+  constructor(public student: StudentDTOInput) {}
 
   toJSON(): IStudentDTOProps {
     return {
       username: this.student.username,
       fullName: this.student.fullName,
       emails: this.student.emails,
-      profilePictureURL: this.student.profilePictureURL.toString(),
+      profilePictureURL: new URL(this.student.profilePictureURL).toString(),
     };
   }
 }
