@@ -18,9 +18,9 @@ export default async function Bonds(
     if (!JSESSIONID) return response.status(400).send({ error: "Invalid token" });
     logger.log("Bonds", "JSESSIONID received", {});
     const authService = new AuthService();
-    const accountService = await authService.rehydrate({JSESSIONID, username, url: sigaaURL});
+    const accountService = await authService.rehydrate({JSESSIONID, username, url: sigaaURL}); // TODO: confirmar username
     logger.log("Bonds", "Account service rehydrated", {});
-    const activeBonds = await accountService.getActiveBonds();
+    const activeBonds = await accountService.getActiveBonds(); 
     const inactiveBonds = await accountService.getInactiveBonds();
     logger.log("Bonds", "Bonds received", {activeBonds: activeBonds.length, inactiveBonds: inactiveBonds.length});
     const bonds = [...activeBonds, ...inactiveBonds];

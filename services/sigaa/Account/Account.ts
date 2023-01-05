@@ -1,8 +1,7 @@
 import { Account, StudentBond } from "sigaa-api";
 import { StudentBondWithAdditionalProps } from "./Bond/Bond";
 import logger from "@services/logger";
-import cacheService from "@lib/cache";
-import { IBondDTOProps } from "@DTOs/BondDTO";
+import RehydrateBondFactory from "./Bond/RehydrateBondFactory";
 
 export class AccountService {
   constructor(
@@ -47,7 +46,7 @@ export class AccountService {
       (bond) => bond.type === "student"
     ) as StudentBond[];
     logger.log("AccountService", "Active bonds", {});
-    return await this.addAdditionalPropsToBonds(studentActiveBonds, true);
+    return await RehydrateBondFactory.addAdditionalPropsToBonds(studentActiveBonds, true);
   }
 
   async getInactiveBonds(): Promise<StudentBondWithAdditionalProps[]> {
@@ -57,34 +56,7 @@ export class AccountService {
       (bond) => bond.type === "student"
     ) as StudentBond[];
     logger.log("AccountService", "Inactive bonds", {});
-    return await this.addAdditionalPropsToBonds(studentInactiveBonds, false);
-  }
-  private async addAdditionalPropsToBonds(
-    bonds: StudentBond[],
-    active: boolean
-  ) {
-    logger.log("AccountService", "Adding additional props to bond", {});
-    const bondsWithAdditionalProps: StudentBondWithAdditionalProps[] = [];
-    for (const bond of bonds) {
-      const cache = cacheService.get<IBondDTOProps>(bond.registration);
-      let period: string;
-      let campus: string;
-      if (cache) {
-        logger.log("AccountService", "got period and campus from cache", {});
-        period = cache.period;
-        campus = cache.campus;
-      } else {
-        period = await bond.getCurrentPeriod();
-        logger.log("AccountService", "got period", {});
-        campus = await bond.getCampus();
-        logger.log("AccountService", "got campus", {});
-        cacheService.set(bond.registration, { period, campus });
-      }
-      bondsWithAdditionalProps.push(
-        Object.assign(bond, { period, campus, active })
-      );
-    }
-    return bondsWithAdditionalProps;
+    return await RehydrateBondFactory.addAdditionalPropsToBonds(studentInactiveBonds, false);
   }
 
   getJSESSIONID() {

@@ -1,4 +1,9 @@
-import { Page, Request, Sigaa, SigaaCookiesController } from "sigaa-api";
+import {
+  Page,
+  Request,
+  Sigaa,
+  SigaaCookiesController,
+} from "sigaa-api";
 import { AccountService } from "./Account/Account";
 import logger from "@services/logger";
 import { SigaaRequestStack } from "sigaa-api/dist/helpers/sigaa-request-stack";
@@ -16,7 +21,10 @@ export class AuthService {
         username: credentials.username,
       });
       const requestStackController = new SigaaRequestStack<Request, Page>();
-      cacheService.set(`${credentials.username}-requestStackController`, requestStackController);
+      cacheService.set(
+        `${credentials.username}-requestStackController`,
+        requestStackController
+      );
       this.sigaaInstance = new Sigaa({ url, requestStackController });
 
       const { account, JSESSIONID } = await this.attemptLogin(
@@ -49,7 +57,30 @@ export class AuthService {
     logger.log("AuthService:attemptLogin", "got account", {});
     return { account, JSESSIONID };
   }
-
+  /**
+   * Metodo para preparar a instância do Sigaa
+   * Injetar os cookies, e salvar o requestStackController
+   */
+  prepareSigaaInstance(params: {
+    JSESSIONID: string;
+    username: string;
+    url: string;
+  }) {
+    const { JSESSIONID, username, url } = params;
+    const { hostname } = new URL(url);
+    const cookiesController = new SigaaCookiesController();
+    cookiesController.storeCookies(hostname, [JSESSIONID]);
+    const requestStackController = cacheService.get<
+      SigaaRequestStack<Request, Page>
+    >(`${username}-requestStackController`);
+    if (!requestStackController)
+      throw new Error("RequestStackController not found");
+    return new Sigaa({
+      url,
+      cookiesController,
+      requestStackController,
+    });
+  }
   async rehydrate(params: {
     JSESSIONID: string;
     username: string;
@@ -58,27 +89,25 @@ export class AuthService {
     logger.log("AuthService:rehydrate", "Rehydrating session", {
       username: params.username,
     });
-    const { JSESSIONID, username, url } = params;
-    const { hostname } = new URL(url);
-    const cookiesController = new SigaaCookiesController();
-    cookiesController.storeCookies(hostname, [JSESSIONID]);
-    const requestStackController = cacheService.get<SigaaRequestStack<Request, Page>>(`${username}-requestStackController`);
-    if (!requestStackController) throw new Error("RequestStackController not found");
-    this.sigaaInstance = new Sigaa({ url, cookiesController, requestStackController });
+    this.sigaaInstance = this.prepareSigaaInstance(params);
     const http = this.sigaaInstance.httpFactory.createHttp();
     const page = await http.get("/sigaa/vinculos.jsf");
     logger.log("AuthService:rehydrate", "Rehydrated page", page.url.pathname);
     const account = await this.sigaaInstance.accountFactory.getAccount(page);
     logger.log("AuthService:rehydrate", "Rehydrated account", {});
-    const accountService = new AccountService(account, username, JSESSIONID);
+    const accountService = new AccountService(
+      account,
+      params.username,
+      params.JSESSIONID
+    );
     return accountService;
   }
   closeSession() {
-    logger.log(
-      "AuthService:closeSession",
-      "Closing session",
-      {}
-    );
+    logger.log("AuthService:closeSession", "Closing session", {});
     this.sigaaInstance?.close();
+  }
+  getSigaaInstance() {
+    if (!this.sigaaInstance) throw new Error("Sigaa instance not found");
+    return this.sigaaInstance;
   }
 }

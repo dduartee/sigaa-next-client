@@ -33,7 +33,7 @@
     "react-dom": "latest",
     "react-moment": "^1.1.1",
     "react-tsparticles": "^1.29.2",
-    "sigaa-api": "https://github.com/dduartee/sigaa-api.git#mobile-login",
+    "sigaa-api": "https://github.com/dduartee/sigaa-api.git#bondUrl",
     "socket.io-client": "latest",
     "uuid": "^9.0.0",
     "zod": "^3.20.2"
