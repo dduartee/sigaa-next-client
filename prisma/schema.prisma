@@ -7,35 +7,96 @@ generator client {
     provider = "prisma-client-js"
 }
 
+generator erd {
+    provider = "prisma-erd-generator"
+    output   = "./erd.pdf"
+}
+
 model Institution {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String   @unique
     acronym   String   @unique
+    url       String   @unique
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    Campi    Campus[]
+    Campuses  Campus[]
 }
 
 model Campus {
     id            String      @id @default(auto()) @map("_id") @db.ObjectId
     name          String      @unique
     acronym       String      @unique
+    Institution   Institution @relation(fields: [institutionId], references: [id])
+    institutionId String      @db.ObjectId
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @updatedAt
-    institution   Institution @relation(fields: [institutionId], references: [id])
-    institutionId String      @db.ObjectId
-    Users         User[]
+    Bonds         Bond[]
 }
 
-model User {
+model Session {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    value     String   @unique
+    token     String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Student   Student  @relation(fields: [studentId], references: [id])
+    studentId String   @unique @db.ObjectId
+    // em algum momento futuro, a sessão será referenciada pelo vinculo.
+}
+
+model Bond {
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    program      String
+    registration String   @unique
+    period       String
+    sequence     Int
+    active       Boolean  @default(true)
+    Student      Student  @relation(fields: [studentId], references: [id])
+    studentId    String   @db.ObjectId
+    Campus       Campus   @relation(fields: [campusId], references: [id])
+    campusId     String   @db.ObjectId
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    Courses      Course[]
+}
+
+// model compartilhado para alunos do mesmo periodo que há a mesma matéria, ou seja, com o title, id, code, schedule... compartilhados
+// informações comuns são compartilhadas entre alunos do mesmo periodo
+model SharedCourse {
+    id               String   @id @default(auto()) @map("_id") @db.ObjectId
+    courseId         String   @unique
+    title            String
+    code             String
+    schedule         String
+    period           String
+    numberOfStudents Int
+    // homeworks     Homework[]
+    // lessons       Lesson[]
+    // news          News[]
+    Courses          Course[]
+}
+
+// model para cada aluno, com suas informações particulares, notas, frequencia...
+model Course {
+    id             String       @id @default(auto()) @map("_id") @db.ObjectId
+    // homeworks   Homework[] // done
+    // grades      Grade[]
+    // absences    Absence[]
+    Bond           Bond         @relation(fields: [bondId], references: [id])
+    bondId         String       @db.ObjectId
+    SharedCourse   SharedCourse @relation(fields: [sharedCourseId], references: [id])
+    sharedCourseId String       @db.ObjectId
+}
+
+model Student {
     id                String   @id @default(auto()) @map("_id") @db.ObjectId
     username          String   @unique
     fullName          String
     passwordHash      String
     emails            String[]
     profilePictureURL String
-    campus            Campus   @relation(fields: [campusId], references: [id])
-    campusId          String   @db.ObjectId
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
+    Bond              Bond[]
+    Session           Session?
 }

@@ -9,7 +9,7 @@ export interface ICourseDTOProps {
     id: string;
     title: string;
     code: string;
-    schedule?: string;
+    schedule: string;
     period: string;
     numberOfStudents: number;
     grades?: IGradeGroupDTOProps[];

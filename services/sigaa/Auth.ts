@@ -20,12 +20,12 @@ export class AuthService {
       logger.log("AuthService:Login", "Logging in", {
         username: credentials.username,
       });
-      const requestStackController = new SigaaRequestStack<Request, Page>();
+      /*const requestStackController = new SigaaRequestStack<Request, Page>();
       cacheService.set(
         `${credentials.username}-requestStackController`,
         requestStackController
-      );
-      this.sigaaInstance = new Sigaa({ url, requestStackController });
+      );*/
+      this.sigaaInstance = new Sigaa({ url });
 
       const { account, JSESSIONID } = await this.attemptLogin(
         credentials,
@@ -70,15 +70,14 @@ export class AuthService {
     const { hostname } = new URL(url);
     const cookiesController = new SigaaCookiesController();
     cookiesController.storeCookies(hostname, [JSESSIONID]);
-    const requestStackController = cacheService.get<
+    /*const requestStackController = cacheService.get<
       SigaaRequestStack<Request, Page>
     >(`${username}-requestStackController`);
     if (!requestStackController)
-      throw new Error("RequestStackController not found");
+      throw new Error("RequestStackController not found");*/
     return new Sigaa({
       url,
       cookiesController,
-      requestStackController,
     });
   }
   async rehydrate(params: {

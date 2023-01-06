@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-declare let global: { prisma: PrismaClient };
+declare let global: { prismaInstance: PrismaClient };
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
@@ -7,14 +7,14 @@ declare let global: { prisma: PrismaClient };
 // Learn more: 
 // https://pris.ly/d/help/next-js-best-practices
 
-let prisma: PrismaClient
+let prismaInstance: PrismaClient
 
 if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
+  prismaInstance = new PrismaClient()
 } else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient()
+  if (!global.prismaInstance) {
+    global.prismaInstance = new PrismaClient()
   }
-  prisma = global.prisma
+  prismaInstance = global.prismaInstance
 }
-export default prisma
+export {prismaInstance}

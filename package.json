@@ -20,6 +20,7 @@
     "@material-ui/styles": "latest",
     "@prisma/client": "^4.8.0",
     "@syncfusion/ej2-react-schedule": "^19.2.47",
+    "bson": "^4.7.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-prettier": "^3.4.0",
@@ -28,6 +29,7 @@
     "next": "latest",
     "next-pwa": "^5.6.0",
     "node-cache": "^5.1.2",
+    "node-rsa": "^1.1.1",
     "prettier": "^2.3.2",
     "react": "latest",
     "react-dom": "latest",
@@ -35,12 +37,13 @@
     "react-tsparticles": "^1.29.2",
     "sigaa-api": "https://github.com/dduartee/sigaa-api.git#bondUrl",
     "socket.io-client": "latest",
-    "uuid": "^9.0.0",
-    "zod": "^3.20.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^9.3.0",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "latest",
+    "@types/node-rsa": "^1.1.1",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/uuid": "^9.0.0",
@@ -50,6 +53,7 @@
     "eslint-config-next": "^11.0.1",
     "eslint-plugin-react": "^7.24.0",
     "prisma": "^4.8.0",
+    "prisma-erd-generator": "^1.2.4",
     "typescript": "^4.2.4"
   }
 }

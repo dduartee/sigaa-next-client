@@ -1,5 +1,6 @@
 import { ActivityDTO } from "@DTOs/ActivityDTO";
 import { BondDTO } from "@DTOs/BondDTO";
+import { ICampusDTOProps } from "@DTOs/CampusDTO";
 import { CourseDTO } from "@DTOs/CourseDTO";
 import logger from "@services/logger";
 import { CourseStudent, StudentBond } from "sigaa-api";
@@ -7,7 +8,7 @@ import { CourseStudent, StudentBond } from "sigaa-api";
 export interface StudentBondWithAdditionalProps extends StudentBond {
   active: boolean;
   period: string;
-  campus: string;
+  campus: ICampusDTOProps;
 }
 
 /**
