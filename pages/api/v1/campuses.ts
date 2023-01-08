@@ -13,6 +13,7 @@ export default async function Campuses(
   response: NextApiResponse
 ) {
   const { institution: acronym } = request.query as CampusQuery;
+  if (!acronym) return response.status(400).json({ message: "Acronym required" });
   const institution = await prismaInstance.institution.findUnique({
     where: { acronym },
   });
