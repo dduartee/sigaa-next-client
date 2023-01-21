@@ -23,10 +23,10 @@ export default async function Login(
 ) {
   logger.log("Login", "Request received", {});
   const { username, password, sigaaURL, token } =
-    request.body as AuthenticationParams;
+   JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
 
-  if (!username) response.status(400).send({ error: "Username is required" });
-  if (!sigaaURL) response.status(400).send({ error: "Sigaa URL is required" });
+  if (!username) return response.status(400).send({ error: "Username is required" });
+  if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
 
   const authService = new AuthService();
   let studentDTO: StudentDTO;
@@ -59,10 +59,10 @@ export default async function Login(
     studentDTO = await getStudentDTO(accountService);
     session = accountService.getJSESSIONID();
     const studentJSON = studentDTO.toJSON();
-    const hashService = new HashService();
+    // const hashService = new HashService();
     const studentInput = {
       ...studentJSON,
-      passwordHash: hashService.encrypt(password),
+      passwordHash: "asdasdaskdoijoijoijoijehehhehehehehdgotcha"
     };
     const createOrUpdateStudent = await prismaInstance.student.upsert({
       where: { username },
@@ -78,7 +78,7 @@ export default async function Login(
         Student: { connect: { id: createOrUpdateStudent.id } },
       },
     });
-    logger.log("Login", "Student created or updated", createOrUpdateStudent);
+    logger.log("Login", "Student created or updated", {});
   } else {
     return response.status(400).send({ error: "Password is required" });
   }

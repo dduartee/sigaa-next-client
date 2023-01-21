@@ -1,13 +1,9 @@
 import {
-  Page,
-  Request,
   Sigaa,
   SigaaCookiesController,
 } from "sigaa-api";
 import { AccountService } from "./Account/Account";
 import logger from "@services/logger";
-import { SigaaRequestStack } from "sigaa-api/dist/helpers/sigaa-request-stack";
-import cacheService from "@lib/cache";
 
 export class AuthService {
   sigaaInstance?: Sigaa;

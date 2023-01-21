@@ -12,7 +12,6 @@ export interface IBondDTOProps {
   campus: ICampusDTOProps;
   activities?: IActivityDTOProps[];
   courses?: ICourseDTOProps[];
-  sequence: string;
 }
 export interface IBondDTO {
   toJSON(additionals: {
@@ -33,16 +32,12 @@ export class BondDTO implements IBondDTO {
   toJSON(): IBondDTOProps {
     const coursesDTOs = this.additionals?.coursesDTOs || undefined;
     const activitiesDTOs = this.additionals?.activitiesDTOs || undefined;
-
-    const bondSwitchUrl = this.bond.bondSwitchUrl || new URL("");
-    const sequence = bondSwitchUrl.searchParams.get("vinculo") || ""; // ordem sequencial do vinculo
     return {
       program: this.bond.program,
       registration: this.bond.registration,
       type: this.bond.type,
       active: this.bond.active,
       period: this.bond.period,
-      sequence,
       campus: this.bond.campus,
       activities: activitiesDTOs?.map((a) => a.toJSON()),
       courses: coursesDTOs?.map((c) => c.toJSON()),

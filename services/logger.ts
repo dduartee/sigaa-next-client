@@ -1,6 +1,6 @@
 class LoggerService {
     private lastLogDate?: Date;
-    log(method: string, message: string, data: unknown) {
+    log(method: string, message: string, data: any) {
         const date = new Date();
         const time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
         if (this.lastLogDate) {

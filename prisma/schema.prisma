@@ -20,6 +20,7 @@ model Institution {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Campuses  Campus[]
+    @@map("institutions")
 }
 
 model Campus {
@@ -31,6 +32,7 @@ model Campus {
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @updatedAt
     Bonds         Bond[]
+    @@map("campuses")
 }
 
 model Session {
@@ -42,6 +44,7 @@ model Session {
     Student   Student  @relation(fields: [studentId], references: [id])
     studentId String   @unique @db.ObjectId
     // em algum momento futuro, a sessão será referenciada pelo vinculo.
+    @@map("sessions")
 }
 
 model Bond {
@@ -58,6 +61,7 @@ model Bond {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
     Courses      Course[]
+    @@map("bonds")
 }
 
 // model compartilhado para alunos do mesmo periodo que há a mesma matéria, ou seja, com o title, id, code, schedule... compartilhados
@@ -70,22 +74,25 @@ model SharedCourse {
     schedule         String
     period           String
     numberOfStudents Int
-    // homeworks     Homework[]
+    postValues       String
+    // homeworks     Homework[] {name, description, deadline, files}
     // lessons       Lesson[]
     // news          News[]
     Courses          Course[]
+    @@map("shared_courses")
 }
 
 // model para cada aluno, com suas informações particulares, notas, frequencia...
 model Course {
     id             String       @id @default(auto()) @map("_id") @db.ObjectId
-    // homeworks   Homework[] // done
+    // homeworks   Homework[]   // {done}
     // grades      Grade[]
     // absences    Absence[]
     Bond           Bond         @relation(fields: [bondId], references: [id])
     bondId         String       @db.ObjectId
     SharedCourse   SharedCourse @relation(fields: [sharedCourseId], references: [id])
     sharedCourseId String       @db.ObjectId
+    @@map("courses")
 }
 
 model Student {
@@ -99,4 +106,5 @@ model Student {
     updatedAt         DateTime @updatedAt
     Bond              Bond[]
     Session           Session?
+    @@map("students")
 }
