@@ -1,7 +1,7 @@
 import { CourseDTO, ICourseDTOProps } from "@DTOs/CourseDTO";
 import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "./login";
+import { AuthenticationParams } from "../../auth/login";
 import { BondService } from "@services/sigaa/Account/Bond/Bond";
 import logger from "@services/logger";
 import RehydrateBondFactory from "@services/sigaa/Account/Bond/RehydrateBondFactory";
@@ -11,17 +11,20 @@ import { ObjectId } from "bson";
 interface QueryParams {
   registration: string;
 }
-type RequestBody = QueryParams & AuthenticationParams;
+type RequestBody = AuthenticationParams;
 export default async function Courses(
   request: NextApiRequest,
   response: NextApiResponse<{ data: ICourseDTOProps[] } | { error: string }>
 ) {
   logger.log("Courses", "Request received", {});
-  const { username, sigaaURL, token, registration } =
+  const { username, sigaaURL, token } =
     JSON.parse(JSON.stringify(request.body)) as RequestBody;
+
   if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
   if (!token) return response.status(400).send({ error: "Token is required" });
 
+  const { registration } = request.query as Partial<QueryParams>;
+  if (!registration) return response.status(400).send({ error: "Registration is required" });
   logger.log("Courses", "Token received", token);
   const storedSession = await prismaInstance.session.findUnique({
     where: { token },

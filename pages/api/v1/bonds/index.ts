@@ -1,6 +1,6 @@
 import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "./login";
+import { AuthenticationParams } from "../auth/login";
 import { BondDTO, IBondDTOProps } from "@DTOs/BondDTO";
 import logger from "@services/logger";
 import { prismaInstance } from "@lib/prisma";

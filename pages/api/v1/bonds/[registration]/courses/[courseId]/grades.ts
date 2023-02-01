@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "./login";
+import { AuthenticationParams } from "../../../../auth/login";
 import { prismaInstance } from "@lib/prisma";
 import { AuthService } from "@services/sigaa/Auth";
 import { ICourseDTOProps } from "@DTOs/CourseDTO";
@@ -10,19 +10,24 @@ interface QueryParams {
   registration: string;
   courseId: string;
 }
-type RequestBody = QueryParams & AuthenticationParams;
+type RequestBody = AuthenticationParams;
 
 export default async function Grades(
   request: NextApiRequest,
   response: NextApiResponse<{ data: ICourseDTOProps } | { error: string }>
 ) {
-  const { username, sigaaURL, token, registration, courseId } =
-  JSON.parse(JSON.stringify(request.body)) as RequestBody;
-  logger.log("Grades", "Request received", {courseId});
-  
+  const { username, sigaaURL, token } =
+    JSON.parse(JSON.stringify(request.body)) as RequestBody;
+  logger.log("Grades", "Request received", {});
   if (!sigaaURL)
-    return response.status(400).send({ error: "Sigaa URL is required" });
+  return response.status(400).send({ error: "Sigaa URL is required" });
   if (!token) return response.status(400).send({ error: "Token is required" });
+
+  const { registration, courseId } = request.query as Partial<QueryParams>;
+  if (!registration)
+    return response.status(400).send({ error: "Registration is required" });
+  if (!courseId)
+    return response.status(400).send({ error: "CourseId is required" });
 
   const storedSession = await prismaInstance.session.findUnique({
     where: { token },
@@ -62,15 +67,15 @@ export default async function Grades(
     where: { courseId },
   });
   if (!sharedCourse)
-  return response.status(400).send({ error: "Invalid sharedCourse" });
+    return response.status(400).send({ error: "Invalid sharedCourse" });
   const courses = bondStored.Courses;
   const course = courses.find((course) => course.sharedCourseId === sharedCourse.id);
   if (!course) return response.status(400).send({ error: "Invalid course" });
   /**
    * Rehidratar o course apartir dos dados salvos no banco
   */
- const courseService = new CourseService();
- logger.log("Grades", "Rehydrating course", {});
+  const courseService = new CourseService();
+  logger.log("Grades", "Rehydrating course", {});
   courseService.rehydrateCourse(sharedCourse, {
     parser,
     http,
