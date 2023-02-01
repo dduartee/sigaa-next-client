@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    
     "lib": [
       "dom",
       "dom.iterable",
@@ -21,14 +20,21 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@*": ["*"]
-    }
+      "@*": [
+        "*"
+      ]
+    },
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/bond/...slug.tsx", "formatSchedule.js", "formatSchedule.js", "formatSchedule.js"  ],
+    "**/*.tsx",
+    "pages/bond/...slug.tsx",
+    "formatSchedule.js",
+    "formatSchedule.js",
+    "formatSchedule.js"
+  ],
   "exclude": [
     "node_modules"
   ]

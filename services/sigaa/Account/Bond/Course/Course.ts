@@ -4,10 +4,13 @@ import { SharedCourse } from "@prisma/client";
 import { GradesService } from "./Grades";
 import { GradeGroupDTO } from "@DTOs/GradeGroup/GradeGroup.DTO";
 import { CourseDTO } from "@DTOs/CourseDTO";
+import { AbsencesService } from "./Absences";
+import { AbsencesDTO } from "@DTOs/AbsencesDTO";
 
 export class CourseService {
   course: SigaaCourseStudent | undefined;
   gradeGroupsDTOs: GradeGroupDTO[] | undefined;
+  absences: AbsencesDTO | undefined;
   /**
    * Parseia os dados da matéria do banco de dados para o tipo CourseStudentData
    * @param SharedCourse dados da matéria recuperados do banco de dados
@@ -61,6 +64,13 @@ export class CourseService {
     const gradeGroupsDTOs = gradesService.getGradesGroupDTOs(gradeGroups);
     this.gradeGroupsDTOs = gradeGroupsDTOs;
     return gradeGroupsDTOs;
+  }
+  public async getAbsences() {
+    if (!this.course) throw new Error("Course not rehydrated");
+    const absences = await this.course.getAbsence();
+    const absencesService = new AbsencesService();
+    this.absences = absencesService.getAbsencesDTOs(absences);
+    return absences;
   }
   /**
    * Conforme o retorno dos métodos, como getGrades, getNews, getHomeworks, getLessons, getAbsences,
