@@ -3,6 +3,10 @@
 ![logo sigaanext](docs/images/logo.png)
 ### Este projeto está hospedado em [sigaa-next-client.vercel.app](https://sigaa-next-client.vercel.app/). <br>
 </div>
+<div align="center">
+
+### Link do trabalho apresentado:<br> [Alternativa ao SIGAA para visualização de informações "gerais" pelos estudantes](https://www.even3.com.br/anais/encontro_emi_ifsc/519811-alternativa-ao-sigaa-para-visualizacao-de-informacoes-globais-pelos-estudantes/). <br> <a href="docs/images/519811.pdf">(Trabalho em pdf)</a>
+</div>
 
 ## Objetivo do projeto
 
@@ -13,8 +17,9 @@ O principal objetivo do projeto é melhorar a usabilidade do estudante para visu
 
 ![PIX](https://user-images.githubusercontent.com/33992396/99478349-ff1b1280-2932-11eb-8776-1942bbe1a52a.png)
 
-Para manter o projeto funcionando 24h e atualizado, estamos aceitando doações! 
-<p style="font-size: 24px">email: sigaanext@gmail.com</h2>
+Para manter o projeto funcionando 24h e atualizado, estamos aceitando doações!
+
+PIX (email): <a href="mailto:sigaanext@gmail.com">sigaanext@gmail.com</a>
 <br>
 
 ## Problemas ou sugestões
