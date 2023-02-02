@@ -42,14 +42,23 @@ Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issu
 <h2>Página inicial e menu</h2>
 <img src="docs/images/Atividades.png" width="300" />
 <img src="docs/images/Matérias.png" width="300" />
-<img src="docs/images/Menu.png" width="300" />
+<img src="docs/images/MenuNovo.png" width="300" />
 </div>
 
 <br>
 <div align="center">
 
-<h2>Horários e Notas</h2>
+<h2>Horários, Frequências e Notas</h2>
 <img src="docs/images/Horários.png" width="300" />
-<img src="docs/images/Notas.png" width="300" />
+<img src="docs/images/Frequencias.png" width="300" />
 <img src="docs/images/Notas2.png" width="300" />
+</div>
+
+<br>
+<div align="center">
+
+<h2>Página de turmas e Tópicos de aula</h2>
+<img src="docs/images/Turmas.png" width="300" />
+<img src="docs/images/TopicosAula.png" width="300" />
+<img src="docs/images/TopicosAula2.png" width="300" />
 </div>
