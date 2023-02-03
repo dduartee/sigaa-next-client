@@ -6,7 +6,7 @@ import { v4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "@services/logger";
 import { prismaInstance } from "@lib/prisma";
-import { HashService } from "@services/Hash";
+// import { HashService } from "@services/Hash";
 
 export interface AuthenticationParams {
   username: string;

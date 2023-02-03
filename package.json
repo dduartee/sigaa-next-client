@@ -18,7 +18,7 @@
     "@material-ui/core": "^5.0.0-beta.0",
     "@material-ui/icons": "^5.0.0-alpha.37",
     "@material-ui/styles": "latest",
-    "@prisma/client": "latest",
+    "@prisma/client": "^4.9.0",
     "@syncfusion/ej2-react-schedule": "^19.2.47",
     "bson": "^4.7.1",
     "eslint-config-prettier": "^8.3.0",
@@ -54,7 +54,7 @@
     "eslint": "^7.29.0",
     "eslint-config-next": "^11.0.1",
     "eslint-plugin-react": "^7.24.0",
-    "prisma": "latest",
+    "prisma": "^4.9.0",
     "prisma-erd-generator": "^1.2.4",
     "typescript": "^4.9.5"
   }
