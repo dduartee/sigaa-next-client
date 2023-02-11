@@ -22,7 +22,8 @@ import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import MoreIcon from "@material-ui/icons/More";
 import { formatContent } from "@components/Lessons/Content";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
+import Loading from "@components/Loading";
 
 export default function Activities({
   bond,
@@ -87,9 +88,7 @@ export default function Activities({
         padding={1}
       >
         {loading || !activities ? (
-          <Box width="100%" textAlign={"center"}>
-            <CircularProgress style={{ margin: "1rem" }} />
-          </Box>
+        <Loading value={loading} />
         ) : (
           <Box width={"100%"}>
             {activities.length === 0 ? (

@@ -16,6 +16,7 @@ import moment from "moment";
 import "moment/locale/pt";
 import "react-moment";
 import React, { useEffect, useState } from "react";
+import Loading from "@components/Loading";
 
 export default function Lessons(props: { course?: Course; loading: boolean }) {
   moment.locale("pt-br");
@@ -51,14 +52,7 @@ export default function Lessons(props: { course?: Course; loading: boolean }) {
   return (
     <Box padding={1} minWidth={"50%"}>
       {props.loading || !props.course?.lessons ? (
-        <Box
-          display={"flex"}
-          justifyContent={"center"}
-          borderRadius={"10px"}
-          padding={1}
-        >
-          <CircularProgress style={{ margin: "1rem" }} />
-        </Box>
+        <Loading value={props.loading} />
       ) : (
         <Box>
           <Typography

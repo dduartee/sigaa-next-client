@@ -4,13 +4,14 @@ import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import { Box, CircularProgress } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import Head from "next/head";
 import useTabHandler from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Absences from "@components/Absences/Content";
 import useAbsencesEvents from "@hooks/courses/useAbsencesEvents";
 import { bondTabs } from "@components/Home/CustomDrawer";
+import Loading from "@components/Loading";
 
 function InitializeHooks({ registration }: { registration: string }) {
   const valid = useTokenHandler();
@@ -27,8 +28,6 @@ function InitializeHooks({ registration }: { registration: string }) {
     bond,
     partialLoading,
     setPartialLoading,
-    loading,
-    setLoading,
     user,
     setUser,
     valid,
@@ -41,7 +40,6 @@ export default function GradesPage({ registration }: { registration: string }) {
   const {
     bond,
     partialLoading,
-    loading,
     user,
     valid,
     tab,
@@ -67,7 +65,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         <title>Frequência | sigaa-next</title>
       </Head>
       <HomeProvider
-        loading={loading}
+        loading={partialLoading}
         registration={registration}
         user={user}
         setTab={setTab}
@@ -76,11 +74,7 @@ export default function GradesPage({ registration }: { registration: string }) {
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Absences bond={bond} />
-          {partialLoading ? (
-            <Box display={"flex"} justifyContent={"center"}>
-              <CircularProgress style={{ margin: "1rem" }} />
-            </Box>
-          ) : null}
+          <Loading value={partialLoading} />
         </Box>
       </HomeProvider>
     </>

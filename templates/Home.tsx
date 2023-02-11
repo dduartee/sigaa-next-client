@@ -1,11 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Box, styled } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import CustomDrawer from "@components/Home/CustomDrawer";
 import CustomNavBar from "@components/Home/CustomNavBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Loading from "@components/Loading";
-import { LoadingContext } from "@context/loading";
 
 const StyledContent = styled(Box)(({ theme }) => ({
   width: "90%",
@@ -40,15 +38,13 @@ export default function HomeTemplate({
     setMobileOpen(!mobileOpen);
   };
   const drawerWidth = 100;
-  const loading = useContext(LoadingContext);
   return (
     <>
-      <Loading loading={loading} />
       <Box sx={{ display: "flex" }}>
         <CustomNavBar handler={handleDrawerToggle} width={drawerWidth} />
         <CustomDrawer
           tabChanger={tabChanger}
-          tab={tab}
+          tabSelected={tab}
           tabs={tabs}
           handler={handleDrawerToggle}
           open={mobileOpen}

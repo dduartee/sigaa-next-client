@@ -13,6 +13,8 @@ import { emitCourseList } from "@hooks/useBondsEvents";
 import HomeProvider from "@components/HomeProvider";
 import Courses from "@components/Courses/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
+import Loading from "@components/Loading";
+
 function InitializeHooks({ registration }: { registration: string }) {
   const valid = useTokenHandler();
   const { user } = useUserHandler();
@@ -103,7 +105,7 @@ export default function CoursesPage({
         <title>Turmas | sigaa-next</title>
       </Head>
       <HomeProvider
-        loading={false}
+        loading={coursesLoading}
         user={user}
         registration={registration}
         setTab={setTab}
@@ -117,7 +119,8 @@ export default function CoursesPage({
           alignItems={"center"}
           maxWidth={"100%"}
         >
-          <Courses bond={bond} loading={coursesLoading} />
+          <Courses bond={bond} />
+          <Loading value={coursesLoading} />
         </Box>
       </HomeProvider>
     </>

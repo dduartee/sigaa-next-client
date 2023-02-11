@@ -102,7 +102,7 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
               <CollapsibleTable>
                 <TableBody>
                   {course.absences.list?.map((absence, key) => {
-                    if (absence.numOfAbsences == 0) return <></>;
+                    if (absence.numOfAbsences == 0) return <div key={key}></div>;
 
                     return (
                       <StyledTableRow key={key}>

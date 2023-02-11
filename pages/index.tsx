@@ -45,7 +45,9 @@ function Index(): JSX.Element {
 
   useEffect(() => {
     if (valid) {
-      socket.emit("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo token
+      const username = localStorage.getItem("username");
+      const token = localStorage.getItem("token");
+      if(username && token) socket.emit("user::login", { token, username }); // tenta logar pelo token
     }
   }, [valid, socket, setStatus]);
   useEffect(() => {

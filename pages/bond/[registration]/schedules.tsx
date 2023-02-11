@@ -15,6 +15,7 @@ import HomeProvider from "@components/HomeProvider";
 import Schedules from "@components/Schedules/Content";
 import { emitCourseList } from "@hooks/useBondsEvents";
 import { bondTabs } from "@components/Home/CustomDrawer";
+import Loading from "@components/Loading";
 function InitializeHooks({ registration }: { registration: string }) {
   const valid = useTokenHandler();
   const { user } = useUserHandler();
@@ -66,6 +67,7 @@ export default function SchedulesPage({ registration }: { registration: string }
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Schedules bond={bond} />
+          <Loading value={loading} />
         </Box>
       </HomeProvider>
     </>

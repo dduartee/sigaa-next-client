@@ -66,7 +66,7 @@ export default function RegistrationPage({
         <title>Inicio | sigaa-next</title>
       </Head>
       <HomeProvider
-        loading={false}
+        loading={activitiesLoading}
         user={user}
         registration={registration}
         setTab={setTab}
@@ -80,7 +80,7 @@ export default function RegistrationPage({
           alignItems={"center"}
           maxWidth={"100%"}
         >
-          <Activities bond={bond} loading={activitiesLoading} />
+          <Activities bond={bond} loading={activitiesLoading}/>
         </Box>
       </HomeProvider>
     </>

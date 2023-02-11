@@ -72,7 +72,7 @@ export default function LessonsPage({
         <title>Tópicos de aula | {id} | sigaa-next</title>
       </Head>
       <HomeProvider
-        loading={false}
+        loading={loading}
         registration={registration}
         user={user}
         setTab={setTab}

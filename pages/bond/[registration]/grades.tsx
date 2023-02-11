@@ -15,11 +15,11 @@ import useTabHandler from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
+import Loading from "@components/Loading";
 
 function InitializeHooks({ registration }: { registration: string }) {
   const valid = useTokenHandler();
   const { user, setUser } = useUserHandler();
-  const [loading, setLoading] = useState(false);
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
     order: 1,
@@ -31,8 +31,6 @@ function InitializeHooks({ registration }: { registration: string }) {
     bond,
     partialLoading,
     setPartialLoading,
-    loading,
-    setLoading,
     user,
     setUser,
     valid,
@@ -45,7 +43,6 @@ export default function GradesPage({ registration }: { registration: string }) {
   const {
     bond,
     partialLoading,
-    loading,
     user,
     valid,
     tab,
@@ -74,7 +71,7 @@ export default function GradesPage({ registration }: { registration: string }) {
         <title>Notas | sigaa-next</title>
       </Head>
       <HomeProvider
-        loading={loading}
+        loading={partialLoading}
         registration={registration}
         user={user}
         setTab={setTab}
@@ -83,13 +80,7 @@ export default function GradesPage({ registration }: { registration: string }) {
       >
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Grades bond={bond} />
-          {
-            partialLoading ? (
-              <Box display={"flex"} justifyContent={"center"}>
-                <CircularProgress style={{ margin: "1rem" }} />
-              </Box>
-            ) : null
-          }
+          <Loading value={partialLoading} />
         </Box>
       </HomeProvider>
     </>

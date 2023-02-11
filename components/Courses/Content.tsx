@@ -5,7 +5,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  CircularProgress,
   Typography,
 } from "@material-ui/core";
 import { RegistrationContext } from "@context/registration";
@@ -14,10 +13,8 @@ import { ChevronRight } from "@material-ui/icons";
 
 export default function Courses({
   bond,
-  loading,
 }: {
   bond: Bond | null;
-  loading: boolean;
 }) {
   const router = useRouter();
   const accessCourse = (registration: string, courseId: string) => {
@@ -56,18 +53,9 @@ export default function Courses({
       >
         Turmas
       </Typography>
-      {loading || !courses ? (
-        <Box
-          display={"flex"}
-          justifyContent={"center"}
-          borderRadius={"10px"}
-          padding={1}
-        >
-          <CircularProgress style={{ margin: "1rem" }} />
-        </Box>
-      ) : (
-        <Box>
-          {registration && courses?.map((course, key) => {
+      <Box>
+        {registration &&
+          courses?.map((course, key) => {
             return (
               <CourseContent
                 key={key}
@@ -76,8 +64,7 @@ export default function Courses({
               />
             );
           })}
-        </Box>
-      )}
+      </Box>
     </Box>
   );
 }
