@@ -11,10 +11,10 @@ export default function useUserHandler() {
   const [errorFeedback, setErrorFeedback] = useState("");
   const socket = useContext(SocketContext);
   useEffect(() => {
-    const fullName = localStorage.getItem("fullName");
-    const profilePictureURL = localStorage.getItem("profilePictureURL");
-    const emails = JSON.parse(localStorage.getItem("emails") || "[]") as string[];
-    const username = localStorage.getItem("username");
+    const fullName = sessionStorage.getItem("fullName");
+    const profilePictureURL = sessionStorage.getItem("profilePictureURL");
+    const emails = JSON.parse(sessionStorage.getItem("emails") || "[]") as string[];
+    const username = sessionStorage.getItem("username");
     if (fullName && profilePictureURL && emails && username) {
       setUser({
         username,
@@ -32,10 +32,10 @@ export default function useUserHandler() {
     });
     socket.on("user::login", ({ logado, error }) => {
       if (logado) {
-        emitUserInfo({ token: localStorage.getItem("token") }, socket);
+        emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
         emitBondList(
           {
-            token: localStorage.getItem("token"),
+            token: sessionStorage.getItem("token"),
             inactive: true,
             cache: false
           },
@@ -52,10 +52,10 @@ export default function useUserHandler() {
       }
     });
     socket.on("user::info", ({ fullName, emails, profilePictureURL, username }: UserData) => {
-      localStorage.setItem("fullName", fullName);
-      localStorage.setItem("profilePictureURL", profilePictureURL);
-      localStorage.setItem("emails", JSON.stringify(emails));
-      localStorage.setItem("username", username);
+      sessionStorage.setItem("fullName", fullName);
+      sessionStorage.setItem("profilePictureURL", profilePictureURL);
+      sessionStorage.setItem("emails", JSON.stringify(emails));
+      sessionStorage.setItem("username", username);
       setUser({
         username,
         fullName,

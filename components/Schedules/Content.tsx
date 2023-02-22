@@ -21,14 +21,14 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
   }, [bond, registration]);
 
   React.useEffect(() => {
-    const coursesCached = JSON.parse(localStorage.getItem(`courses-${registration}`) || "{}");
+    const coursesCached = JSON.parse(sessionStorage.getItem(`courses-${registration}`) || "{}");
     if (coursesCached) {
       const timestamp = new Date(coursesCached.timestamp);
       const now = new Date();
       if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
         setCourses(coursesCached.courses);
       } else {
-        localStorage.removeItem(`courses-${registration}`);
+        sessionStorage.removeItem(`courses-${registration}`);
       }
     }
   }, [registration]);

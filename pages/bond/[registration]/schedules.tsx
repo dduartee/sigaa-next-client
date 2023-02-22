@@ -44,9 +44,9 @@ export default function SchedulesPage({ registration }: { registration: string }
   });
   useEffect(() => {
     if (valid) {
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       emitCourseList(
-        { token: localStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: true, id: "schedules" },
+        { token: sessionStorage.getItem("token"), registration, allPeriods: false, cache: true, inactive: true, id: "schedules" },
         socket
       );
     } else window.location.href = "/";

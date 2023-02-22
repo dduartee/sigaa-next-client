@@ -45,8 +45,8 @@ function Index(): JSX.Element {
 
   useEffect(() => {
     if (valid) {
-      const username = localStorage.getItem("username");
-      const token = localStorage.getItem("token");
+      const username = sessionStorage.getItem("username");
+      const token = sessionStorage.getItem("token");
       if(username && token) socket.emit("user::login", { token, username }); // tenta logar pelo token
     }
   }, [valid, socket, setStatus]);
@@ -98,9 +98,9 @@ function Index(): JSX.Element {
   };
   const handleLogout = () => {
     setErrorFeedback("");
-    socket.emit("user::logoff", { token: localStorage.getItem("token") });
+    socket.emit("user::logoff", { token: sessionStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
-    localStorage.clear();
+    sessionStorage.clear();
   };
 
   const conditionals = {
@@ -118,7 +118,7 @@ function Index(): JSX.Element {
 
   const [activeParticles, setActiveParticles] = useState(true);
   useEffect(() => {
-    localStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
+    sessionStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
   }, [])
   const [increaseBoxSize, setIncreaseBoxSize] = useState(openHelp || openDonate);
   useEffect(() => setIncreaseBoxSize(openHelp || openDonate), [openHelp, openDonate])

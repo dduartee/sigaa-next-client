@@ -23,12 +23,12 @@ export default function LessonsPage({
   const [bond, setBond] = useState<Bond | null>(null);
   useEffect(() => {
     const bondCached = JSON.parse(
-      localStorage.getItem(`bond@${registration}`) || "{}"
+      sessionStorage.getItem(`bond@${registration}`) || "{}"
     );
     if (bondCached) {
       setBond(bondCached);
     } else {
-      localStorage.removeItem(`bond@${registration}`);
+      sessionStorage.removeItem(`bond@${registration}`);
     }
   }, [registration]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function LessonsPage({
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       setLoading(true);
     }
   }, [registration, setLoading, socket, valid]);
@@ -48,7 +48,7 @@ export default function LessonsPage({
         setLoading(false);
       });
       socket.emit("lessons::list", {
-        token: localStorage.getItem("token"),
+        token: sessionStorage.getItem("token"),
         registration,
         inactive: true,
         cache: true,

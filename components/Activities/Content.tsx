@@ -47,7 +47,7 @@ export default function Activities({
 
   useEffect(() => {
     const activitiesCached = JSON.parse(
-      localStorage.getItem(`activities-${registration}`) ?? "{}"
+      sessionStorage.getItem(`activities-${registration}`) ?? "{}"
     );
     if (activitiesCached) {
       const timestamp = new Date(activitiesCached.timestamp);
@@ -55,7 +55,7 @@ export default function Activities({
       if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
         setActivities(activitiesCached.activities);
       } else {
-        localStorage.removeItem(`activities-${registration}`);
+        sessionStorage.removeItem(`activities-${registration}`);
       }
     }
   }, [registration]);
@@ -167,7 +167,7 @@ function ActivityCollapse({
           courseId: activity.course.id,
           homeworkTitle: activity.title,
           homeworkId: activity.id,
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
         });
       }
     }

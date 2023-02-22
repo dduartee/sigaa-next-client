@@ -30,7 +30,7 @@ export default function Courses({
 
   React.useEffect(() => {
     const coursesCached = JSON.parse(
-      localStorage.getItem(`courses-${registration}`) || "{}"
+      sessionStorage.getItem(`courses-${registration}`) || "{}"
     );
     if (coursesCached) {
       const timestamp = new Date(coursesCached.timestamp);
@@ -38,7 +38,7 @@ export default function Courses({
       if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
         setCourses(coursesCached.courses);
       } else {
-        localStorage.removeItem(`courses-${registration}`);
+        sessionStorage.removeItem(`courses-${registration}`);
       }
     }
   }, [registration]);

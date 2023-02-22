@@ -24,12 +24,12 @@ export default function RegistrationPage({
   const [bond, setBond] = useState<Bond | null>(null);
   useEffect(() => {
     const bondCached = JSON.parse(
-      localStorage.getItem(`bond@${registration}`) || "{}"
+      sessionStorage.getItem(`bond@${registration}`) || "{}"
     );
     if (bondCached) {
       setBond(bondCached);
     } else {
-      localStorage.removeItem(`bond@${registration}`);
+      sessionStorage.removeItem(`bond@${registration}`);
     }
   }, [registration]);
   const { activitiesLoading, setActivitiesLoading } = useCourseEvents(setBond);
@@ -42,7 +42,7 @@ export default function RegistrationPage({
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       setActivitiesLoading(true);
     }
   }, [registration, setActivitiesLoading, socket, valid]);
@@ -50,7 +50,7 @@ export default function RegistrationPage({
     if (user?.fullName) {
       emitActivitiesList(
         {
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
           registration,
           inactive: true,
           cache: true,
@@ -60,7 +60,7 @@ export default function RegistrationPage({
       );
       emitCourseList(
         {
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
           registration,
           inactive: true,
           allPeriods: false,

@@ -51,14 +51,14 @@ export default function GradesPage({ registration }: { registration: string }) {
   } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       emitGradesList(
         {
           registration,
           id: "grades",
           cache: true,
           inactive: true,
-          token: localStorage.getItem("token"),
+          token: sessionStorage.getItem("token"),
         },
         socket
       );

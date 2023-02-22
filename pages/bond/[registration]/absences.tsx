@@ -48,13 +48,13 @@ export default function GradesPage({ registration }: { registration: string }) {
   } = InitializeHooks({ registration });
   useEffect(() => {
     if (valid) {
-      emitUserInfo({ token: localStorage.getItem("token") }, socket);
+      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       socket.emit("absences::list", {
         registration,
         cache: true,
         inactive: true,
         id: "absences",
-        token: localStorage.getItem("token"),
+        token: sessionStorage.getItem("token"),
       });
       setPartialLoading(true);
     } else window.location.href = "/";
