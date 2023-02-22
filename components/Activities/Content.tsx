@@ -163,7 +163,10 @@ function ActivityCollapse({
         socket.emit("homework::content", {
           inactive: false,
           registration,
-          activityTitle: activity.title,
+          cache: true,
+          courseId: activity.course.id,
+          homeworkTitle: activity.title,
+          homeworkId: activity.id,
           token: localStorage.getItem("token"),
         });
       }

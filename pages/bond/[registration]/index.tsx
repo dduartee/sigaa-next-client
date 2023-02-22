@@ -9,7 +9,7 @@ import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import { Bond } from "@types";
 import useTabHandler from "@hooks/useTabHandler";
-import { emitActivitiesList } from "@hooks/useBondsEvents";
+import { emitActivitiesList, emitCourseList } from "@hooks/useBondsEvents";
 import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
 import { bondTabs } from "@components/Home/CustomDrawer";
@@ -55,6 +55,17 @@ export default function RegistrationPage({
           inactive: true,
           cache: true,
           id: "activities",
+        },
+        socket
+      );
+      emitCourseList(
+        {
+          token: localStorage.getItem("token"),
+          registration,
+          inactive: true,
+          allPeriods: false,
+          cache: true,
+          id: "courses",
         },
         socket
       );

@@ -22,12 +22,11 @@ export type Bond = {
 };
 export type Activity = {
   type: "homework" | "exam" | "quiz";
+  id: string;
   title: string;
   date: string;
-  course: {
-    title: string;
-  };
   done: boolean;
+  course: { title: string, id: string };
 };
 
 export type News = {
@@ -156,10 +155,10 @@ export type Homework = {
 
 export type GradeGroup = {
   type:
-    | "sum-of-grades"
-    | "only-average"
-    | "weighted-average"
-    | "arithmetic-average";
+  | "sum-of-grades"
+  | "only-average"
+  | "weighted-average"
+  | "arithmetic-average";
   value: number;
   name: string;
   subGrades: SumOfGrades[] | WeightedAverage[] | ArithmeticAverage[];
