@@ -340,33 +340,38 @@ function BondSelection(props: { registrationSelected: string, setRegistrationSel
     <Typography textAlign={"center"} margin={2}>
       Escolha um vínculo para acessar
     </Typography>
-    <ToggleButtonGroup
-      exclusive
-      aria-label=""
-      value={registrationSelected}
-      onChange={handleChangeRegistration}
-      orientation="vertical"
-    >
-      {bonds.map((bond, index) => {
-        return (
-          <ToggleButton
-            key={index}
-            value={bond.registration}
-            style={{
-              marginTop: ".5rem",
-              marginLeft: "1rem",
-              marginRight: "1rem",
-              marginBottom: ".5rem",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "4px",
-              color: "#fff",
-            }}
-          >
-            {bond.program}<br />Matrícula: {bond.registration}
-          </ToggleButton>
-        );
-      })}
-    </ToggleButtonGroup>
+    <Box sx={{
+      maxHeight: "320px",
+      overflowInline: "auto"
+    }}>
+      <ToggleButtonGroup
+        exclusive
+        aria-label=""
+        value={registrationSelected}
+        onChange={handleChangeRegistration}
+        orientation="vertical"
+      >
+        {bonds.map((bond, index) => {
+          return (
+            <ToggleButton
+              key={index}
+              value={bond.registration}
+              style={{
+                marginTop: ".5rem",
+                marginLeft: "1rem",
+                marginRight: "1rem",
+                marginBottom: ".5rem",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "4px",
+                color: "#fff",
+              }}
+            >
+              {bond.program}<br />Matrícula: {bond.registration}
+            </ToggleButton>
+          );
+        })}
+      </ToggleButtonGroup>
+    </Box>
   </>)
 }
 
