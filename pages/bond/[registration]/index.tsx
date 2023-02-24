@@ -48,16 +48,6 @@ export default function RegistrationPage({
   }, [registration, setActivitiesLoading, socket, valid]);
   useEffect(() => {
     if (user?.fullName) {
-      emitActivitiesList(
-        {
-          token: sessionStorage.getItem("token"),
-          registration,
-          inactive: true,
-          cache: true,
-          id: "activities",
-        },
-        socket
-      );
       emitCourseList(
         {
           token: sessionStorage.getItem("token"),
@@ -69,6 +59,18 @@ export default function RegistrationPage({
         },
         socket
       );
+      socket.on("courses::list", () => {
+        emitActivitiesList(
+          {
+            token: sessionStorage.getItem("token"),
+            registration,
+            inactive: true,
+            cache: true,
+            id: "activities",
+          },
+          socket
+        );
+      })
     }
   }, [registration, socket, user?.fullName]);
   return (

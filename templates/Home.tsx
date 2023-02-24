@@ -39,7 +39,6 @@ export default function HomeTemplate({
   };
   const drawerWidth = 100;
   return (
-    <>
       <Box sx={{ display: "flex" }}>
         <CustomNavBar handler={handleDrawerToggle} width={drawerWidth} />
         <CustomDrawer
@@ -65,6 +64,5 @@ export default function HomeTemplate({
           </StyledContent>
         </Box>
       </Box>
-    </>
   );
 }
