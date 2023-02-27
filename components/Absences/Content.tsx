@@ -122,7 +122,7 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
                 </TableBody>
               </CollapsibleTable>
               <Typography variant="caption" gutterBottom component="div" color="GrayText">
-                Pode haver faltas não informadas.
+                Pode haver faltas não cadastradas.
               </Typography>
             </Box>
           </Collapse>

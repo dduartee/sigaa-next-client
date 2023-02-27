@@ -9,51 +9,54 @@ export default function useTabHandler({
 }: {
   order: number;
   valid: boolean;
-  registration: string;
+  registration: string | undefined;
   courseId?: string;
 }) {
   const router = useRouter()
   const [tab, setTab] = useState(order);
   useEffect(() => {
-    let path = ""
-    if (courseId) {
-      switch (tab) {
-        case 0:
-          path = `/bond/${registration}/courses`;
-          break;
-        case 1:
-          path = `/bond/${registration}/course/${courseId}`;
-          break;
-        default:
-          path = `/`;
-          break;
+    if (registration) {
+      let path = ""
+      if (courseId) {
+        switch (tab) {
+          case 0:
+            path = `/bond/${registration}/courses`;
+            break;
+          case 1:
+            path = `/bond/${registration}/course/${courseId}`;
+            break;
+          default:
+            path = `/`;
+            break;
+        }
+      } else {
+        switch (tab) {
+          case 0:
+            path = `/bond/${registration}/`;
+            break;
+          case 1:
+            path = `/bond/${registration}/grades`;
+            break;
+          case 2:
+            path = `/bond/${registration}/absences`;
+            break;
+          case 3:
+            path = `/bond/${registration}/courses`;
+            break;
+          case 4:
+            path = `/bond/${registration}/schedules`;
+            break;
+          default:
+            path = `/`;
+            break;
+        }
       }
-    } else {
-      switch (tab) {
-        case 0:
-          path = `/bond/${registration}/`;
-          break;
-        case 1:
-          path = `/bond/${registration}/grades`;
-          break;
-        case 2:
-          path = `/bond/${registration}/absences`;
-          break;
-        case 3:
-          path = `/bond/${registration}/courses`;
-          break;
-        case 4:
-          path = `/bond/${registration}/schedules`;
-          break;
-        default:
-          path = `/`;
-          break;
+      console.debug({ path })
+      if (path === "/") {
+        window.location.href = "/";
+      } else {
+        router.push(path);
       }
-    }
-    if (path === "/") {
-      window.location.href = "/";
-    } else {
-      router.push(path);
     }
   }, [tab, registration, courseId])
   return { tab, setTab, order, valid, registration };

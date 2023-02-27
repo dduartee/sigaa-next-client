@@ -3,7 +3,6 @@ import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
@@ -13,11 +12,11 @@ import { emitActivitiesList, emitCourseList } from "@hooks/useBondsEvents";
 import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
 import { bondTabs } from "@components/Home/CustomDrawer";
-export default function RegistrationPage({
-  registration,
-}: {
-  registration: string;
-}) {
+import { useRouter } from "next/router";
+
+export default function RegistrationPage() {
+  const router = useRouter();
+  const registration = router.query.registration as string | undefined;
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
@@ -47,7 +46,7 @@ export default function RegistrationPage({
     }
   }, [registration, setActivitiesLoading, socket, valid]);
   useEffect(() => {
-    if (user?.fullName) {
+    if (user?.fullName && registration) {
       emitCourseList(
         {
           token: sessionStorage.getItem("token"),
@@ -62,45 +61,42 @@ export default function RegistrationPage({
       socket.on("courses::list", () => {
         emitActivitiesList(
           {
-            token: sessionStorage.getItem("token"),
-            registration,
-            inactive: true,
-            cache: true,
-            id: "activities",
+          token: sessionStorage.getItem("token"),
+          registration,
+          inactive: true,
+          cache: true,
+          id: "activities",
           },
           socket
         );
       })
-    }
+      }
   }, [registration, socket, user?.fullName]);
   return (
     <>
       <Head>
         <title>Inicio | sigaa-next</title>
       </Head>
-      <HomeProvider
-        loading={activitiesLoading}
-        user={user}
-        registration={registration}
-        setTab={setTab}
-        tab={tab}
-        tabs={bondTabs}
-      >
-        <Box
-          sx={{ flexGrow: 1, p: 1 }}
-          display={"flex"}
-          flexDirection="column"
-          alignItems={"center"}
-          maxWidth={"100%"}
+      {registration ? (
+        <HomeProvider
+          loading={activitiesLoading}
+          user={user}
+          registration={registration}
+          setTab={setTab}
+          tab={tab}
+          tabs={bondTabs}
         >
-          <Activities bond={bond} loading={activitiesLoading}/>
-        </Box>
-      </HomeProvider>
+          <Box
+            sx={{ flexGrow: 1, p: 1 }}
+            display={"flex"}
+            flexDirection="column"
+            alignItems={"center"}
+            maxWidth={"100%"}
+          >
+            <Activities bond={bond} loading={activitiesLoading} />
+          </Box>
+        </HomeProvider>
+      ) : null}
     </>
   );
-}
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  return {
-    props: context.query,
-  };
 }

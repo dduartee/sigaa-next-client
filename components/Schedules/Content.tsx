@@ -1,5 +1,5 @@
 import { RegistrationContext } from "@context/registration";
-import { Collapse } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { Day, Week, Schedule, isMobile } from "@syncfusion/ej2-react-schedule";
 import { Bond, Course } from "@types";
 import moment from "moment";
@@ -51,44 +51,51 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
     }
   }, [bond, courses, scheduleData.length]);
   useEffect(() => {
-    Schedule.Inject(Day, Week);
-    const scheduleObj = new Schedule({
-      currentView: isMobile() ? "Day" : "Week",
-      selectedDate: new Date(),
-      eventSettings: {
-        dataSource: scheduleData,
-        allowAdding: false,
-        allowEditing: false,
-        allowDeleting: false,
-        enableIndicator: false,
-      },
-      views: [
-        "Day",
-        "Week"
-      ],
-      startHour: "7:00 AM",
-      readonly: true,
-      workDays: [0, 1, 2, 3, 4, 5, 6],
-      workHours: {
-        highlight: true,
-        start: "0:00",
-        end: "23:59",
-      },
-    })
-    scheduleObj.appendTo('#schedule');
+    if (scheduleData.length > 0) {
+
+      // startWorkHour eg: 0:00
+      // endWorkHour eg: 23:59
+      const startWorkHour = scheduleData.reduce((prev, curr) => {
+        if (prev.StartTime < curr.StartTime) return prev
+        return curr
+      });
+      // moment(prev.StartTime).format("HH:mm");
+      const endWorkHour = scheduleData.reduce((prev, curr) => {
+        if (prev.EndTime > curr.EndTime) return prev
+        return curr
+      });
+      Schedule.Inject(Day, Week);
+      const startHour = moment(startWorkHour.StartTime).subtract(1, "hour");
+      const endHour = moment(endWorkHour.EndTime).add(1, "hour");
+      const scheduleObj = new Schedule({
+        currentView: isMobile() ? "Day" : "Week",
+        selectedDate: new Date(),
+        eventSettings: {
+          dataSource: scheduleData,
+          allowAdding: false,
+          allowEditing: false,
+          allowDeleting: false,
+          enableIndicator: false,
+        },
+        views: ["Day", "Week"],
+        startHour: startHour.format("HH:mm A"),
+        endHour: endHour.format("HH:mm A"),
+        readonly: true,
+        workDays: [1, 2, 3, 4, 5, 6],
+        width: "90%",
+        workHours: {
+          highlight: true,
+          start: startHour.format("HH:mm"),
+          end: endHour.format("HH:mm"),
+        },
+      })
+      scheduleObj.appendTo('#schedule');
+    }
   }, [scheduleData]);
   return (
-    <div>
-      <Head>
-        <title>Horários | sigaa-next</title>
-      </Head>
-      <Collapse in={scheduleData.length > 0}>
-        {
-          scheduleData.length > 0 ? (
-            <div id="schedule" />
-          ) : null}
-      </Collapse>
-    </div >
+    <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <div id="schedule" style={{ maxWidth: "1300px" }} />
+    </Box>
   );
 }
 export function generateScheduleData(scheduleCode: string) {
@@ -105,21 +112,6 @@ export function generateScheduleData(scheduleCode: string) {
     if (!period || !weekDays || !times) {
       return []
     }
-    // scheduleData
-    /**
-     * [
-     * {
-     * "period": "M",
-     * "weekDay": "4",
-     * "times": ["1", "2"]
-     * },
-     * {
-     * "period": "M",
-     * "weekDay": "6",
-     * "times": ["1", "2"]
-     * }
-     * ]
-     */
     const scheduleData = weekDays.split("").map(weekDay => {
       const weekDayDate = moment().weekday(parseInt(weekDay) - 1).format('DD/MM/YYYY');
       return times.split("").map(time => {

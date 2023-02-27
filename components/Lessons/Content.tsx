@@ -3,7 +3,6 @@ import { groupBy } from "@components/Grades/Content";
 import {
   Box,
   Typography,
-  CircularProgress,
   Paper,
   Button,
   Accordion,
@@ -14,7 +13,6 @@ import { ExpandMore } from "@material-ui/icons";
 import { Course, Lesson } from "@types";
 import moment from "moment";
 import "moment/locale/pt";
-import "react-moment";
 import React, { useEffect, useState } from "react";
 import Loading from "@components/Loading";
 

@@ -1,19 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Grid,
-  NoSsr,
-  Paper,
-  CircularProgress,
-  Collapse,
-  Fade,
-  ToggleButton,
-  ToggleButtonGroup,
-  FormControl,
-  FormHelperText,
-  Box,
-  Typography,
-} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import NoSsr from "@material-ui/core/NoSsr";
+import Paper from "@material-ui/core/Paper";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Collapse from "@material-ui/core/Collapse";
+import Fade from "@material-ui/core/Fade";
+import ToggleButton from "@material-ui/core/ToggleButton";
+import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 import { AccountCircle, Lock, Send, ArrowBack, Info } from "@material-ui/icons";
 import { Bond, UserCredentials } from "@types";
 import Particulas from "@components/Index/Particles";
@@ -28,7 +26,9 @@ import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
 import { formatFullName } from "@components/Home/CustomDrawer";
+import { useRouter } from "next/router";
 function Index(): JSX.Element {
+  const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
     password: "",
@@ -93,8 +93,8 @@ function Index(): JSX.Element {
   const handleAccess = () => {
     setStatus("Logando");
     setErrorFeedback("");
-    window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
-    //router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
+    // window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
+    router.push(`/bond/${encodeURIComponent(registrationSelected)}`);
   };
   const handleLogout = () => {
     setErrorFeedback("");

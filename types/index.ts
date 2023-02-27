@@ -26,7 +26,7 @@ export type Activity = {
   title: string;
   date: string;
   done: boolean;
-  course: { title: string, id: string };
+  course: { title: string };
 };
 
 export type News = {

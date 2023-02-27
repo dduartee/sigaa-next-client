@@ -1,14 +1,10 @@
-import { GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import React from "react";
 
-export default function HomeworkPage(props: {registration: string, id: string, hid: string}) {
+export default function HomeworkPage() {
+  const router = useRouter();
+  const { registration, id, hid } = router.query;
     return (
-        <h1>{props.registration} - {props.id} - {props.hid}</h1>
+        <h1>{registration} - {id} - {hid}</h1>
     )
 }
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    return {
-      props: context.query,
-    };
-  }

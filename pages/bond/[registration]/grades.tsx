@@ -1,12 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
-import {
-  Box, CircularProgress,
-} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import Head from "next/head";
 import useGradesEvents, {
   emitGradesList,
@@ -16,8 +13,13 @@ import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
+import { useRouter } from "next/router";
 
-function InitializeHooks({ registration }: { registration: string }) {
+export default function GradesPage() {
+  const router = useRouter();
+  const registration = router.query.registration as string | undefined;
+
+  const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user, setUser } = useUserHandler();
   useAPIHandler();
@@ -27,30 +29,8 @@ function InitializeHooks({ registration }: { registration: string }) {
     valid,
   });
   const { bond, partialLoading, setPartialLoading } = useGradesEvents();
-  return {
-    bond,
-    partialLoading,
-    setPartialLoading,
-    user,
-    setUser,
-    valid,
-    tab,
-    setTab,
-  };
-}
-export default function GradesPage({ registration }: { registration: string }) {
-  const socket = useContext(SocketContext);
-  const {
-    bond,
-    partialLoading,
-    user,
-    valid,
-    tab,
-    setPartialLoading,
-    setTab,
-  } = InitializeHooks({ registration });
   useEffect(() => {
-    if (valid) {
+    if (valid && registration) {
       emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
       emitGradesList(
         {
@@ -70,25 +50,22 @@ export default function GradesPage({ registration }: { registration: string }) {
       <Head>
         <title>Notas | sigaa-next</title>
       </Head>
-      <HomeProvider
-        loading={partialLoading}
-        registration={registration}
-        user={user}
-        setTab={setTab}
-        tab={tab}
-        tabs={bondTabs}
-      >
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Grades bond={bond} />
-          <Loading value={partialLoading} />
-        </Box>
-      </HomeProvider>
+      {registration ? (
+        <HomeProvider
+          loading={partialLoading}
+          registration={registration}
+          user={user}
+          setTab={setTab}
+          tab={tab}
+          tabs={bondTabs}
+        >
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Grades bond={bond} />
+            <Loading value={partialLoading} />
+          </Box>
+        </HomeProvider>
+      ) : null}
     </>
   );
-}
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  return {
-    props: context.query,
-  };
 }
 

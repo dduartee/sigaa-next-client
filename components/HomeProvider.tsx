@@ -17,15 +17,15 @@ export default function HomeProvider(props: {
 }) {
   return (
     <NoSSR>
-    <UserContext.Provider value={props.user}>
-      <RegistrationContext.Provider value={props.registration}>
-        <LoadingContext.Provider value={props.loading}>
+      <UserContext.Provider value={props.user}>
+        <RegistrationContext.Provider value={props.registration}>
+          <LoadingContext.Provider value={props.loading}>
             <HomeTemplate setTab={props.setTab} tab={props.tab} tabs={props.tabs}>
-            {props.children}
-          </HomeTemplate>
-        </LoadingContext.Provider>
-      </RegistrationContext.Provider>
-    </UserContext.Provider>
+              {props.children}
+            </HomeTemplate>
+          </LoadingContext.Provider>
+        </RegistrationContext.Provider>
+      </UserContext.Provider>
     </NoSSR>
   );
 }

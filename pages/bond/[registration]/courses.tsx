@@ -3,7 +3,6 @@ import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { GetServerSidePropsContext } from "next";
 import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
@@ -14,8 +13,13 @@ import HomeProvider from "@components/HomeProvider";
 import Courses from "@components/Courses/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
+import { useRouter } from "next/router";
 
-function InitializeHooks({ registration }: { registration: string }) {
+export default function CoursesPage() {
+  const router = useRouter();
+  const registration = router.query.registration as string | undefined;
+
+  const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
   const [bond, setBond] = useState<Bond | null>(null);
@@ -39,33 +43,6 @@ function InitializeHooks({ registration }: { registration: string }) {
     valid,
   });
   useAPIHandler();
-  return {
-    valid,
-    user,
-    bond,
-    tab,
-    coursesLoading,
-    setCoursesLoading,
-    setTab,
-  };
-}
-export default function CoursesPage({
-  registration,
-}: {
-  registration: string;
-}) {
-  const socket = useContext(SocketContext);
-  const {
-    valid,
-    bond,
-    user,
-    tab,
-    coursesLoading,
-    setCoursesLoading,
-    setTab,
-  } = InitializeHooks({
-    registration,
-  });
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {
@@ -74,19 +51,19 @@ export default function CoursesPage({
     }
   }, [registration, setCoursesLoading, socket, valid]);
   useEffect(() => {
-    if (user?.fullName) {
+    if (user?.fullName && registration) {
         emitCourseList(
             {
-              token: sessionStorage.getItem("token"),
-              registration,
-              inactive: true,
-              allPeriods: false,
-              cache: true,
-              id: "courses",
+          token: sessionStorage.getItem("token"),
+          registration,
+          inactive: true,
+          allPeriods: false,
+          cache: true,
+          id: "courses",
             },
             socket
           );
-    }
+      }
   }, [registration, socket, user?.fullName]);
   useEffect(() => {
     if (bond?.courses) {
@@ -104,30 +81,27 @@ export default function CoursesPage({
       <Head>
         <title>Turmas | sigaa-next</title>
       </Head>
-      <HomeProvider
-        loading={coursesLoading}
-        user={user}
-        registration={registration}
-        setTab={setTab}
-        tab={tab}
-        tabs={bondTabs}
-      >
-        <Box
-          sx={{ flexGrow: 1, p: 1 }}
-          display={"flex"}
-          flexDirection="column"
-          alignItems={"center"}
-          maxWidth={"100%"}
+      {registration ? (
+        <HomeProvider
+          loading={coursesLoading}
+          user={user}
+          registration={registration}
+          setTab={setTab}
+          tab={tab}
+          tabs={bondTabs}
         >
-          <Courses bond={bond} />
-          <Loading value={coursesLoading} />
-        </Box>
-      </HomeProvider>
+          <Box
+            sx={{ flexGrow: 1, p: 1 }}
+            display={"flex"}
+            flexDirection="column"
+            alignItems={"center"}
+            maxWidth={"100%"}
+          >
+            <Courses bond={bond} />
+            <Loading value={coursesLoading} />
+          </Box>
+        </HomeProvider>
+      ) : null}
     </>
   );
-}
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  return {
-    props: context.query,
-  };
 }

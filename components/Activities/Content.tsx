@@ -164,7 +164,7 @@ function ActivityCollapse({
           inactive: false,
           registration,
           cache: true,
-          courseId: activity.course.id,
+          courseTitle: activity.course.title,
           homeworkTitle: activity.title,
           homeworkId: activity.id,
           token: sessionStorage.getItem("token"),
