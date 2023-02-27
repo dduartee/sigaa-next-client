@@ -16,7 +16,7 @@ import "moment/locale/pt";
 import React, { useEffect, useState } from "react";
 import Loading from "@components/Loading";
 
-export default function Lessons(props: { course?: Course; loading: boolean }) {
+export default function Lessons(props: { course?: Course; loading: boolean; getLessons: (cache: boolean) => void }) {
   moment.locale("pt-br");
   const [showOthersMonths, setShowOthersMonths] = React.useState(false);
   const [lessonsByMonth, setLessonsByMonth] =
@@ -40,65 +40,84 @@ export default function Lessons(props: { course?: Course; loading: boolean }) {
     if (lessonsByMonth) {
       const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
       // se já estiver se passado metade do ano, inverte a ordem dos meses
-      const mesAtual = moment().month();
-      if (mesAtual > 5) {
+      if (moment().month() > 5) {
         lessonsByMonthKeys.reverse();
       }
       setMonths(lessonsByMonthKeys);
     }
   }, [lessonsByMonth]);
+  const [alreadyUpdated, setAlreadyUpdated] = useState(false);
+  const update = () => {
+    props.getLessons(false);
+    setAlreadyUpdated(true);
+  }
   return (
     <Box padding={1} minWidth={"50%"}>
-      {props.loading || !props.course?.lessons ? (
-        <Loading value={props.loading} />
-      ) : (
-        <Box>
+      <Box>
+        <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
           <Typography
             textAlign="center"
             fontWeight="500"
             fontSize={"1.5rem"}
             whiteSpace="break-spaces"
-            mb={2}
+            mb={1}
           >
             Tópicos de aula
           </Typography>
-          <Typography
-            textAlign="center"
-            fontWeight="400"
-            fontSize={"1rem"}
-            whiteSpace="break-spaces"
-            mb={2}
-          >
-            {props.course?.title}
-          </Typography>
-          <Box textAlign={"right"}>
-            <Button
-              onClick={() => setShowOthersMonths(!showOthersMonths)}
-              style={{ color: "#fff" }}
-            >
-              <Typography variant="caption" display="block" color={"gray"}>
-                {showOthersMonths
-                  ? "Fechar todos anteriores"
-                  : "Abrir todos anteriores"}
-              </Typography>
-            </Button>
-          </Box>
-          <Paper elevation={2} sx={{ padding: ".2rem" }}>
-            {months.map((month, key) => {
-              const show = month === currentMonth;
-              return (
-                <MonthAccordion
-                  key={key}
-                  month={month}
-                  lessons={lessonsByMonth?.get(month) || []}
-                  show={show}
-                  openAll={showOthersMonths}
-                />
-              );
-            })}
-          </Paper>
         </Box>
-      )}
+        {props.loading || !props.course?.lessons ? (
+          <Loading value={props.loading} />
+        ) : (
+          <>
+            <Typography
+              textAlign="center"
+              fontWeight="400"
+              fontSize={"1.2rem"}
+              whiteSpace="break-spaces"
+              mb={1}
+            >
+              {props.course?.title}
+            </Typography>
+            <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
+              <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>{alreadyUpdated ? "Atualizado" : "Atualizar"}</Button>
+              <Typography
+                variant="caption"
+                display="block"
+                color={"gray"}>
+                (Última atualização: {moment(props.course.timestamp).calendar({
+                  sameDay: "[Hoje]",
+                  lastDay: "[Ontem]",
+                })} às {moment(props.course.timestamp).format("HH:mm:ss")})
+              </Typography>
+            </Box>
+            <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
+              <Box textAlign={"right"}>
+                <Button
+                  onClick={() => setShowOthersMonths(!showOthersMonths)}
+                  style={{ color: "#fff" }}
+                  color={"inherit"}>
+                  <Typography variant="caption" display="block" color={"gray"} >
+                    {showOthersMonths ? "Fechar " : "Abrir "}
+                    outros meses
+                  </Typography>
+                </Button>
+              </Box>
+              {months.map((month, key) => {
+                const show = month === currentMonth;
+                return (
+                  <MonthAccordion
+                    key={key}
+                    month={month}
+                    lessons={lessonsByMonth?.get(month) || []}
+                    show={show}
+                    openAll={showOthersMonths}
+                  />
+                );
+              })}
+            </Paper>
+          </>
+        )}
+      </Box>
     </Box>
   );
 }
@@ -180,7 +199,7 @@ export function formatDate(dateString: string) {
   const year = date.getFullYear();
   return `${day < 10 ? `0${day}` : day}/${
     month < 10 ? `0${month}` : month
-  }/${year}`;
+    }/${year}`;
 }
 export function formatTime(timeString: string) {
   const date = new Date(timeString);
@@ -188,7 +207,7 @@ export function formatTime(timeString: string) {
   const minutes = date.getMinutes();
   return `${hours < 10 ? `0${hours}` : hours}:${
     minutes < 10 ? `0${minutes}` : minutes
-  }`;
+    }`;
 }
 export function formatContent(content: string) {
   return content.split("\n").map((text, key) => {

@@ -38,20 +38,24 @@ export default function LessonsPage() {
     }
   }, [registration, setLoading, socket, valid]);
   const [course, setCourse] = useState<Course>();
+  const getLessons = (cache: boolean) => {
+    setCourse(undefined);
+    setLoading(true);
+    socket.emit("lessons::list", {
+      token: sessionStorage.getItem("token"),
+      registration,
+      inactive: true,
+      cache,
+      courseId: id,
+    });
+  }
   useEffect(() => {
     if (user?.fullName && registration && id) {
         socket.on("lessons::list", (course: Course) => {
           setCourse(course);
           setLoading(false);
         });
-        socket.emit("lessons::list", {
-          token: sessionStorage.getItem("token"),
-          registration,
-          inactive: true,
-          cache: true,
-          courseId: id,
-          identifier: `lessons@${registration}@${id}`,
-        });
+        getLessons(true);
       }
     return () => {
       socket.off("lessons::list");
@@ -77,7 +81,7 @@ export default function LessonsPage() {
           tab={tab}
           tabs={courseTabs}
         >
-          <Lessons course={course} loading={loading} />
+          <Lessons course={course} getLessons={getLessons} loading={loading} />
         </HomeProvider>
       ) : null}
     </>
