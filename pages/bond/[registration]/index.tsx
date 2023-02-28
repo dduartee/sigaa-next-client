@@ -21,16 +21,6 @@ export default function RegistrationPage() {
   const valid = useTokenHandler();
   const { user } = useUserHandler();
   const [bond, setBond] = useState<Bond | null>(null);
-  useEffect(() => {
-    const bondCached = JSON.parse(
-      sessionStorage.getItem(`bond@${registration}`) || "{}"
-    );
-    if (bondCached) {
-      setBond(bondCached);
-    } else {
-      sessionStorage.removeItem(`bond@${registration}`);
-    }
-  }, [registration]);
   const { activitiesLoading, setActivitiesLoading } = useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
     order: 0,

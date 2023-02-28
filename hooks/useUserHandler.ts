@@ -11,22 +11,6 @@ export default function useUserHandler() {
   const [errorFeedback, setErrorFeedback] = useState("");
   const socket = useContext(SocketContext);
   useEffect(() => {
-    const fullName = sessionStorage.getItem("fullName");
-    const profilePictureURL = sessionStorage.getItem("profilePictureURL");
-    const emails = JSON.parse(sessionStorage.getItem("emails") || "[]") as string[];
-    const username = sessionStorage.getItem("username");
-    if (fullName && profilePictureURL && emails && username) {
-      setUser({
-        username,
-        fullName,
-        profilePictureURL,
-        emails
-      });
-    } else {
-      setUser(null)
-    }
-  }, [])
-  useEffect(() => {
     socket.on("user::status", (status: UserStatus) => {
       setStatus(status);
     });
@@ -52,10 +36,6 @@ export default function useUserHandler() {
       }
     });
     socket.on("user::info", ({ fullName, emails, profilePictureURL, username }: UserData) => {
-      sessionStorage.setItem("fullName", fullName);
-      sessionStorage.setItem("profilePictureURL", profilePictureURL);
-      sessionStorage.setItem("emails", JSON.stringify(emails));
-      sessionStorage.setItem("username", username);
       setUser({
         username,
         fullName,

@@ -23,16 +23,6 @@ export default function CoursesPage() {
   const valid = useTokenHandler();
   const { user } = useUserHandler();
   const [bond, setBond] = useState<Bond | null>(null);
-  useEffect(() => {
-    const bondCached = JSON.parse(
-      sessionStorage.getItem(`bond@${registration}`) || "{}"
-    );
-    if (bondCached) {
-      setBond(bondCached);
-    } else {
-      sessionStorage.removeItem(`bond@${registration}`);
-    }
-  }, [registration]);
   const {
     coursesLoading,
     setCoursesLoading,

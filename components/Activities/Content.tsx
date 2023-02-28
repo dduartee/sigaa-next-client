@@ -45,21 +45,6 @@ export default function Activities({
     }
   }, [bond, registration]);
 
-  useEffect(() => {
-    const activitiesCached = JSON.parse(
-      sessionStorage.getItem(`activities-${registration}`) ?? "{}"
-    );
-    if (activitiesCached) {
-      const timestamp = new Date(activitiesCached.timestamp);
-      const now = new Date();
-      if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
-        setActivities(activitiesCached.activities);
-      } else {
-        sessionStorage.removeItem(`activities-${registration}`);
-      }
-    }
-  }, [registration]);
-
   return (
     <Box
       padding={2}
@@ -88,7 +73,7 @@ export default function Activities({
         padding={1}
       >
         {loading || !activities ? (
-        <Loading value={loading} />
+          <Loading value={loading} />
         ) : (
           <Box width={"100%"}>
             {activities.length === 0 ? (
@@ -105,7 +90,7 @@ export default function Activities({
                 const activityDate = new Date(activity.date);
                 const days = Math.round(
                   (activityDate.getTime() - new Date().getTime()) /
-                    (1000 * 60 * 60 * 24)
+                  (1000 * 60 * 60 * 24)
                 );
                 return (
                   <ActivityCollapse
@@ -206,12 +191,12 @@ function ActivityCollapse({
     date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
   }/${
     date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
-  }/${date.getFullYear()}`;
+    }/${date.getFullYear()}`;
   const timeString = `${
     date.getUTCHours() < 10 ? "0" : ""
   }${date.getUTCHours()}:${
     date.getUTCMinutes() < 10 ? "0" : ""
-  }${date.getUTCMinutes()}`;
+    }${date.getUTCMinutes()}`;
 
   return (
     <Box mb={2} maxWidth={"100%"}>
@@ -291,11 +276,11 @@ function ActivityCollapse({
                     {!finish ? (
                       <span>{`(${today ? "Hoje" : Math.abs(days)}${
                         today ? "" : tomorrow ? " dia" : " dias"
-                      })`}</span>
+                        })`}</span>
                     ) : (
                       <span>{`(${Math.abs(days)}${
                         Math.abs(days) === 1 ? " dia" : " dias"
-                      } atrás)`}</span>
+                        } atrás)`}</span>
                     )}
                   </Typography>
                   <Typography

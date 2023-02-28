@@ -8,10 +8,6 @@ export default function useCourseEvents(setBond: React.Dispatch<React.SetStateAc
   const socket = useContext(SocketContext);
   useEffect(() => {
     socket.on("courses::list", (bondReceived: Bond) => {
-      sessionStorage.setItem(`courses-${bondReceived.registration}`, JSON.stringify({
-        courses: bondReceived.courses,
-        timestamp: Date.now()
-      }));
       setBond((prevBond) => {
         if (prevBond) {
           return { ...prevBond, courses: bondReceived.courses };
@@ -22,10 +18,6 @@ export default function useCourseEvents(setBond: React.Dispatch<React.SetStateAc
       setCoursesLoading(false);
     });
     socket.on("activities::list", (bondReceived: Bond) => {
-      sessionStorage.setItem(`activities-${bondReceived.registration}`, JSON.stringify({
-        activities: bondReceived.activities,
-        timestamp: Date.now()
-      }));
       setBond((prevBond) => {
         if (prevBond) {
           return { ...prevBond, activities: bondReceived.activities };

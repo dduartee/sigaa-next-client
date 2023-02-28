@@ -17,17 +17,6 @@ export default function LessonsPage() {
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
-  const [, setBond] = useState<Bond | null>(null);
-  useEffect(() => {
-    const bondCached = JSON.parse(
-      sessionStorage.getItem(`bond@${registration}`) || "{}"
-    );
-    if (bondCached) {
-      setBond(bondCached);
-    } else {
-      sessionStorage.removeItem(`bond@${registration}`);
-    }
-  }, [registration]);
   const [loading, setLoading] = useState(true);
   useAPIHandler();
   useEffect(() => {
