@@ -8,6 +8,10 @@ export default function useCourseEvents(setBond: React.Dispatch<React.SetStateAc
   const socket = useContext(SocketContext);
   useEffect(() => {
     socket.on("courses::list", (bondReceived: Bond) => {
+      sessionStorage.setItem(`courses-${bondReceived.registration}`, JSON.stringify({
+        courses: bondReceived.courses,
+        timestamp: Date.now()
+      }));
       setBond((prevBond) => {
         if (prevBond) {
           return { ...prevBond, courses: bondReceived.courses };

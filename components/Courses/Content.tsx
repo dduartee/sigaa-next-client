@@ -27,7 +27,20 @@ export default function Courses({
       setCourses(bond.courses);
     }
   }, [bond, registration]);
-
+  React.useEffect(() => {
+    const coursesCached = JSON.parse(
+      sessionStorage.getItem(`courses-${registration}`) || "{}"
+    );
+    if (coursesCached) {
+      const timestamp = new Date(coursesCached.timestamp);
+      const now = new Date();
+      if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
+        setCourses(coursesCached.courses);
+      } else {
+        sessionStorage.removeItem(`courses-${registration}`);
+      }
+    }
+  }, [registration]);
   return (
     <Box padding={2} minWidth={"50%"}>
       <Typography
