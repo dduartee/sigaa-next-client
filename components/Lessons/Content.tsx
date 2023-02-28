@@ -91,18 +91,20 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
               </Typography>
             </Box>
             <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
-              <Box textAlign={"right"}>
-                <Button
-                  onClick={() => setShowOthersMonths(!showOthersMonths)}
-                  style={{ color: "#fff" }}
-                  color={"inherit"}>
-                  <Typography variant="caption" display="block" color={"gray"} >
-                    {showOthersMonths ? "Fechar " : "Abrir "}
-                    outros meses
-                  </Typography>
-                </Button>
-              </Box>
-              {months.map((month, key) => {
+              {months.length > 0 ? (
+                <Box textAlign={"right"}>
+                  <Button
+                    onClick={() => setShowOthersMonths(!showOthersMonths)}
+                    style={{ color: "#fff" }}
+                    color={"inherit"}>
+                    <Typography variant="caption" display="block" color={"gray"} >
+                      {showOthersMonths ? "Fechar " : "Abrir "}
+                      outros meses
+                    </Typography>
+                  </Button>
+                </Box>
+              ) : null}
+              {months.length > 0 ? months.map((month, key) => {
                 const show = month === currentMonth;
                 return (
                   <MonthAccordion
@@ -113,7 +115,15 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
                     openAll={showOthersMonths}
                   />
                 );
-              })}
+              }) : (
+                <Typography
+                  textAlign="center"
+                  fontWeight="400"
+                  fontSize={"1.2rem"}
+                  m={1}>
+                  Sem tópicos de aula cadastrados
+                </Typography>
+              )}
             </Paper>
           </>
         )}
@@ -197,16 +207,14 @@ export function formatDate(dateString: string) {
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
-  return `${day < 10 ? `0${day}` : day}/${
-    month < 10 ? `0${month}` : month
+  return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month
     }/${year}`;
 }
 export function formatTime(timeString: string) {
   const date = new Date(timeString);
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  return `${hours < 10 ? `0${hours}` : hours}:${
-    minutes < 10 ? `0${minutes}` : minutes
+  return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes
     }`;
 }
 export function formatContent(content: string) {
