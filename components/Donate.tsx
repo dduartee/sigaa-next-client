@@ -16,7 +16,14 @@ export function Donate(props: { email: string, fontSize: string, fontSizeEmail: 
         "Estude agora, talvez amanhã não terá mais tempo... reflita.",
         "Está suspeitando de nós? Entre em contato conosco! 🤗",
     ]
-    const [frase] = React.useState(frases[Math.floor(Math.random() * frases.length)])
+    const shuffleArray = (arr: string[]) => {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    const [frase] = React.useState(shuffleArray(frases)[Math.floor(Math.random() * frases.length)])
     const [copiado, setCopiado] = React.useState(0)
     return (
         <Box display={"flex"} alignItems="center" flexDirection={"column"} >
