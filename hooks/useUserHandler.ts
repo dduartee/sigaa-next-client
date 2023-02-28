@@ -36,6 +36,7 @@ export default function useUserHandler() {
       }
     });
     socket.on("user::info", ({ fullName, emails, profilePictureURL, username }: UserData) => {
+      sessionStorage.setItem("username", username);
       setUser({
         username,
         fullName,
