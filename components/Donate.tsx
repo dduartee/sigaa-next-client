@@ -2,33 +2,32 @@ import { Box, Button, Typography } from "@material-ui/core"
 import React from "react"
 export function Donate(props: { email: string, fontSize: string, fontSizeEmail: string, iconWidth: string, children?: React.ReactNode }) {
     const frases = [
-        "Se você gostou do site, considere fazer uma doação! 🫶",
-        "Paga a coxinha 🥹",
-        "Me ajuda ai 😮‍💨",
-        "Paga o café 🥱😴",
-        "Ajuda a pagar o servidor 😵‍💫",
+        "Se você gostou do site, considere fazer uma doação!",
         "Se nós ajudamos você, nos ajude a sustentar o site 🤝",
         "Aceitamos PIX! 🤠",
         "Contribua para a causa! ✊👊🫰",
         "Divulgue o site para seus amigos! 🤗🫂",
         "Ajude a manter o site no ar! 🤯",
-        "Siga nos no instagram! @sigaanext 💖"
+        "Siga nos no instagram! @sigaanext 💖",
+        "Sempre leve a vantagem...",
+        "Estamos sempre atualizando e melhorando o site!",
+        "Entre gastar tempo acessando cada matéria, ou gastar 1 minuto para ver tudo, qual você prefere?",
+        "Não esqueça de nos seguir no instagram! @sigaanext",
+        "Estude agora, talvez amanhã não terá mais tempo... reflita.",
+        "Está suspeitando de nós? Entre em contato conosco! 🤗",
     ]
     const [frase] = React.useState(frases[Math.floor(Math.random() * frases.length)])
     const [copiado, setCopiado] = React.useState(0)
     return (
         <Box display={"flex"} alignItems="center" flexDirection={"column"} >
-            <Box marginBottom={"1rem"} textAlign="center" display={"flex"} flexDirection="column" alignItems={"center"}>
+            <Box marginBottom={"0rem"} textAlign="center" display={"flex"} flexDirection="column" alignItems={"center"}>
                 <PixIcon width={props.iconWidth} />
-                <Typography variant="h2" fontSize={"1.5rem"} fontWeight={"500"}>
-                    Doações PIX
-                </Typography>
             </Box>
             <Box textAlign={"center"} m={"1rem"}>
                 <Typography m={1} fontSize={props.fontSize}>
                     {frase}
                 </Typography>
-                <Typography m={1} fontSize={props.fontSizeEmail} sx={{textDecoration: "underline", textDecorationColor: "#207e3f", textDecorationThickness: "2px"}}>
+                <Typography m={1} fontSize={props.fontSizeEmail} sx={{ textDecoration: "underline", textDecorationColor: "#207e3f", textDecorationThickness: "2px" }}>
                     {props.email}
                 </Typography>
             </Box>
@@ -38,14 +37,14 @@ export function Donate(props: { email: string, fontSize: string, fontSizeEmail: 
                     size="large"
                     onClick={() => {
                         navigator.clipboard.writeText(props.email);
-                        navigator.clipboard.writeText(props.email)
+                        navigator.clipboard.writeText(props.email);
                         setCopiado(1)
                         setTimeout(() => {
                             setCopiado(0)
                         }, 2000)
                     }}
                 >
-                    {copiado ? "Copiado!" : "Copiar"}
+                    {copiado ? "Copiado!" : "Copiar PIX"}
                 </Button>
             </Box>
 

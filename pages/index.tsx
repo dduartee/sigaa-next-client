@@ -171,9 +171,9 @@ function Index(): JSX.Element {
                   height: "fit-content"
                 }}
               >
-                <Collapse in={openHelp} timeout={500}>
+                <Fade in={openHelp} timeout={500}>
                   {openHelp ?
-                    <Box>
+                    <Box maxHeight={"600px"}>
                       <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
                       <CardBottom>
                         <Button
@@ -185,8 +185,8 @@ function Index(): JSX.Element {
                         </Button>
                       </CardBottom>
                     </Box>
-                    : null}
-                </Collapse>
+                    : <div></div>}
+                </Fade>
                 <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
                   {
                     (user?.profilePictureURL && user?.fullName) ? (
