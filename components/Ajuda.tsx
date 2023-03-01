@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { PixIcon } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {
     useEffect(() => {
-        localStorage.setItem("particles", props.activeParticles.toString());
+        sessionStorage.setItem("particles", props.activeParticles.toString());
     }, [props.activeParticles]);
     return (
         <Box display={"flex"} m={1} flexDirection={"column"}>

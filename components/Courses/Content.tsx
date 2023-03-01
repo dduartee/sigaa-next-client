@@ -5,7 +5,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  CircularProgress,
   Typography,
 } from "@material-ui/core";
 import { RegistrationContext } from "@context/registration";
@@ -14,10 +13,8 @@ import { ChevronRight } from "@material-ui/icons";
 
 export default function Courses({
   bond,
-  loading,
 }: {
   bond: Bond | null;
-  loading: boolean;
 }) {
   const router = useRouter();
   const accessCourse = (registration: string, courseId: string) => {
@@ -30,10 +27,9 @@ export default function Courses({
       setCourses(bond.courses);
     }
   }, [bond, registration]);
-
   React.useEffect(() => {
     const coursesCached = JSON.parse(
-      localStorage.getItem(`courses-${registration}`) || "{}"
+      sessionStorage.getItem(`courses-${registration}`) || "{}"
     );
     if (coursesCached) {
       const timestamp = new Date(coursesCached.timestamp);
@@ -41,7 +37,7 @@ export default function Courses({
       if (now.getTime() - timestamp.getTime() < 1000 * 60 * 60 * 24) {
         setCourses(coursesCached.courses);
       } else {
-        localStorage.removeItem(`courses-${registration}`);
+        sessionStorage.removeItem(`courses-${registration}`);
       }
     }
   }, [registration]);
@@ -56,18 +52,9 @@ export default function Courses({
       >
         Turmas
       </Typography>
-      {loading || !courses ? (
-        <Box
-          display={"flex"}
-          justifyContent={"center"}
-          borderRadius={"10px"}
-          padding={1}
-        >
-          <CircularProgress style={{ margin: "1rem" }} />
-        </Box>
-      ) : (
-        <Box>
-          {registration && courses?.map((course, key) => {
+      <Box>
+        {registration &&
+          courses?.map((course, key) => {
             return (
               <CourseContent
                 key={key}
@@ -76,8 +63,7 @@ export default function Courses({
               />
             );
           })}
-        </Box>
-      )}
+      </Box>
     </Box>
   );
 }

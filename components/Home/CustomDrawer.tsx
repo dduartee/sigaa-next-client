@@ -14,6 +14,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
 import { Tab as TabType } from "@types";
+import { LoadingContext } from "@context/loading";
 
 export const courseTabs = [
   {
@@ -61,7 +62,7 @@ function ResponsiveDrawer({
   open,
   width,
   tabs,
-  tab,
+  tabSelected,
   tabChanger,
 }: {
   handler: () => void;
@@ -71,10 +72,11 @@ function ResponsiveDrawer({
   ) => void;
   open: boolean;
   width: number;
-  tab: number;
+  tabSelected: number;
   tabs: TabType[];
 }) {
   const user = React.useContext(UserContext);
+  const loading = React.useContext(LoadingContext);
   const [anchorEl, setAnchorEl] = React.useState<
     (EventTarget & HTMLButtonElement) | null
   >(null);
@@ -115,7 +117,7 @@ function ResponsiveDrawer({
           variant="scrollable"
           indicatorColor="primary"
           textColor="inherit"
-          value={tab}
+          value={tabSelected}
           onChange={tabChanger}
           sx={{
             height: "100%",
@@ -124,8 +126,9 @@ function ResponsiveDrawer({
           {tabs.map((tab, index) => (
             <Tab
               key={index}
-              label={tab.label}
+              label={(tabSelected == index) && loading? `Carregando ${tab.label}` : tab.label} // se o tab for selecionado e estiver sendo carregado
               icon={tab.icon}
+              disabled={loading}
               sx={{
                 position: tab.bottom ? "absolute" : "relative",
                 bottom: "0px",

@@ -6,10 +6,10 @@ export default function useTokenHandler() {
   const [valid, setValid] = useState(true);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
     });
     socket.on("auth::valid", (valid: boolean) => setValid(valid));
-    socket.emit("auth::valid", { token: localStorage.getItem("token") }); // pede para o servidor se o token é válido
+    socket.emit("auth::valid", { token: sessionStorage.getItem("token") }); // pede para o servidor se o token é válido
     return () => {
       socket.off("auth::store");
       socket.off("auth::valid");

@@ -1,19 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Grid,
-  NoSsr,
-  Paper,
-  CircularProgress,
-  Collapse,
-  Fade,
-  ToggleButton,
-  ToggleButtonGroup,
-  FormControl,
-  FormHelperText,
-  Box,
-  Typography,
-} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import NoSsr from "@material-ui/core/NoSsr";
+import Paper from "@material-ui/core/Paper";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Collapse from "@material-ui/core/Collapse";
+import Fade from "@material-ui/core/Fade";
+import ToggleButton from "@material-ui/core/ToggleButton";
+import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 import { AccountCircle, Lock, Send, ArrowBack, Info } from "@material-ui/icons";
 import { Bond, UserCredentials } from "@types";
 import Particulas from "@components/Index/Particles";
@@ -28,7 +26,9 @@ import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
 import { formatFullName } from "@components/Home/CustomDrawer";
+import { useRouter } from "next/router";
 function Index(): JSX.Element {
+  const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
     password: "",
@@ -45,12 +45,14 @@ function Index(): JSX.Element {
 
   useEffect(() => {
     if (valid) {
-      socket.emit("user::login", { token: localStorage.getItem("token") }); // tenta logar pelo token
+      const username = sessionStorage.getItem("username");
+      const token = sessionStorage.getItem("token");
+      if(username && token) socket.emit("user::login", { token, username }); // tenta logar pelo token
     }
   }, [valid, socket, setStatus]);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
-      setCredentials({ token, password: "", username: "" })
+      setCredentials((credentials) => ({ ...credentials, token }));
     });
   }, [socket]);
   useEffect(() => {
@@ -91,14 +93,14 @@ function Index(): JSX.Element {
   const handleAccess = () => {
     setStatus("Logando");
     setErrorFeedback("");
-    window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
-    //router.push(`/bond/${encodeURIComponent(registrationSelected)}`, undefined, { shallow: true });
+    // window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
+    router.push(`/bond/${encodeURIComponent(registrationSelected)}`);
   };
   const handleLogout = () => {
     setErrorFeedback("");
-    socket.emit("user::logoff", { token: localStorage.getItem("token") });
+    socket.emit("user::logoff", { token: sessionStorage.getItem("token") });
     setCredentials({ username: "", password: "", token: "" });
-    localStorage.clear();
+    sessionStorage.clear();
   };
 
   const conditionals = {
@@ -116,7 +118,7 @@ function Index(): JSX.Element {
 
   const [activeParticles, setActiveParticles] = useState(true);
   useEffect(() => {
-    localStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
+    sessionStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
   }, [])
   const [increaseBoxSize, setIncreaseBoxSize] = useState(openHelp || openDonate);
   useEffect(() => setIncreaseBoxSize(openHelp || openDonate), [openHelp, openDonate])
@@ -169,9 +171,9 @@ function Index(): JSX.Element {
                   height: "fit-content"
                 }}
               >
-                <Collapse in={openHelp} timeout={500}>
+                <Fade in={openHelp} timeout={500}>
                   {openHelp ?
-                    <Box>
+                    <Box maxHeight={"600px"}>
                       <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
                       <CardBottom>
                         <Button
@@ -183,8 +185,8 @@ function Index(): JSX.Element {
                         </Button>
                       </CardBottom>
                     </Box>
-                    : null}
-                </Collapse>
+                    : <div></div>}
+                </Fade>
                 <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
                   {
                     (user?.profilePictureURL && user?.fullName) ? (
@@ -338,33 +340,38 @@ function BondSelection(props: { registrationSelected: string, setRegistrationSel
     <Typography textAlign={"center"} margin={2}>
       Escolha um vínculo para acessar
     </Typography>
-    <ToggleButtonGroup
-      exclusive
-      aria-label=""
-      value={registrationSelected}
-      onChange={handleChangeRegistration}
-      orientation="vertical"
-    >
-      {bonds.map((bond, index) => {
-        return (
-          <ToggleButton
-            key={index}
-            value={bond.registration}
-            style={{
-              marginTop: ".5rem",
-              marginLeft: "1rem",
-              marginRight: "1rem",
-              marginBottom: ".5rem",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "4px",
-              color: "#fff",
-            }}
-          >
-            {bond.program}<br />Matrícula: {bond.registration}
-          </ToggleButton>
-        );
-      })}
-    </ToggleButtonGroup>
+    <Box sx={{
+      maxHeight: "320px",
+      overflowInline: "auto"
+    }}>
+      <ToggleButtonGroup
+        exclusive
+        aria-label=""
+        value={registrationSelected}
+        onChange={handleChangeRegistration}
+        orientation="vertical"
+      >
+        {bonds.map((bond, index) => {
+          return (
+            <ToggleButton
+              key={index}
+              value={bond.registration}
+              style={{
+                marginTop: ".5rem",
+                marginLeft: "1rem",
+                marginRight: "1rem",
+                marginBottom: ".5rem",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "4px",
+                color: "#fff",
+              }}
+            >
+              {bond.program}<br />Matrícula: {bond.registration}
+            </ToggleButton>
+          );
+        })}
+      </ToggleButtonGroup>
+    </Box>
   </>)
 }
 
