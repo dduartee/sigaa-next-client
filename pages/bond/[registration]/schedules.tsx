@@ -22,7 +22,7 @@ export default function SchedulesPage() {
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
-  const [loading, setCoursesLoading] = useState(false);
+  const [loading] = useState(false);
   const [bond, setBond] = useState<Bond | null>(null);
   useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({

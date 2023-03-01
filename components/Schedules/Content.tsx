@@ -3,7 +3,6 @@ import { Box } from "@material-ui/core";
 import { Day, Week, Schedule, isMobile } from "@syncfusion/ej2-react-schedule";
 import { Bond, Course } from "@types";
 import moment from "moment";
-import Head from "next/head";
 import React, { useContext, useEffect } from "react";
 export type SchedulerData = {
   Id: string;

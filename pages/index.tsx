@@ -52,7 +52,7 @@ function Index(): JSX.Element {
   }, [valid, socket, setStatus]);
   useEffect(() => {
     socket.on("auth::store", (token: string) => {
-      setCredentials({ ...credentials, token });
+      setCredentials((credentials) => ({ ...credentials, token }));
     });
   }, [socket]);
   useEffect(() => {

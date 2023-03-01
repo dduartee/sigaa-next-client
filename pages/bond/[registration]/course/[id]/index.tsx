@@ -6,7 +6,7 @@ import useAPIHandler from "@hooks/useAPIEvents";
 import useTabHandler from "@hooks/useTabHandler";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { Bond, Course } from "@types";
+import { Course } from "@types";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";

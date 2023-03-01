@@ -21,7 +21,7 @@ export default function GradesPage() {
 
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
-  const { user, setUser } = useUserHandler();
+  const { user } = useUserHandler();
   useAPIHandler();
   const { tab, setTab } = useTabHandler({
     order: 1,
