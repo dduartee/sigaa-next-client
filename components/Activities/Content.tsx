@@ -24,6 +24,7 @@ import MoreIcon from "@material-ui/icons/More";
 import { formatContent, formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
+import moment from "moment-timezone";
 
 export default function Activities({
   bond,
@@ -89,14 +90,13 @@ export default function Activities({
               activities?.map((activity: Activity, index) => {
                 const activityDate = new Date();
                 const days = Math.round(
-                  (activityDate.getTime() - new Date().getTime()) /
+                  (activityDate.getTime() - Date.now()) /
                   (1000 * 60 * 60 * 24)
                 );
                 return (
                   <ActivityCollapse
                     key={index}
                     activity={activity}
-                    days={days}
                     date={activity.date}
                     openFinished={openFinished}
                     accessCourse={accessCourse}
@@ -126,13 +126,11 @@ export default function Activities({
 }
 function ActivityCollapse({
   activity,
-  days,
   date,
   openFinished,
   accessCourse,
 }: {
   activity: Activity;
-  days: number;
   date: string;
   openFinished: boolean;
   accessCourse: (registration: string, courseId: string) => void;
@@ -183,10 +181,13 @@ function ActivityCollapse({
       break;
   }
   const [expanded, setExpanded] = useState(false);
+  // const finish = days < 0;
+  // const today = days === 0;
+  // const tomorrow = days === 1;
+  const days = moment(date).diff(moment(), "days");
   const finish = days < 0;
   const today = days === 0;
   const tomorrow = days === 1;
-
   const dateString = formatDate(date);
   const timeString = formatTime(date);
 
