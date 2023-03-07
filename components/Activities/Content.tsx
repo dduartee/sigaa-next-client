@@ -21,7 +21,7 @@ import ForumIcon from "@material-ui/icons/Forum";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import MoreIcon from "@material-ui/icons/More";
-import { formatContent } from "@components/Lessons/Content";
+import { formatContent, formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 
@@ -87,7 +87,7 @@ export default function Activities({
               </Typography>
             ) : (
               activities?.map((activity: Activity, index) => {
-                const activityDate = new Date(activity.date);
+                const activityDate = new Date();
                 const days = Math.round(
                   (activityDate.getTime() - new Date().getTime()) /
                   (1000 * 60 * 60 * 24)
@@ -97,7 +97,7 @@ export default function Activities({
                     key={index}
                     activity={activity}
                     days={days}
-                    date={activityDate}
+                    date={activity.date}
                     openFinished={openFinished}
                     accessCourse={accessCourse}
                   />
@@ -133,7 +133,7 @@ function ActivityCollapse({
 }: {
   activity: Activity;
   days: number;
-  date: Date;
+  date: string;
   openFinished: boolean;
   accessCourse: (registration: string, courseId: string) => void;
 }) {
@@ -187,12 +187,8 @@ function ActivityCollapse({
   const today = days === 0;
   const tomorrow = days === 1;
 
-  const dateString = `${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-    }/${date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
-    }/${date.getFullYear()}`;
-  const timeString = `${date.getUTCHours() < 10 ? "0" : ""
-    }${date.getUTCHours()}:${date.getUTCMinutes() < 10 ? "0" : ""
-    }${date.getUTCMinutes()}`;
+  const dateString = formatDate(date);
+  const timeString = formatTime(date);
 
   return (
     <Box mb={2} maxWidth={"100%"}>
@@ -257,7 +253,7 @@ function ActivityCollapse({
                   sx={{
                     "@media (max-width:1000px)": {
                       flexDirection: "column",
-                    },
+                    }
                   }}
                   margin="0.5rem"
                   textAlign={"right"}

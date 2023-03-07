@@ -213,11 +213,7 @@ export function formatDate(dateString: string) {
   return moment(dateString).utc().format("DD/MM/YYYY");
 }
 export function formatTime(timeString: string) {
-  const date = new Date(timeString);
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes
-    }`;
+  return moment(timeString).utc().format("HH:mm");
 }
 export function formatContent(content: string) {
   return content.split("\n").map((text, key) => {
