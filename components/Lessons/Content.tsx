@@ -157,7 +157,8 @@ function MonthAccordion(props: {
   );
 }
 function LessonContent(props: { lesson: Lesson }) {
-  const weekDay = moment(props.lesson.startDate).utc().format("dddd");
+  const startWeekDay = moment(props.lesson.startDate).utc().format("dddd");
+  const endWeekDay = moment(props.lesson.endDate).utc().format("dddd");
   const startDateString = formatDate(props.lesson.startDate);
   const endDateString = formatDate(props.lesson.endDate);
   return (
@@ -177,12 +178,13 @@ function LessonContent(props: { lesson: Lesson }) {
     >
       <Paper elevation={2} sx={{ padding: ".5rem" }}>
         <Typography fontSize={"1.2em"} fontWeight="500">
-          {props.lesson.title} -
-        </Typography>
-        <Typography fontSize={"1rem"} m={1} fontWeight="500">
-          {weekDay}{": "}
-          {
-            startDateString === endDateString ? (startDateString) : (`${startDateString} a ${endDateString}`)}
+          {props.lesson.title}
+          <Typography fontSize={"1.2rem"} m={1} fontWeight="500">
+            <span style={{ whiteSpace: "nowrap" }}>{startWeekDay}: {startDateString}</span>
+              {startDateString !== endDateString ? (
+                <span> até {endWeekDay}: {endDateString}</span>
+              ) : null}
+          </Typography>
         </Typography>
         <Typography fontSize={"1rem"} m={1}>
           {props.lesson.content ? formatContent(props.lesson.content) : " "}
