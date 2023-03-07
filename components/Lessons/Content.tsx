@@ -23,7 +23,7 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
     React.useState<Map<string, Lesson[]>>();
   const [months, setMonths] = React.useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = React.useState<string>();
-
+  const [courseTitle, setCourseTitle] = React.useState<string>();
   useEffect(() => {
     if (props.course) {
       setCurrentMonth(moment().format("MMMM"));
@@ -34,6 +34,7 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
           return mes;
         })
       );
+      setCourseTitle(props.course.title);
     }
   }, [props.course, props.course?.lessons]);
   useEffect(() => {
@@ -47,9 +48,11 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
     }
   }, [lessonsByMonth]);
   const [alreadyUpdated, setAlreadyUpdated] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const update = () => {
     props.getLessons(false);
     setAlreadyUpdated(true);
+    setIsUpdating(true);
   }
   return (
     <Box padding={1} minWidth={"50%"}>
@@ -65,68 +68,74 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
             Tópicos de aula
           </Typography>
         </Box>
-        {props.loading || !props.course?.lessons ? (
-          <Loading value={props.loading} />
-        ) : (
-          <>
-            <Typography
-              textAlign="center"
-              fontWeight="400"
-              fontSize={"1.2rem"}
-              whiteSpace="break-spaces"
-              mb={1}
-            >
-              {props.course?.title}
-            </Typography>
-            <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
-              <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>{alreadyUpdated ? "Atualizado" : "Atualizar"}</Button>
-              <Typography
-                variant="caption"
-                display="block"
-                color={"gray"}>
-                (Última atualização: {moment(props.course.timestamp).calendar({
-                  sameDay: "[Hoje]",
-                  lastDay: "[Ontem]",
-                })} às {moment(props.course.timestamp).format("HH:mm:ss")})
-              </Typography>
-            </Box>
-            <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
-              {months.length > 0 ? (
-                <Box textAlign={"right"}>
-                  <Button
-                    onClick={() => setShowOthersMonths(!showOthersMonths)}
-                    style={{ color: "#fff" }}
-                    color={"inherit"}>
-                    <Typography variant="caption" display="block" color={"gray"} >
-                      {showOthersMonths ? "Fechar " : "Abrir "}
-                      outros meses
-                    </Typography>
-                  </Button>
-                </Box>
-              ) : null}
-              {months.length > 0 ? months.map((month, key) => {
-                const show = month === currentMonth;
-                return (
-                  <MonthAccordion
-                    key={key}
-                    month={month}
-                    lessons={lessonsByMonth?.get(month) || []}
-                    show={show}
-                    openAll={showOthersMonths}
-                  />
-                );
-              }) : (
+        <Typography
+          textAlign="center"
+          fontWeight="400"
+          fontSize={"1.2rem"}
+          whiteSpace="break-spaces"
+          mb={1}
+        >
+          {courseTitle}
+        </Typography>
+        <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
+          <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>{
+            props.loading && isUpdating ? (
+              "Atualizando"
+            ) : alreadyUpdated ? "Atualizado" : "Atualizar"
+          }</Button>
+          {
+            props.loading || !props.course?.lessons ? (
+              <Loading value={props.loading} />
+            ) : (
+              <>
                 <Typography
-                  textAlign="center"
-                  fontWeight="400"
-                  fontSize={"1.2rem"}
-                  m={1}>
-                  Sem tópicos de aula cadastrados
+                  variant="caption"
+                  display="block"
+                  color={"gray"}>
+                  (Última atualização: {moment(props.course.timestamp).calendar({
+                    sameDay: "[Hoje]",
+                    lastDay: "[Ontem]",
+                  })} às {moment(props.course.timestamp).format("HH:mm:ss")})
                 </Typography>
-              )}
-            </Paper>
-          </>
-        )}
+                <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
+                  {months.length > 0 ? (
+                    <Box textAlign={"right"}>
+                      <Button
+                        onClick={() => setShowOthersMonths(!showOthersMonths)}
+                        style={{ color: "#fff" }}
+                        color={"inherit"}>
+                        <Typography variant="caption" display="block" color={"gray"} >
+                          {showOthersMonths ? "Fechar " : "Abrir "}
+                          outros meses
+                        </Typography>
+                      </Button>
+                    </Box>
+                  ) : null}
+                  {months.length > 0 ? months.map((month, key) => {
+                    const show = month === currentMonth;
+                    return (
+                      <MonthAccordion
+                        key={key}
+                        month={month}
+                        lessons={lessonsByMonth?.get(month) || []}
+                        show={show}
+                        openAll={showOthersMonths}
+                      />
+                    );
+                  }) : (
+                    <Typography
+                      textAlign="center"
+                      fontWeight="400"
+                      fontSize={"1.2rem"}
+                      m={1}>
+                      Sem tópicos de aula cadastrados
+                    </Typography>
+                  )}
+                </Paper>
+              </>
+            )
+          }
+        </Box>
       </Box>
     </Box>
   );
@@ -157,6 +166,10 @@ function MonthAccordion(props: {
   );
 }
 function LessonContent(props: { lesson: Lesson }) {
+  const startWeekDay = moment(props.lesson.startDate).utc().format("dddd");
+  const endWeekDay = moment(props.lesson.endDate).utc().format("dddd");
+  const startDateString = formatDate(props.lesson.startDate);
+  const endDateString = formatDate(props.lesson.endDate);
   return (
     <Box
       sx={{
@@ -174,8 +187,13 @@ function LessonContent(props: { lesson: Lesson }) {
     >
       <Paper elevation={2} sx={{ padding: ".5rem" }}>
         <Typography fontSize={"1.2em"} fontWeight="500">
-          {props.lesson.title} - {formatDate(props.lesson.startDate)} -{" "}
-          {formatDate(props.lesson.endDate)}
+          {props.lesson.title}
+          <Typography fontSize={"1.2rem"} m={1} fontWeight="500">
+            <span style={{ whiteSpace: "nowrap" }}>{startWeekDay}: {startDateString}</span>
+            {startDateString !== endDateString ? (
+              <span> até {endWeekDay}: {endDateString}</span>
+            ) : null}
+          </Typography>
         </Typography>
         <Typography fontSize={"1rem"} m={1}>
           {props.lesson.content ? formatContent(props.lesson.content) : " "}
@@ -203,19 +221,10 @@ function LessonContent(props: { lesson: Lesson }) {
  * retorna data no formado DD/MM/YYY
  */
 export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month
-    }/${year}`;
+  return moment(dateString).utc().format("DD/MM/YYYY");
 }
 export function formatTime(timeString: string) {
-  const date = new Date(timeString);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes
-    }`;
+  return moment(timeString).utc().format("HH:mm");
 }
 export function formatContent(content: string) {
   return content.split("\n").map((text, key) => {

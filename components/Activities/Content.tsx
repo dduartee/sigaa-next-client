@@ -21,9 +21,10 @@ import ForumIcon from "@material-ui/icons/Forum";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import MoreIcon from "@material-ui/icons/More";
-import { formatContent } from "@components/Lessons/Content";
+import { formatContent, formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
+import moment from "moment-timezone";
 
 export default function Activities({
   bond,
@@ -87,17 +88,16 @@ export default function Activities({
               </Typography>
             ) : (
               activities?.map((activity: Activity, index) => {
-                const activityDate = new Date(activity.date);
+                const activityDate = new Date();
                 const days = Math.round(
-                  (activityDate.getTime() - new Date().getTime()) /
+                  (activityDate.getTime() - Date.now()) /
                   (1000 * 60 * 60 * 24)
                 );
                 return (
                   <ActivityCollapse
                     key={index}
                     activity={activity}
-                    days={days}
-                    date={activityDate}
+                    date={activity.date}
                     openFinished={openFinished}
                     accessCourse={accessCourse}
                   />
@@ -126,14 +126,12 @@ export default function Activities({
 }
 function ActivityCollapse({
   activity,
-  days,
   date,
   openFinished,
   accessCourse,
 }: {
   activity: Activity;
-  days: number;
-  date: Date;
+  date: string;
   openFinished: boolean;
   accessCourse: (registration: string, courseId: string) => void;
 }) {
@@ -183,20 +181,15 @@ function ActivityCollapse({
       break;
   }
   const [expanded, setExpanded] = useState(false);
+  // const finish = days < 0;
+  // const today = days === 0;
+  // const tomorrow = days === 1;
+  const days = moment(date).diff(moment(), "days");
   const finish = days < 0;
   const today = days === 0;
   const tomorrow = days === 1;
-
-  const dateString = `${
-    date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-  }/${
-    date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
-    }/${date.getFullYear()}`;
-  const timeString = `${
-    date.getUTCHours() < 10 ? "0" : ""
-  }${date.getUTCHours()}:${
-    date.getUTCMinutes() < 10 ? "0" : ""
-    }${date.getUTCMinutes()}`;
+  const dateString = formatDate(date);
+  const timeString = formatTime(date);
 
   return (
     <Box mb={2} maxWidth={"100%"}>
@@ -261,7 +254,7 @@ function ActivityCollapse({
                   sx={{
                     "@media (max-width:1000px)": {
                       flexDirection: "column",
-                    },
+                    }
                   }}
                   margin="0.5rem"
                   textAlign={"right"}
@@ -274,12 +267,10 @@ function ActivityCollapse({
                     margin="0.2rem"
                   >
                     {!finish ? (
-                      <span>{`(${today ? "Hoje" : Math.abs(days)}${
-                        today ? "" : tomorrow ? " dia" : " dias"
+                      <span>{`(${today ? "Hoje" : Math.abs(days)}${today ? "" : tomorrow ? " dia" : " dias"
                         })`}</span>
                     ) : (
-                      <span>{`(${Math.abs(days)}${
-                        Math.abs(days) === 1 ? " dia" : " dias"
+                      <span>{`(${Math.abs(days)}${Math.abs(days) === 1 ? " dia" : " dias"
                         } atrás)`}</span>
                     )}
                   </Typography>
@@ -305,11 +296,7 @@ function ActivityCollapse({
           </AccordionSummary>
 
           {registration && activity.type === "homework" ? (
-            <AccordionDetails
-              sx={{
-                whiteSpace: "pre-line",
-              }}
-            >
+            <AccordionDetails sx={{ whiteSpace: "pre-line" }}>
               {content ? (
                 <Box display={"flex"} flexDirection={"column"}>
                   {formatContent(content)}
