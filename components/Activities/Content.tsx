@@ -187,15 +187,11 @@ function ActivityCollapse({
   const today = days === 0;
   const tomorrow = days === 1;
 
-  const dateString = `${
-    date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-  }/${
-    date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
+  const dateString = `${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+    }/${date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
     }/${date.getFullYear()}`;
-  const timeString = `${
-    date.getUTCHours() < 10 ? "0" : ""
-  }${date.getUTCHours()}:${
-    date.getUTCMinutes() < 10 ? "0" : ""
+  const timeString = `${date.getUTCHours() < 10 ? "0" : ""
+    }${date.getUTCHours()}:${date.getUTCMinutes() < 10 ? "0" : ""
     }${date.getUTCMinutes()}`;
 
   return (
@@ -274,12 +270,10 @@ function ActivityCollapse({
                     margin="0.2rem"
                   >
                     {!finish ? (
-                      <span>{`(${today ? "Hoje" : Math.abs(days)}${
-                        today ? "" : tomorrow ? " dia" : " dias"
+                      <span>{`(${today ? "Hoje" : Math.abs(days)}${today ? "" : tomorrow ? " dia" : " dias"
                         })`}</span>
                     ) : (
-                      <span>{`(${Math.abs(days)}${
-                        Math.abs(days) === 1 ? " dia" : " dias"
+                      <span>{`(${Math.abs(days)}${Math.abs(days) === 1 ? " dia" : " dias"
                         } atrás)`}</span>
                     )}
                   </Typography>
@@ -305,11 +299,7 @@ function ActivityCollapse({
           </AccordionSummary>
 
           {registration && activity.type === "homework" ? (
-            <AccordionDetails
-              sx={{
-                whiteSpace: "pre-line",
-              }}
-            >
+            <AccordionDetails sx={{ whiteSpace: "pre-line" }}>
               {content ? (
                 <Box display={"flex"} flexDirection={"column"}>
                   {formatContent(content)}

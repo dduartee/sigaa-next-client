@@ -157,6 +157,9 @@ function MonthAccordion(props: {
   );
 }
 function LessonContent(props: { lesson: Lesson }) {
+  const weekDay = moment(props.lesson.startDate).utc().format("dddd");
+  const startDateString = formatDate(props.lesson.startDate);
+  const endDateString = formatDate(props.lesson.endDate);
   return (
     <Box
       sx={{
@@ -174,8 +177,12 @@ function LessonContent(props: { lesson: Lesson }) {
     >
       <Paper elevation={2} sx={{ padding: ".5rem" }}>
         <Typography fontSize={"1.2em"} fontWeight="500">
-          {props.lesson.title} - {formatDate(props.lesson.startDate)} -{" "}
-          {formatDate(props.lesson.endDate)}
+          {props.lesson.title} -
+        </Typography>
+        <Typography fontSize={"1rem"} m={1} fontWeight="500">
+          {weekDay}{": "}
+          {
+            startDateString === endDateString ? (startDateString) : (`${startDateString} a ${endDateString}`)}
         </Typography>
         <Typography fontSize={"1rem"} m={1}>
           {props.lesson.content ? formatContent(props.lesson.content) : " "}
@@ -203,17 +210,12 @@ function LessonContent(props: { lesson: Lesson }) {
  * retorna data no formado DD/MM/YYY
  */
 export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month
-    }/${year}`;
+  return moment(dateString).utc().format("DD/MM/YYYY");
 }
 export function formatTime(timeString: string) {
   const date = new Date(timeString);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
   return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes
     }`;
 }
