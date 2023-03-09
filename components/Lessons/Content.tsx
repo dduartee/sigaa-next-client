@@ -25,28 +25,21 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
   const [currentMonth, setCurrentMonth] = React.useState<string>();
   const [courseTitle, setCourseTitle] = React.useState<string>();
   useEffect(() => {
-    if (props.course) {
-      setCurrentMonth(moment().format("MMMM"));
-      setLessonsByMonth(
-        groupBy(props.course.lessons || [], (lesson) => {
-          // retorna o mês da aula por extenso
-          const mes = moment(lesson.startDate).format("MMMM");
-          return mes;
-        })
-      );
+    if (props.course && props.course.lessons) {
+      const currentMonth = moment().format("MMMM");
+      setCurrentMonth(currentMonth);
+      const lessonsByMonth = groupBy(props.course.lessons, (lesson) => {
+        // retorna o mês da aula por extenso
+        const mes = moment(lesson.startDate).format("MMMM");
+        return mes;
+      })
+      setLessonsByMonth(lessonsByMonth);
+      const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
+      setMonths(lessonsByMonthKeys);
       setCourseTitle(props.course.title);
+      setIsUpdating(false);
     }
   }, [props.course, props.course?.lessons]);
-  useEffect(() => {
-    if (lessonsByMonth) {
-      const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
-      // se já estiver se passado metade do ano, inverte a ordem dos meses
-      if (moment().month() > 5) {
-        lessonsByMonthKeys.reverse();
-      }
-      setMonths(lessonsByMonthKeys);
-    }
-  }, [lessonsByMonth]);
   const [alreadyUpdated, setAlreadyUpdated] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const update = () => {
@@ -78,24 +71,25 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
           {courseTitle}
         </Typography>
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
-          <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>{
-            props.loading && isUpdating ? (
-              "Atualizando"
-            ) : alreadyUpdated ? "Atualizado" : "Atualizar"
-          }</Button>
+          {courseTitle ? (
+            <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>
+              {isUpdating ? (
+                "Atualizando"
+              ) : alreadyUpdated ? "Atualizado" : "Atualizar"}
+            </Button>
+          ) : null}
+
           {
             props.loading || !props.course?.lessons ? (
               <Loading value={props.loading} />
-            ) : (
+            ) : props.course ? (
               <>
                 <Typography
                   variant="caption"
                   display="block"
+                  mb={".5rem"}
                   color={"gray"}>
-                  (Última atualização: {moment(props.course.timestamp).calendar({
-                    sameDay: "[Hoje]",
-                    lastDay: "[Ontem]",
-                  })} às {moment(props.course.timestamp).format("HH:mm:ss")})
+                  (Última atualização: {getFriendlyDateString(props.course.timestamp)})
                 </Typography>
                 <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
                   {months.length > 0 ? (
@@ -133,13 +127,31 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
                   )}
                 </Paper>
               </>
-            )
+            ) : null
           }
         </Box>
       </Box>
     </Box>
   );
 }
+/**
+ * hoje, ontem ou dd/mm
+ * @param timestamp Timestamp da última atualização
+ */
+function getFriendlyDateString(timestamp?: string): string {
+  if (!timestamp) {
+    return "";
+  }
+  const timestampMoment = moment(timestamp);
+  const dayDiff = moment().diff(timestampMoment, "days");
+  const today = dayDiff === 0;
+  const yesterday = dayDiff === 1;
+  const date = timestampMoment.format("DD/MM");
+  const dateString = today ? "Hoje" : (yesterday ? "Ontem" : date);
+  const time = timestampMoment.format("HH:mm");
+  return `${dateString} às ${time}`;
+}
+
 function MonthAccordion(props: {
   lessons: Lesson[];
   month: string;
@@ -166,8 +178,8 @@ function MonthAccordion(props: {
   );
 }
 function LessonContent(props: { lesson: Lesson }) {
-  const startWeekDay = moment(props.lesson.startDate).utc().format("dddd");
-  const endWeekDay = moment(props.lesson.endDate).utc().format("dddd");
+  const startWeekDay = getWeekDay(props.lesson.startDate);
+  const endWeekDay = getWeekDay(props.lesson.endDate);
   const startDateString = formatDate(props.lesson.startDate);
   const endDateString = formatDate(props.lesson.endDate);
   return (
@@ -217,14 +229,14 @@ function LessonContent(props: { lesson: Lesson }) {
     </Box>
   );
 }
-/**
- * retorna data no formado DD/MM/YYY
- */
-export function formatDate(dateString: string) {
-  return moment(dateString).utc().format("DD/MM/YYYY");
+export function formatDate(isoString: string) {
+  return moment(isoString).utc().format("DD/MM/YYYY");
 }
-export function formatTime(timeString: string) {
-  return moment(timeString).utc().format("HH:mm");
+export function formatTime(isoString?: string) {
+  return moment(isoString).utc().format("HH:mm");
+}
+export function getWeekDay(isoString: string) {
+  return moment(isoString).utc().format("dddd");
 }
 export function formatContent(content: string) {
   return content.split("\n").map((text, key) => {

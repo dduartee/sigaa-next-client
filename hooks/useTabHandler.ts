@@ -20,10 +20,10 @@ export default function useTabHandler({
       if (courseId) {
         switch (tab) {
           case 0:
-            path = `/bond/${registration}/courses`;
-            break;
-          case 1:
             path = `/bond/${registration}/course/${courseId}`;
+            break;
+            case 1:
+            path = `/bond/${registration}/courses`;
             break;
           default:
             path = `/`;
