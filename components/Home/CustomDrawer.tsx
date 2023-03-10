@@ -15,8 +15,13 @@ import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
 import { UserContext } from "@context/user";
 import { Tab as TabType } from "@types";
 import { LoadingContext } from "@context/loading";
+import DvrIcon from '@material-ui/icons/Dvr';
 
 export const courseTabs = [
+  {
+    label: "Tópicos de aula",
+    icon: <DvrIcon />
+  },
   {
     label: "Voltar",
     icon: <ArrowBackIcon />,

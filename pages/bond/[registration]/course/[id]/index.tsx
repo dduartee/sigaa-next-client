@@ -51,7 +51,7 @@ export default function LessonsPage() {
     };
   }, [id, registration, setLoading, socket, user?.fullName]);
   const { tab, setTab } = useTabHandler({
-    order: 1,
+    order: 0,
     registration,
     courseId: id,
     valid,

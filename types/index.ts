@@ -48,7 +48,7 @@ export type Course = {
   lessons?: Lesson[];
   absences?: Absences;
   members?: Members;
-  timestamp?: number; // sharedResponse
+  timestamp?: string; // sharedResponse ISOSTRING
 };
 export type File = {
   id: string;

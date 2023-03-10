@@ -88,11 +88,6 @@ export default function Activities({
               </Typography>
             ) : (
               activities?.map((activity: Activity, index) => {
-                const activityDate = new Date();
-                const days = Math.round(
-                  (activityDate.getTime() - Date.now()) /
-                  (1000 * 60 * 60 * 24)
-                );
                 return (
                   <ActivityCollapse
                     key={index}
@@ -335,13 +330,14 @@ function ActivityCollapse({
 }
 export function Attachment(props: { attachment: Attachments }) {
   const { attachment } = props;
-  const frase = attachment.title.split(" ").length == 0;
+  const frase = attachment.title.split(" ").length > 1;
+  const sigaaURL = "https://sigaa.ifsc.edu.br";
   switch (attachment.type) {
     case "file":
       return (
         <Button
           variant="outlined"
-          href={`https://sigaa.ifsc.edu.br/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
+          href={`${sigaaURL}/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
           target="_blank"
           style={{ color: "#32A041", display: "flex", alignItems: "center" }}
         >
@@ -354,7 +350,7 @@ export function Attachment(props: { attachment: Attachments }) {
               lineBreak: frase ? "auto" : "anywhere",
             }}
           >
-            Anexo: {attachment.title}
+            Anexo: <span>{attachment.title}</span>
           </Typography>
         </Button>
       );

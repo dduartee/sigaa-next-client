@@ -2,18 +2,16 @@ import { Box, Button, Typography } from "@material-ui/core"
 import React from "react"
 export function Donate(props: { email: string, fontSize: string, fontSizeEmail: string, iconWidth: string, children?: React.ReactNode }) {
     const frases = [
-        "Se você gostou do site, considere fazer uma doação!",
         "Se nós ajudamos você, nos ajude a sustentar o site 🤝",
         "Aceitamos PIX! 🤠",
         "Contribua para a causa! ✊👊🫰",
         "Divulgue o site para seus amigos! 🤗🫂",
         "Ajude a manter o site no ar! 🤯",
         "Siga nos no instagram! @sigaanext 💖",
-        "Sempre leve a vantagem...",
+        "Sempre leve a  VANTAGEM!",
         "Estamos sempre atualizando e melhorando o site!",
         "Entre gastar tempo acessando cada matéria, ou gastar 1 minuto para ver tudo, qual você prefere?",
         "Não esqueça de nos seguir no instagram! @sigaanext",
-        "Estude agora, talvez amanhã não terá mais tempo... reflita.",
         "Está suspeitando de nós? Entre em contato conosco! 🤗",
     ]
     const shuffleArray = (arr: string[]) => {
