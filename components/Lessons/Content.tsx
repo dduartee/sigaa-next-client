@@ -82,7 +82,7 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
           {
             props.loading || !props.course?.lessons ? (
               <Loading value={props.loading} />
-            ) : props.course ? (
+            ) : props.course && months.length > 0 ? (
               <>
                 <Typography
                   variant="caption"
@@ -92,7 +92,6 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
                   (Última atualização: {getFriendlyDateString(props.course.timestamp)})
                 </Typography>
                 <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
-                  {months.length > 0 ? (
                     <Box textAlign={"right"}>
                       <Button
                         onClick={() => setShowOthersMonths(!showOthersMonths)}
@@ -104,7 +103,6 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
                         </Typography>
                       </Button>
                     </Box>
-                  ) : null}
                   {months.length > 0 ? months.map((month, key) => {
                     const show = month === currentMonth;
                     return (
@@ -116,18 +114,16 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
                         openAll={showOthersMonths}
                       />
                     );
-                  }) : (
-                    <Typography
-                      textAlign="center"
-                      fontWeight="400"
-                      fontSize={"1.2rem"}
-                      m={1}>
-                      Sem tópicos de aula cadastrados
-                    </Typography>
-                  )}
+                  }) : null}
                 </Paper>
               </>
-            ) : null
+            ) : <Typography
+            textAlign="center"
+            fontWeight="400"
+            fontSize={"1.2rem"}
+            m={1}>
+            Sem tópicos de aula cadastrados
+          </Typography>
           }
         </Box>
       </Box>
@@ -143,11 +139,10 @@ function getFriendlyDateString(timestamp?: string): string {
     return "";
   }
   const timestampMoment = moment(timestamp);
-  const dayDiff = moment().diff(timestampMoment, "days");
-  const today = dayDiff === 0;
-  const yesterday = dayDiff === 1;
   const date = timestampMoment.format("DD/MM");
-  const dateString = today ? "Hoje" : (yesterday ? "Ontem" : date);
+  const today = moment().format("DD/MM");
+  const yesterday = moment().subtract(1, "days").format("DD/MM");
+  const dateString = date === today ? "Hoje" : date === yesterday ? "Ontem" : date;
   const time = timestampMoment.format("HH:mm");
   return `${dateString} às ${time}`;
 }
