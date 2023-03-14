@@ -15,7 +15,7 @@ O principal objetivo do projeto é melhorar a usabilidade do estudante para visu
 
 ## Uso dos dados
 
-Ao utilizar o [backend](https://github.com/dduartee/sigaa-socket-api), os dados, leia-se, informações do usuário (nome, usuário, url da foto), informações de vinculos e turmas, são armazenadas temporariamente para agilidade na resposta, bem como para as informações que podem ser compartilhadas entre usuários com as mesmas permissões para a turma, os tópicos de aula e o conteúdo da tarefas.
+Ao utilizar o [backend](https://github.com/dduartee/sigaa-socket-api), os dados, leia-se as informações do usuário (nome, usuário, url da foto), informações de vinculos e turmas, são armazenadas temporariamente para agilidade na resposta, bem como para as informações que podem ser compartilhadas entre usuários com as mesmas permissões para a turma, os tópicos de aula e o conteúdo da tarefas.
 
 Sobre as credenciais (Cookie da sessão, e usuário) são armazenados temporariamente para o acesso ao SIGAA. Além disso, para evitar o roubo de sessão, o usuário recebe um código de referência do Cookie salvo na memória do servidor.
 
