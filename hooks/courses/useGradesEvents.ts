@@ -32,6 +32,5 @@ export function emitGradesList(params: {
   id: string;
   cache: boolean;
 }, socket: Socket) {
-  console.log("grades::list")
   socket.emit('grades::list', params)
 }

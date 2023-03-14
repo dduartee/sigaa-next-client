@@ -41,7 +41,6 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
     useEffect(() => {
         if (props.course) {
             setCourseTitle(props.course.title);
-            console.log(props.course)
         }
     }, [props.course]);
     const updateResource = () => updateHook.updateResource(props.updateSyllabus);
