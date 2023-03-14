@@ -6,14 +6,12 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Collapse from "@material-ui/core/Collapse";
 import Fade from "@material-ui/core/Fade";
-import ToggleButton from "@material-ui/core/ToggleButton";
-import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { AccountCircle, Lock, Send, ArrowBack, Info } from "@material-ui/icons";
-import { Bond, UserCredentials } from "@types";
+import { UserCredentials } from "@types";
 import Particulas from "@components/Index/Particles";
 import { SocketContext } from "@context/socket";
 import { Input, InputBox } from "@components/Index/Input";
@@ -21,12 +19,14 @@ import LoginBox from "@components/Index/LoginBox";
 import { CardBottom, CardHeader } from "@components/Index/Card";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler from "@hooks/useUserHandler";
-import useBondsHandler from "@hooks/useBondsEvents";
+import useBondsHandler, { emitCourseList } from "@hooks/useBondsEvents";
 import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
 import { Donate } from "@components/Donate";
 import { formatFullName } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
+import { BondSelection } from "@components/BondSelection";
+import { BondSelectionButtons } from "@components/BondSelectionButtons";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -40,14 +40,14 @@ function Index(): JSX.Element {
 
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
-  const { status, user, setStatus, errorFeedback, setErrorFeedback  } = useUserHandler();
+  const { status, user, setStatus, errorFeedback, setErrorFeedback } = useUserHandler();
   const { bonds } = useBondsHandler();
 
   useEffect(() => {
     if (valid) {
       const username = sessionStorage.getItem("username");
       const token = sessionStorage.getItem("token");
-      if(username && token) socket.emit("user::login", { token, username }); // tenta logar pelo token
+      if (username && token) socket.emit("user::login", { token, username, institution: "IFSC" }); // tenta logar pelo token
     }
   }, [valid, socket, setStatus]);
   useEffect(() => {
@@ -85,16 +85,29 @@ function Index(): JSX.Element {
   const handleLogin = () => {
     if (credentials.username && credentials.password) {
       setStatus("Logando");
-      socket.emit("user::login", credentials); // loga pela "primeira vez" sem o cache
+      socket.emit("user::login", { ...credentials, institution: "IFSC" }); // loga pela "primeira vez" sem o cache
     } else {
       setErrorFeedback("");
     }
   };
   const handleAccess = () => {
+    emitCourseList(
+      {
+        token: sessionStorage.getItem("token"),
+        registration: registrationSelected,
+        inactive: true,
+        allPeriods: false,
+        cache: true,
+        id: "courses",
+      },
+      socket
+    );
     setStatus("Logando");
     setErrorFeedback("");
     // window.location.href = `/bond/${encodeURIComponent(registrationSelected)}`
-    router.push(`/bond/${encodeURIComponent(registrationSelected)}`);
+    socket.on("courses::list", () => {
+      router.push(`/bond/${encodeURIComponent(registrationSelected)}`);
+    });
   };
   const handleLogout = () => {
     setErrorFeedback("");
@@ -168,7 +181,7 @@ function Index(): JSX.Element {
                   width: increaseBoxSize ? "97%" : "20rem",
                   maxWidth: "700px",
                   overflowY: increaseBoxSize ? "scroll" : "visible",
-                  height: "fit-content"
+                  height: "auto"
                 }}
               >
                 <Fade in={openHelp} timeout={500}>
@@ -215,9 +228,7 @@ function Index(): JSX.Element {
                 >
                   <>
                     <BondSelection registrationSelected={registrationSelected} setRegistrationSelected={setRegistrationSelected} bonds={bonds} />
-                    <CardBottom>
-                      <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
-                    </CardBottom>
+                    <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
                   </>
                 </Collapse>
                 <Collapse in={conditionals.isLoggedOut}>
@@ -268,7 +279,7 @@ function LoginCard(props: {
     setErrorFeedback("");
   };
   return (
-    <Box>
+    <Box height={"230px"}>
       <LoginBox onChange={handleCredentialsChange} onKeyPress={handleEnterPress}>
         <InputBox
           icon={<AccountCircle />}
@@ -326,78 +337,4 @@ function LoginCard(props: {
       </CardBottom>
     </Box>
   )
-}
-function BondSelection(props: { registrationSelected: string, setRegistrationSelected: (registration: string) => void, bonds: Bond[] }) {
-  const { registrationSelected, setRegistrationSelected, bonds } = props;
-  const handleChangeRegistration = (
-    _: React.MouseEvent<HTMLElement>,
-    nextVinculo: string
-  ) => {
-    console.debug("@handleChangeRegistration", nextVinculo);
-    setRegistrationSelected(nextVinculo);
-  };
-  return (<>
-    <Typography textAlign={"center"} margin={2}>
-      Escolha um vínculo para acessar
-    </Typography>
-    <Box sx={{
-      maxHeight: "320px",
-      overflowInline: "auto"
-    }}>
-      <ToggleButtonGroup
-        exclusive
-        aria-label=""
-        value={registrationSelected}
-        onChange={handleChangeRegistration}
-        orientation="vertical"
-      >
-        {bonds.map((bond, index) => {
-          return (
-            <ToggleButton
-              key={index}
-              value={bond.registration}
-              style={{
-                marginTop: ".5rem",
-                marginLeft: "1rem",
-                marginRight: "1rem",
-                marginBottom: ".5rem",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                borderRadius: "4px",
-                color: "#fff",
-              }}
-            >
-              {bond.program}<br />Matrícula: {bond.registration}
-            </ToggleButton>
-          );
-        })}
-      </ToggleButtonGroup>
-    </Box>
-  </>)
-}
-
-function BondSelectionButtons(props: { handleLogout: () => void, handleAccess: () => void }) {
-  return <Grid
-    justifyContent="center"
-    alignContent="center"
-    display="flex"
-  >
-    <Button
-      variant="contained"
-      startIcon={<ArrowBack direction="right" />}
-      onClick={props.handleLogout}
-      fullWidth
-      sx={{ margin: ".25rem" }}
-    >
-      Sair
-    </Button>
-    <Button
-      variant="contained"
-      endIcon={<Send />}
-      fullWidth
-      sx={{ margin: ".25rem" }}
-      onClick={props.handleAccess}
-    >
-      Acessar
-    </Button>
-  </Grid>
 }

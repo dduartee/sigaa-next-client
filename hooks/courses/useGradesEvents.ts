@@ -3,7 +3,7 @@ import { SocketContext } from "@context/socket";
 import { useState, useEffect, useContext } from "react";
 import { Socket } from "socket.io-client";
 export default function useGradesEvents() {
-  const [bond, setBond] = useState<Bond | null>(null);
+  const [bond, setBond] = useState<Bond | undefined>(undefined);
   const [partialLoading, setPartialLoading] = useState(false);
   const socket = useContext(SocketContext);
 

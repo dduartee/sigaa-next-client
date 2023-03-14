@@ -3,11 +3,10 @@ import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import { Bond } from "@types";
-import useTabHandler from "@hooks/useTabHandler";
+import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import { emitCourseList } from "@hooks/useBondsEvents";
 import HomeProvider from "@components/HomeProvider";
 import Courses from "@components/Courses/Content";
@@ -22,17 +21,16 @@ export default function CoursesPage() {
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
-  const [bond, setBond] = useState<Bond | null>(null);
+  const [bond, setBond] = useState<Bond | undefined>(undefined);
   const {
     coursesLoading,
     setCoursesLoading,
   } = useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 3,
+    order: BondTab.COURSES,
     registration,
     valid,
   });
-  useAPIHandler();
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {

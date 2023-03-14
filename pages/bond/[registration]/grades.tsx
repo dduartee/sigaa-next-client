@@ -2,13 +2,12 @@ import React, { useContext, useEffect } from "react";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import useAPIHandler from "@hooks/useAPIEvents";
 import { Box } from "@material-ui/core";
 import Head from "next/head";
 import useGradesEvents, {
   emitGradesList,
 } from "@hooks/courses/useGradesEvents";
-import useTabHandler from "@hooks/useTabHandler";
+import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
@@ -22,9 +21,8 @@ export default function GradesPage() {
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
-  useAPIHandler();
   const { tab, setTab } = useTabHandler({
-    order: 1,
+    order: BondTab.GRADES,
     registration,
     valid,
   });

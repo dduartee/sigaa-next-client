@@ -9,8 +9,8 @@ import NoSSR from "react-no-ssr";
 export default function HomeProvider(props: {
   children: React.ReactNode;
   loading: boolean;
-  user: UserData | null;
-  registration: string;
+  user?: UserData;
+  registration?: string;
   tab: number;
   setTab: React.Dispatch<React.SetStateAction<number>>;
   tabs: Tab[];

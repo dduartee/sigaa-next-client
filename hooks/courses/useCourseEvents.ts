@@ -1,8 +1,7 @@
 import { Bond } from "@types";
 import { SocketContext } from "@context/socket";
 import React, { useState, useEffect, useContext } from "react";
-import { Socket } from "socket.io-client";
-export default function useCourseEvents(setBond: React.Dispatch<React.SetStateAction<Bond | null>>) {
+export default function useCourseEvents(setBond: React.Dispatch<React.SetStateAction<Bond | undefined>>) {
   const [coursesLoading, setCoursesLoading] = useState(true);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
   const socket = useContext(SocketContext);

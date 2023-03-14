@@ -16,11 +16,15 @@ import { UserContext } from "@context/user";
 import { Tab as TabType } from "@types";
 import { LoadingContext } from "@context/loading";
 import DvrIcon from '@material-ui/icons/Dvr';
-
+import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 export const courseTabs = [
   {
     label: "Tópicos de aula",
     icon: <DvrIcon />
+  },
+  {
+    label: "Plano de ensino",
+    icon: <ImportContactsIcon />,
   },
   {
     label: "Voltar",
@@ -87,9 +91,7 @@ function ResponsiveDrawer({
   >(null);
   const drawer = (
     <Box
-      sx={{
-        height: "100%",
-      }}
+      sx={{ height: "100%", }}
     >
       <Toolbar
         sx={{ height: "90px", display: "flex", justifyContent: "center" }}
@@ -131,7 +133,7 @@ function ResponsiveDrawer({
           {tabs.map((tab, index) => (
             <Tab
               key={index}
-              label={(tabSelected == index) && loading? `Carregando ${tab.label}` : tab.label} // se o tab for selecionado e estiver sendo carregado
+              label={(tabSelected == index) && loading ? `Carregando ${tab.label}` : tab.label} // se o tab for selecionado e estiver sendo carregado
               icon={tab.icon}
               disabled={loading}
               sx={{

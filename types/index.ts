@@ -1,3 +1,5 @@
+import { Syllabus } from "@components/Syllabus/Content";
+
 export type UserCredentials = {
   username: string;
   password: string;
@@ -48,6 +50,7 @@ export type Course = {
   lessons?: Lesson[];
   absences?: Absences;
   members?: Members;
+  syllabus?: Syllabus;
   timestamp?: string; // sharedResponse ISOSTRING
 };
 export type File = {

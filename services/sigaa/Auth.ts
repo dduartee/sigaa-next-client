@@ -62,7 +62,7 @@ export class AuthService {
     username: string;
     url: string;
   }) {
-    const { JSESSIONID, username, url } = params;
+    const { JSESSIONID, url } = params;
     const { hostname } = new URL(url);
     const cookiesController = new SigaaCookiesController();
     cookiesController.storeCookies(hostname, [JSESSIONID]);

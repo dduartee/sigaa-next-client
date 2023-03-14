@@ -23,20 +23,19 @@ function ResponsiveDrawer({
           ml: { sm: `${width}px` },
         }}
       >
-        <Toolbar>
-          <div style={{ position: "absolute" }}>
+        <Toolbar sx={{justifyContent: "space-between"}}>
+          <Box >
             <IconButton
               color="inherit"
-              aria-label="open drawer"
               edge="start"
+              sx={{ mr: 0, display: { sm: "none" } }}
               onClick={handler}
-              sx={{ mr: 0, display: { sm: "none" }, fontSize: "1rem" }}
             >
-              <MenuIcon />
+              <MenuIcon fontSize="large" />
             </IconButton>
-          </div>
-          <Box textAlign={"center"} width="100%" padding={2}>
-            <img src="/img/logo.png" height="50rem"/>
+          </Box>
+          <Box padding={2} width="100%" textAlign={"center"}>
+            <img src="/img/logo.png" height="50rem" />
           </Box>
 
         </Toolbar>

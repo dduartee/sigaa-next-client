@@ -10,14 +10,14 @@ export type SchedulerData = {
   StartTime: Date;
   EndTime: Date;
 };
-export default function Schedules({ bond }: { bond: Bond | null }) {
+export default function Schedules(props: { bond: Bond | undefined }) {
   const registration = useContext(RegistrationContext)
-  const [courses, setCourses] = React.useState<Course[] | null>(null);
+  const [courses, setCourses] = React.useState<Course[]>([]);
   React.useEffect(() => {
-    if (bond?.courses) {
-      setCourses(bond.courses);
+    if (props.bond && props.bond.courses) {
+      setCourses(props.bond.courses);
     }
-  }, [bond, registration]);
+  }, [props.bond, registration]);
   React.useEffect(() => {
     const coursesCached = JSON.parse(sessionStorage.getItem(`courses-${registration}`) || "{}");
     if (coursesCached) {
@@ -33,7 +33,7 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
   const [scheduleData, setScheduleData] = React.useState<SchedulerData[]>([]);
   useEffect(() => {
     if (scheduleData.length == 0) {
-      courses?.map((course) => {
+      courses.map((course) => {
         const schedulesData = generateScheduleData(course.schedule ?? "");
         schedulesData.map((weekDaySchedules) => {
           weekDaySchedules.map((weekDaySchedule) => {
@@ -47,7 +47,7 @@ export default function Schedules({ bond }: { bond: Bond | null }) {
         });
       });
     }
-  }, [bond, courses, scheduleData.length]);
+  }, [courses, scheduleData.length]);
   useEffect(() => {
     if (scheduleData.length > 0) {
 
@@ -103,7 +103,7 @@ export function generateScheduleData(scheduleCode: string) {
       .set("M", [[], ["7:45:00", "8:40:00"], ["8:40:00", "9:35:00"], ["9:55:00", "10:50:00"], ["10:50:00", "11:45:00"]])
       .set("T", [[], ["13:30:00", "14:25:00"], ["14:25:00", "15:20:00"], ["15:40:00", "16:35:00"], ["16:35:00", "17:30:00"]])
       .set("N", [[], ["18:30:00", "19:25:00"], ["19:25:00", "20:20:00"], ["20:40:00", "21:35:00"], ["21:35:00", "22:30:00"]]);
-    // schedule can be "2T3", "3M12 4M34" or "43M12"
+    // schedule can be "2T3", "3M12 4M34", "43M12" and 4M34 (06/03/2023 - 04/07/2023)
     const [period] = schedule.match(/[A-Z]/) ?? [];
     const [weekDays] = schedule.match(/^[0-9]+/) ?? []
     const [, times] = schedule.match(/[0-9]+/g) ?? [];

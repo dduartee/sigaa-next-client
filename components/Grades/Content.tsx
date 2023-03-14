@@ -44,9 +44,9 @@ export function groupBy<K, V>(array: V[], grouper: (item: V) => K) {
     return store;
   }, new Map<K, V[]>());
 }
-function getIndex(bond: Bond) {
+function getIndex(courses: Course[]) {
   const gradesIndex: string[] = [];
-  bond.courses?.map((course) =>
+  courses.map((course) =>
     course.grades?.map((gradeGroup) => {
       const exists = gradesIndex.includes(gradeGroup.name);
       if (!exists) gradesIndex.push(gradeGroup.name);
@@ -54,29 +54,25 @@ function getIndex(bond: Bond) {
   );
   return gradesIndex;
 }
-export default function Grades({
-  bond,
-}: {
-  bond: Bond | null
-}) {
+export default function Grades(props: { bond: Bond|undefined }) {
   const [index, setIndex] = React.useState<string[]>([]);
   const [coursesByPeriod, setCoursesByPeriod] = React.useState<
     Map<string, Course[]>
   >(new Map<string, Course[]>());
   const [periods, setPeriods] = React.useState<string[]>([]);
   useEffect(() => {
-    if (bond?.courses) {
-      setIndex(getIndex(bond));
-      setCoursesByPeriod(groupBy(bond.courses, (course) => course.period));
+    if (props.bond && props.bond.courses.length > 0) {
+      setIndex(getIndex(props.bond.courses));
+      setCoursesByPeriod(groupBy(props.bond.courses, (course) => course.period));
     }
-  }, [bond]);
+  }, [props.bond]);
   useEffect(() => {
     setPeriods(Array.from(coursesByPeriod.keys()));
   }, [coursesByPeriod]);
   const isMobileDevice = useMediaQuery("(max-width:900px)");
   return (
     <React.Fragment>
-      {bond ? (
+      {props.bond && props.bond.courses.length > 0 ? (
         <TableContainer>
           {isMobileDevice ? (
             <MobileTable gradesIndex={index} periods={periods} coursesByPeriod={coursesByPeriod} />

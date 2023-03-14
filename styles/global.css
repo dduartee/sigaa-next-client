@@ -6,7 +6,7 @@ body {
 }
 
 .Mui-selected:hover {
-    background-color: rgba(22, 88, 44, .7) !important;
+    background-color: #17592db3 !important;
 }
 
 .Mui-selected {

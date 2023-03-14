@@ -6,7 +6,7 @@ import { emitBondList } from "./useBondsEvents";
 
 export default function useUserHandler() {
   const [status, setStatus] = useState<UserStatus>("Deslogado");
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserData | undefined>(undefined);
   const [error, setError] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState("");
   const socket = useContext(SocketContext);

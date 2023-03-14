@@ -21,22 +21,23 @@ import ForumIcon from "@material-ui/icons/Forum";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import MoreIcon from "@material-ui/icons/More";
-import { formatContent, formatDate, formatTime } from "@components/Lessons/Content";
+import { formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import moment from "moment-timezone";
+import FormattedContent from "@components/Lessons/FormattedContent";
 
 export default function Activities({
   bond,
   loading,
 }: {
-  bond: Bond | null;
+  bond: Bond | undefined;
   loading: boolean;
 }) {
   const router = useRouter();
   const [openFinished, setOpenFinished] = useState(false);
   const registration = useContext(RegistrationContext);
-  const [activities, setActivities] = useState<Activity[] | null>(null);
+  const [activities, setActivities] = useState<Activity[] | undefined>(undefined);
   const accessCourse = (registration: string, courseId: string) => {
     router.push(`/bond/${registration}/course/${courseId}`);
   };
@@ -294,7 +295,7 @@ function ActivityCollapse({
             <AccordionDetails sx={{ whiteSpace: "pre-line" }}>
               {content ? (
                 <Box display={"flex"} flexDirection={"column"}>
-                  {formatContent(content)}
+                  <FormattedContent>{content}</FormattedContent>
                   <Box display={"flex"} flexDirection={"row"} width="100%" justifyContent={"space-around"}>
                     {attachment ? <Attachment attachment={attachment} /> : null}
                     <Button
