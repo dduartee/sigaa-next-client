@@ -1,7 +1,7 @@
 import { prismaInstance } from "@lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import { loadCampuses } from "./campuses/[institution]";
-type InstitutionData = {
+export type InstitutionData = {
   name: string;
   acronym: string;
   url: string;

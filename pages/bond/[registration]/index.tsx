@@ -3,11 +3,10 @@ import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import useAPIHandler from "@hooks/useAPIEvents";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
 import { Bond } from "@types";
-import useTabHandler from "@hooks/useTabHandler";
+import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import { emitActivitiesList, emitCourseList } from "@hooks/useBondsEvents";
 import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
@@ -20,7 +19,7 @@ export default function RegistrationPage() {
   const socket = useContext(SocketContext);
   const valid = useTokenHandler();
   const { user } = useUserHandler();
-  const [bond, setBond] = useState<Bond | null>(null);
+  const [bond, setBond] = useState<Bond | undefined>(undefined);
   useEffect(() => {
     const bondCached = JSON.parse(
       sessionStorage.getItem(`bond@${registration}`) || "{}"
@@ -33,11 +32,10 @@ export default function RegistrationPage() {
   }, [registration]);
   const { activitiesLoading, setActivitiesLoading } = useCourseEvents(setBond);
   const { tab, setTab } = useTabHandler({
-    order: 0,
+    order: BondTab.ACTIVITIES,
     registration,
     valid,
   });
-  useAPIHandler();
   useEffect(() => {
     if (!valid) window.location.href = "/";
     else {

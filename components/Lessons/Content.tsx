@@ -1,4 +1,4 @@
-import { Attachment } from "@components/Activities/Content";
+import { Attachment } from "@components/Activities/Attachment";
 import { groupBy } from "@components/Grades/Content";
 import {
   Box,
@@ -15,15 +15,21 @@ import moment from "moment";
 import "moment/locale/pt";
 import React, { useEffect, useState } from "react";
 import Loading from "@components/Loading";
-
-export default function Lessons(props: { course?: Course; loading: boolean; getLessons: (cache: boolean) => void }) {
+import { useUpdatableResource } from "@hooks/useUpdatableResource";
+import { UpdateButton, UpdateInfo } from "@components/UpdatableResource";
+import FormattedContent from "./FormattedContent";
+export type LessonsProps = {
+  course?: Course;
+  loading: boolean;
+  updateLessons: () => void
+}
+export default function Lessons(props: LessonsProps) {
   moment.locale("pt-br");
   const [showOthersMonths, setShowOthersMonths] = React.useState(false);
   const [lessonsByMonth, setLessonsByMonth] =
     React.useState<Map<string, Lesson[]>>();
   const [months, setMonths] = React.useState<string[]>([]);
   const [currentMonth, setCurrentMonth] = React.useState<string>();
-  const [courseTitle, setCourseTitle] = React.useState<string>();
   useEffect(() => {
     if (props.course && props.course.lessons) {
       const currentMonth = moment().format("MMMM");
@@ -36,96 +42,81 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
       setLessonsByMonth(lessonsByMonth);
       const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
       setMonths(lessonsByMonthKeys);
-      setCourseTitle(props.course.title);
-      setIsUpdating(false);
     }
   }, [props.course, props.course?.lessons]);
-  const [alreadyUpdated, setAlreadyUpdated] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const update = () => {
-    props.getLessons(false);
-    setAlreadyUpdated(true);
-    setIsUpdating(true);
-  }
+  const updateHook = useUpdatableResource<Course>(props.course);
+  const [courseTitle, setCourseTitle] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (props.course) {
+      setCourseTitle(props.course.title);
+    }
+  }, [props.course]);
+  const updateResource = () => updateHook.updateResource(props.updateLessons);
+  const isLoading = props.loading || updateHook.isUpdating;
   return (
     <Box padding={1} minWidth={"50%"}>
-      <Box>
-        <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
-          <Typography
-            textAlign="center"
-            fontWeight="500"
-            fontSize={"1.5rem"}
-            whiteSpace="break-spaces"
-            mb={1}
-          >
-            Tópicos de aula
-          </Typography>
-        </Box>
+      <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
         <Typography
           textAlign="center"
-          fontWeight="400"
-          fontSize={"1.2rem"}
+          fontWeight="500"
+          fontSize={"1.5rem"}
           whiteSpace="break-spaces"
           mb={1}
         >
-          {courseTitle}
+          Tópicos de aula
         </Typography>
-        <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
-          {courseTitle ? (
-            <Button variant="outlined" sx={{ mb: ".5rem", width: "150px" }} onClick={update} disabled={alreadyUpdated}>
-              {isUpdating ? (
-                "Atualizando"
-              ) : alreadyUpdated ? "Atualizado" : "Atualizar"}
-            </Button>
-          ) : null}
-
-          {
-            props.loading || !props.course?.lessons ? (
-              <Loading value={props.loading} />
-            ) : props.course && months.length > 0 ? (
-              <>
-                <Typography
-                  variant="caption"
-                  display="block"
-                  mb={".5rem"}
-                  color={"gray"}>
-                  (Última atualização: {getFriendlyDateString(props.course.timestamp)})
-                </Typography>
-                <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
-                    <Box textAlign={"right"}>
-                      <Button
-                        onClick={() => setShowOthersMonths(!showOthersMonths)}
-                        style={{ color: "#fff" }}
-                        color={"inherit"}>
-                        <Typography variant="caption" display="block" color={"gray"} >
-                          {showOthersMonths ? "Fechar " : "Abrir "}
-                          outros meses
-                        </Typography>
-                      </Button>
-                    </Box>
-                  {months.length > 0 ? months.map((month, key) => {
-                    const show = month === currentMonth;
-                    return (
-                      <MonthAccordion
-                        key={key}
-                        month={month}
-                        lessons={lessonsByMonth?.get(month) || []}
-                        show={show}
-                        openAll={showOthersMonths}
-                      />
-                    );
-                  }) : null}
-                </Paper>
-              </>
+      </Box>
+      <Typography
+        textAlign="center"
+        fontWeight="400"
+        fontSize={"1.2rem"}
+        whiteSpace="break-spaces"
+        mb={1}
+      >
+        {courseTitle}
+      </Typography>
+      <Box display={"flex"} flexDirection={"column"} alignItems={"center"} mb={2}>
+        <UpdateButton updateHook={updateHook} update={updateResource} />
+        {!props.course || isLoading ? (
+          <Loading value={isLoading} />
+        ) : (
+          <>
+            <UpdateInfo updateHook={updateHook} timestamp={props.course.timestamp} />
+            {props.course.lessons?.length !== 0 ? (
+              <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
+                <Box textAlign={"right"}>
+                  <Button
+                    onClick={() => setShowOthersMonths(!showOthersMonths)}
+                    style={{ color: "#fff" }}
+                    color={"inherit"}>
+                    <Typography variant="caption" display="block" color={"gray"} >
+                      {showOthersMonths ? "Fechar " : "Abrir "}
+                      outros meses
+                    </Typography>
+                  </Button>
+                </Box>
+                {months.length > 0 ? months.map((month, key) => {
+                  const show = month === currentMonth;
+                  return (
+                    <MonthAccordion
+                      key={key}
+                      month={month}
+                      lessons={lessonsByMonth?.get(month) || []}
+                      show={show}
+                      openAll={showOthersMonths}
+                    />
+                  );
+                }) : null}
+              </Paper>
             ) : <Typography
-            textAlign="center"
-            fontWeight="400"
-            fontSize={"1.2rem"}
-            m={1}>
-            Sem tópicos de aula cadastrados
-          </Typography>
-          }
-        </Box>
+              textAlign="center"
+              fontWeight="400"
+              fontSize={"1.2rem"}
+              m={1}>
+              Sem tópicos de aula cadastrados
+            </Typography>}
+          </>
+        )}
       </Box>
     </Box>
   );
@@ -134,7 +125,7 @@ export default function Lessons(props: { course?: Course; loading: boolean; getL
  * hoje, ontem ou dd/mm
  * @param timestamp Timestamp da última atualização
  */
-function getFriendlyDateString(timestamp?: string): string {
+export function getFriendlyDateString(timestamp?: string): string {
   if (!timestamp) {
     return "";
   }
@@ -203,7 +194,7 @@ function LessonContent(props: { lesson: Lesson }) {
           </Typography>
         </Typography>
         <Typography fontSize={"1rem"} m={1}>
-          {props.lesson.content ? formatContent(props.lesson.content) : " "}
+          {props.lesson.content ? <FormattedContent>{props.lesson.content}</FormattedContent> : <></>}
         </Typography>
         <Box
           display={"flex"}
@@ -233,35 +224,4 @@ export function formatTime(isoString?: string) {
 export function getWeekDay(isoString: string) {
   return moment(isoString).utc().format("dddd");
 }
-export function formatContent(content: string) {
-  return content.split("\n").map((text, key) => {
-    return (
-      <Typography
-        key={key}
-        gutterBottom
-        whiteSpace={"pre-line"}
-        sx={{
-          whiteSpace: text.split(" ").length > 1 ? "pre-line" : "unset",
-          lineBreak: text.split(" ").length > 1 ? "unset" : "anywhere",
-        }}
-        marginBottom={"1.5rem"}
-      >
-        {urlify(text)}
-      </Typography>
-    );
-  });
-}
 
-function urlify(text: string) {
-  const urlRegex =
-    /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\\/%?=~_|!:,.;]*[-A-Z0-9+&@#\\/%=~_|])/gi;
-  return (
-    <span
-      dangerouslySetInnerHTML={{
-        __html: text.replace(urlRegex, function (url) {
-          return `<a href="${url}" target="_blank" style="color: #32A041">${url}</a>`;
-        }),
-      }}
-    />
-  );
-}

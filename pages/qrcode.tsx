@@ -20,7 +20,7 @@ export default function QRCode() {
                 maxWidth: "500px",
             }}
           />
-        <Box alignSelf={"center"} textAlign={"center"}>
+        <Box alignSelf={"center"} textAlign={"center"} mt={"2rem"}>
           <Typography variant={"h4"}>
             Use a câmera do seu celular para ler o QR Code
           </Typography>

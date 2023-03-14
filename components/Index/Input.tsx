@@ -5,7 +5,7 @@ function Input(props: TextFieldProps) {
   return <TextField {...props} variant="standard" fullWidth />;
 }
 
-function InputBox({ icon, input }: InputBoxProps) {
+function InputBox(props: InputBoxProps) {
   return (
     <Grid
       container
@@ -13,13 +13,13 @@ function InputBox({ icon, input }: InputBoxProps) {
       width="90%"
       justifyContent="center"
       spacing={1}
-      mb={0.5}
+      mb={1}
     >
       <Grid item marginTop="8px">
-        {icon}
+        {props.icon}
       </Grid>
       <Grid item width="85%">
-        {input}
+        {props.input}
       </Grid>
     </Grid>
   );

@@ -1,4 +1,4 @@
-import { HyperlinkAttachment } from "sigaa-api/dist/courses/resources/attachments/sigaa-hyperlink-student";
+import { HyperlinkAttachment } from "sigaa-api";
 
 export interface IHyperLinkDTOProps {
     title: string;

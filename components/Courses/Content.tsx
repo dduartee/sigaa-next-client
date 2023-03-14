@@ -14,11 +14,11 @@ import { ChevronRight } from "@material-ui/icons";
 export default function Courses({
   bond,
 }: {
-  bond: Bond | null;
+  bond: Bond | undefined;
 }) {
   const router = useRouter();
   const accessCourse = (registration: string, courseId: string) => {
-    router.push(`/bond/${registration}/course/${courseId}`);
+    router.push(`/bond/${registration}/course/${courseId}/`);
   };
   const registration = useContext(RegistrationContext);
   const [courses, setCourses] = React.useState<Course[] | null>(null);

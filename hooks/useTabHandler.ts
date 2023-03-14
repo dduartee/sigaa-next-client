@@ -1,6 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
+export enum BondTab {
+  ACTIVITIES = 0,
+  GRADES = 1,
+  ABSENCES = 2,
+  COURSES = 3,
+  SCHEDULES = 4,
+}
+export enum CourseTab {
+  LESSONS = 0,
+  SYLLABUS = 1,
+}
 export default function useTabHandler({
   order,
   valid,
@@ -19,31 +29,31 @@ export default function useTabHandler({
       let path = ""
       if (courseId) {
         switch (tab) {
-          case 0:
-            path = `/bond/${registration}/course/${courseId}`;
+          case CourseTab.LESSONS:
+            path = `/bond/${registration}/course/${courseId}/`;
             break;
-            case 1:
-            path = `/bond/${registration}/courses`;
+          case CourseTab.SYLLABUS:
+            path = `/bond/${registration}/course/${courseId}/syllabus`;
             break;
           default:
-            path = `/`;
+            path = `/bond/${registration}/courses/`;
             break;
         }
       } else {
         switch (tab) {
-          case 0:
+          case BondTab.ACTIVITIES:
             path = `/bond/${registration}/`;
             break;
-          case 1:
+          case BondTab.GRADES:
             path = `/bond/${registration}/grades`;
             break;
-          case 2:
+          case BondTab.ABSENCES:
             path = `/bond/${registration}/absences`;
             break;
-          case 3:
+          case BondTab.COURSES:
             path = `/bond/${registration}/courses`;
             break;
-          case 4:
+          case BondTab.SCHEDULES:
             path = `/bond/${registration}/schedules`;
             break;
           default:
@@ -51,9 +61,8 @@ export default function useTabHandler({
             break;
         }
       }
-      console.debug({ path })
       if (path === "/") {
-        window.location.href = "/";
+        router.push("/");
       } else {
         router.push(path);
       }

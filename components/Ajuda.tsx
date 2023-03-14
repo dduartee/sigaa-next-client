@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { PixIcon } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {
     useEffect(() => {
-        sessionStorage.setItem("particles", props.activeParticles.toString());
+        localStorage.setItem("particles", props.activeParticles.toString());
     }, [props.activeParticles]);
     return (
         <Box display={"flex"} m={1} flexDirection={"column"}>
@@ -39,6 +39,7 @@ export function Ajuda(props: { setActiveParticles: (value: boolean) => void, act
             </Box>
             <Box display="flex" flexDirection={"row"} justifyContent={"start"} alignItems={"center"} m={0}>
                 <Switch checked={props.activeParticles} onChange={() => {
+                    localStorage.setItem("particles", 'false');
                     props.setActiveParticles(!props.activeParticles)
                 }} />
                 <Typography fontSize={"1.3rem"}>Partículas</Typography>

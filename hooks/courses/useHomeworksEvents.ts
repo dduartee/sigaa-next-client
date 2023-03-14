@@ -16,7 +16,6 @@ export default function useHomeworksEvents() {
     });
     socket.on("homeworks::list", (bond: Bond) => {
       setPartialLoading(false);
-      console.debug(bond)
       setBond(bond);
     });
     return () => {
