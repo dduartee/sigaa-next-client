@@ -26,7 +26,7 @@ No frontend, informações da sessão são salvas no navegador (sessionStorage),
 
 ## Segurança em outros softwares
 
-EU não me responsabilizo e nem garanto a segurança de nenhum outro software que utilize da mesma biblioteca [sigaa-api](https://github.com/GeovaneSchmitz/sigaa-api). Visto que, exclusivamente nos repositórios [sigaa-socket-api](https://github.com/dduartee/sigaa-socket-api) e [sigaa-next-client](https://github.com/dduartee/sigaa-next-client), bem como no servidor [api.sigaa-next](https://api.sigaa-next.duckdns.org) são de acesso privado, sem permissão de acesso à terceiros e sem alteração no código após o commit no GitHub.
+EU não me responsabilizo e nem garanto a segurança de nenhum outro software que utilize da mesma biblioteca [sigaa-api](https://github.com/GeovaneSchmitz/sigaa-api). Visto que, exclusivamente nos repositórios [sigaa-socket-api](https://github.com/dduartee/sigaa-socket-api) e [sigaa-next-client](https://github.com/dduartee/sigaa-next-client), bem como no servidor [api.sigaa-next](https://api.sigaa-next.duckdns.org) de acesso privado e sem permissão de acesso à terceiros, não possuem alteração no código após o commit no GitHub.
 
 ## Como contribuir
 
