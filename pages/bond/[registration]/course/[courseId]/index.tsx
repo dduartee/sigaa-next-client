@@ -68,7 +68,7 @@ export default function LessonsPage() {
           tab={tab}
           tabs={courseTabs}
         >
-          <Lessons course={course} updateLessons={() => getLessons(true)} loading={loading} />
+          <Lessons course={course} updateLessons={() => getLessons(false)} loading={loading} />
         </HomeProvider>
       ) : null}
     </>
