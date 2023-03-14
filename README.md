@@ -13,6 +13,21 @@
 O principal objetivo do projeto é melhorar a usabilidade do estudante para visualizar as informações do SIGAA, como por exemplo, todas as notas de todas as matérias em uma única página, horários, tarefas e além de outras funcionalidades que serão implementadas, como visualização de frequências, tópicos de aula, arquivos, entre outros.
 <br>
 
+## Uso dos dados
+
+Ao utilizar o [backend](https://github.com/dduartee/sigaa-socket-api), os dados, leia-se, informações do usuário (nome, usuário, url da foto), informações de vinculos e turmas, são armazenadas temporariamente para agilidade na resposta, bem como para as informações que podem ser compartilhadas entre usuários com as mesmas permissões para a turma, os tópicos de aula e o conteúdo da tarefas.
+
+Sobre as credenciais (Cookie da sessão, e usuário) são armazenados temporariamente para o acesso ao SIGAA. Além disso, para evitar o roubo de sessão, o usuário recebe um código de referência do Cookie salvo na memória do servidor.
+
+Todas as informações armazenadas tem um tempo de vida, que pelo padrão do SIGAA, a sessão dura 90 minutos. Em respostas compartilhadas, o tempo de vida é de 2 dias.
+
+No frontend, informações da sessão são salvas no navegador (sessionStorage), basta fazer o logoff ou fechar a aba que as informações são apagadas.
+<br>
+
+## Segurança em outros softwares
+
+EU não me responsabilizo e nem garanto a segurança de nenhum outro software que utilize da mesma biblioteca [sigaa-api](https://github.com/GeovaneSchmitz/sigaa-api). Visto que, exclusivamente nos repositórios [sigaa-socket-api](https://github.com/dduartee/sigaa-socket-api) e [sigaa-next-client](https://github.com/dduartee/sigaa-next-client), bem como no servidor [api.sigaa-next](https://api.sigaa-next.duckdns.org) são de acesso privado, sem permissão de acesso à terceiros e sem alteração no código após o commit no GitHub.
+
 ## Como contribuir
 
 ![PIX](https://user-images.githubusercontent.com/33992396/99478349-ff1b1280-2932-11eb-8776-1942bbe1a52a.png)
