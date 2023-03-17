@@ -1,12 +1,24 @@
 <div align="center">
 
 ![logo sigaanext](docs/images/logo.png)
+
 ### Este projeto está hospedado em [sigaa-next-client.vercel.app](https://sigaa-next-client.vercel.app/). <br>
+
 </div>
 <div align="center">
 
 ### Link do trabalho apresentado:<br> [Alternativa ao SIGAA para visualização de informações "gerais" pelos estudantes](https://www.even3.com.br/anais/encontro_emi_ifsc/519811-alternativa-ao-sigaa-para-visualizacao-de-informacoes-globais-pelos-estudantes/). <br> <a href="docs/images/519811.pdf">(Trabalho em pdf)</a>
+
 </div>
+
+### LEIA
+
+<b>Desde o dia 16 de março de 2023, todas as páginas de login utilizadas foram protegidas pelo reCAPTCHA do Google.
+A ação já era prevista, visto que é comum esse tipo de proteção.
+Desde 2021 a nossa inteção nunca foi confrontar o IFSC ou substituir o próprio SIGAA.
+Acredito que atingimos o nosso objetivo de chamar atenção para nosso lado discente.
+Entendemos que não é simples tal mudança. Porém, se não demonstrado ninguém sentiria a necessidade.
+Obrigado a todos que participaram e divulgaram deste "movimento".</b>
 
 ## Objetivo do projeto
 
@@ -40,8 +52,6 @@ PIX (email): <a href="mailto:sigaanext@gmail.com">sigaanext@gmail.com</a>
 ## Problemas ou sugestões
 
 Caso encontre algum problema ou tenha alguma sugestão, por favor, abra uma issue [aqui](https://github.com/dduartee/sigaa-next-client/issues/new).
-
-
 
 <br>
 <div align="center">
