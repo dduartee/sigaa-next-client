@@ -1,6 +1,6 @@
 import { courseTabs } from "@components/Home/CustomDrawer";
 import HomeProvider from "@components/HomeProvider";
-import Lessons from "@components/Lessons/Content";
+import Lessons from "@components/Index/Lessons/Content";
 import { SocketContext } from "@context/socket";
 import useTabHandler, { CourseTab } from "@hooks/useTabHandler";
 import useTokenHandler from "@hooks/useTokenHandler";
@@ -38,12 +38,12 @@ export default function LessonsPage() {
   }, [courseId, registration, socket]);
   useEffect(() => {
     if (user?.fullName && registration && courseId) {
-        socket.on("lessons::list", (course: Course) => {
-          setCourse(course);
-          setLoading(false);
-        });
-        getLessons(true);
-      }
+      socket.on("lessons::list", (course: Course) => {
+        setCourse(course);
+        setLoading(false);
+      });
+      getLessons(true);
+    }
     return () => {
       socket.off("lessons::list");
     };

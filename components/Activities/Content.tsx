@@ -21,11 +21,11 @@ import ForumIcon from "@material-ui/icons/Forum";
 import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import MoreIcon from "@material-ui/icons/More";
-import { formatDate, formatTime } from "@components/Lessons/Content";
+import { formatDate, formatTime } from "@components/Index/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import moment from "moment-timezone";
-import FormattedContent from "@components/Lessons/FormattedContent";
+import FormattedContent from "@components/Index/Lessons/FormattedContent";
 
 export default function Activities({
   bond,

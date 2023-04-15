@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import NoSsr from "@material-ui/core/NoSsr";
 import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { AccountCircle, Lock, Send, Info } from "@material-ui/icons";
 import Particulas from "@components/Index/Particles";
-import { Input, InputBox } from "@components/Index/Input";
-import LoginBox from "@components/Index/LoginBox";
-import { CardBottom } from "@components/Index/Card";
 import Head from "next/head";
 import { Link } from "@material-ui/core";
 function Index(): JSX.Element {

@@ -13,7 +13,7 @@ import { Bond, Course } from "@types";
 import React from "react";
 import "moment-timezone";
 import { generateScheduleData } from "@components/Schedules/Content";
-import { formatDate } from "@components/Lessons/Content";
+import { formatDate } from "@components/Index/Lessons/Content";
 export default function Absences(props: { bond: Bond | null }) {
   const courses = props.bond?.courses ?? [];
   return (
@@ -75,8 +75,8 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
               Math.round(course.absences.max * 0.8) <= course.absences.total
                 ? "#FFFF00"
                 : course.absences.max == course.absences.total
-                ? "#FF0000"
-                : "#ff"
+                  ? "#FF0000"
+                  : "#ff"
             }
           >
             {course.absences.total}

@@ -1,19 +1,20 @@
 import { ThemeOptions } from "@material-ui/core/styles";
-const light: ThemeOptions = {
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#32A041",
-    },
-    secondary: {
-      main: "#f50029",
-    },
-    background: {
-      default: "#e8e8e8",
-    },
-  },
-};
 const dark: ThemeOptions = {
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#207e3f',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: '#17592db3',
+            },
+          },
+        },
+      },
+    }
+  },
   typography: {
     h6: {
       fontWeight: 400,
@@ -41,4 +42,58 @@ const dark: ThemeOptions = {
   },
 };
 
-export { dark, light };
+const forbidden: ThemeOptions = {
+  components: {
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#7e2020',
+          }
+        }
+      }
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#7e2020',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: '#591717b3',
+            },
+          },
+        },
+      },
+    }
+  },
+  typography: {
+    h6: {
+      fontWeight: 400,
+      '@media (max-width:425px)': {
+        fontSize: '1rem',
+      },
+      '@media (max-width:768px)': {
+        fontSize: '1.1rem',
+      },
+    },
+
+  },
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#ab1212",
+      "300": "#b21f1f",
+      "200": "#973030",
+      "100": "#962525",
+    },
+    secondary: {
+      main: "#207e3f",
+    },
+    background: {
+      default: "#212121",
+      paper: "#0f0f0f",
+    },
+  },
+};
+export { dark, forbidden };

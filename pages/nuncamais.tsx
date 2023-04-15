@@ -22,11 +22,14 @@ import useUserHandler from "@hooks/useUserHandler";
 import useBondsHandler, { emitCourseList } from "@hooks/useBondsEvents";
 import Head from "next/head";
 import { Ajuda } from "@components/Ajuda";
-import { Donate } from "@components/Donate";
 import { formatFullName } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
 import { BondSelection } from "@components/BondSelection";
 import { BondSelectionButtons } from "@components/BondSelectionButtons";
+import { useTheme } from "@emotion/react";
+import { Theme } from "@material-ui/system";
+import { FormControlLabel, FormGroup, Switch } from "@material-ui/core";
+import { ForbiddenContext } from "@context/forbidden";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -137,6 +140,8 @@ function Index(): JSX.Element {
   useEffect(() => setIncreaseBoxSize(openHelp || openDonate), [openHelp, openDonate])
   const [openCardBody, setOpenCardBody] = useState(!openHelp && !openDonate);
   useEffect(() => setOpenCardBody(!openHelp && !openDonate), [openHelp, openDonate])
+  const { forbiddenVersion, setForbiddenVersion } = useContext(ForbiddenContext)
+  const urlLogo = forbiddenVersion ? "/img/logoForbidden.png" : "/img/logo.png"
   return (
     <>
       <Head>
@@ -160,7 +165,16 @@ function Index(): JSX.Element {
             height={"100vh"}>
             <Particulas disable={!activeParticles} />
             <Box textAlign={"center"} width="100%" padding={3} position="absolute" bottom={0}>
-              <img src="/img/logo.png" height="50rem" />
+              <Box display="flex" flexDirection="column" alignItems={"center"}>
+                <img src={urlLogo} width="175px" />
+                <Box display="flex" flexDirection="row">
+                  <Switch
+                  checked={forbiddenVersion}
+                  onChange={() => setForbiddenVersion(!forbiddenVersion)}
+                />
+                  <Typography>Versão proibida</Typography>
+                </Box>
+              </Box>
             </Box>
             <Box display={"flex"}
               alignContent={"center"}
@@ -246,10 +260,6 @@ function Index(): JSX.Element {
                 {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
                   <CardBottom>
                     <Box display={"flex"} flexDirection="column" overflow={"visible"}>
-                      <Collapse in={openDonate} timeout={1000} sx={{ overflow: 'visible' }}>
-                        <Donate email="sigaanext@gmail.com" fontSize="1.7rem" iconWidth="70px" fontSizeEmail="1.7rem">
-                        </Donate>
-                      </Collapse>
                       <CircularProgress style={{ alignSelf: "center", marginBottom: "1rem" }} />
                     </Box>
                   </CardBottom>
