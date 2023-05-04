@@ -16,22 +16,24 @@ function MyApp(props: AppProps): JSX.Element {
   const darkTheme = createTheme(dark);
   const [theme, setTheme] = React.useState(darkTheme);
   React.useEffect(() => {
-    if (forbiddenVersion) {
-      setTheme(forbiddenTheme);
-    } else {
-      setTheme(darkTheme);
-    }
-  }, [darkTheme, forbiddenTheme, forbiddenVersion]);
-  React.useEffect(() => {
     const forbiddenVersion = localStorage.getItem("forbiddenVersion");
     if (forbiddenVersion === "true") {
       setForbiddenVersion(true);
     } else {
       setForbiddenVersion(false);
     }
-  }, []);
+  }, [setForbiddenVersion]);
+  React.useEffect(() => {
+    localStorage.setItem("forbiddenVersion", forbiddenVersion.toString());
+    if (forbiddenVersion) {
+      setTheme(forbiddenTheme);
+    } else {
+      setTheme(darkTheme);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forbiddenVersion]);
   return (
-    <ForbiddenContext.Provider value={{forbiddenVersion, setForbiddenVersion}}>
+    <ForbiddenContext.Provider value={{ forbiddenVersion, setForbiddenVersion }}>
       <ThemeProvider theme={theme}>
         <SocketContext.Provider value={socketInstance}>
           <CssBaseline />
@@ -39,7 +41,7 @@ function MyApp(props: AppProps): JSX.Element {
         </SocketContext.Provider>
       </ThemeProvider>
     </ForbiddenContext.Provider>
-      );
+  );
 }
 
-      export default MyApp;
+export default MyApp;

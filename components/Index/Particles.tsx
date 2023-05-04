@@ -10,14 +10,19 @@ const useStyles = makeStyles({
     },
   },
 });
-
+interface IParticles {
+  disable: boolean;
+  colors: {
+    main: string;
+    "100": string;
+    "200": string;
+  };
+}
 export default function Particulas({
   disable,
-}: {
-  disable: boolean;
-}): JSX.Element {
+  colors
+}: IParticles): JSX.Element {
   const styles = useStyles();
-  const theme = useTheme() as Theme;
   
   return (
     <div style={{ width: "100%", height: "100%" }} className={styles.particles}>
@@ -55,7 +60,7 @@ export default function Particulas({
                   distance: 200,
                   lineLinked: {
                     blink: true,
-                    color: theme.palette.primary["100"],
+                    color: colors["100"],
                     consent: true,
                     opacity: 1,
                   },
@@ -68,10 +73,10 @@ export default function Particulas({
             },
             particles: {
               color: {
-                value: theme.palette.primary["200"],
+                value: colors["200"],
               },
               links: {
-                color: theme.palette.primary.main,
+                color: colors.main,
                 distance: 150,
                 enable: true,
                 opacity: 1,

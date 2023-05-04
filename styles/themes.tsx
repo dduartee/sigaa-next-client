@@ -1,7 +1,16 @@
 import { ThemeOptions } from "@material-ui/core/styles";
 const dark: ThemeOptions = {
   components: {
-    MuiButton: {
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#207e3f',
+          }
+        }
+      }
+    },
+    MuiToggleButton: {
       styleOverrides: {
         root: {
           '&.Mui-selected': {
@@ -31,6 +40,9 @@ const dark: ThemeOptions = {
     mode: "dark",
     primary: {
       main: "#207e3f",
+      "300": "#1f7e20",
+      "200": "#74b88b",
+      "100": "#25964a",
     },
     secondary: {
       main: "#c20020",

@@ -1,6 +1,6 @@
 import { courseTabs } from "@components/Home/CustomDrawer";
 import HomeProvider from "@components/HomeProvider";
-import Lessons from "@components/Index/Lessons/Content";
+import Lessons from "@components/Lessons/Content";
 import { SocketContext } from "@context/socket";
 import useTabHandler, { CourseTab } from "@hooks/useTabHandler";
 import useTokenHandler from "@hooks/useTokenHandler";

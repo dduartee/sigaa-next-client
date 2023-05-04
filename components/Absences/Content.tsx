@@ -13,7 +13,7 @@ import { Bond, Course } from "@types";
 import React from "react";
 import "moment-timezone";
 import { generateScheduleData } from "@components/Schedules/Content";
-import { formatDate } from "@components/Index/Lessons/Content";
+import { formatDate } from "@components/Lessons/Content";
 export default function Absences(props: { bond: Bond | null }) {
   const courses = props.bond?.courses ?? [];
   return (

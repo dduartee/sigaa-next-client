@@ -6,7 +6,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Collapse, Paper, Ty
 import { Course } from "@types";
 import { useEffect, useState } from "react";
 import { AccountTree, MenuBook, Equalizer, Timeline, Language, Help, } from "@material-ui/icons";
-import FormattedContent from "@components/Index/Lessons/FormattedContent";
+import FormattedContent from "@components/Lessons/FormattedContent";
 import moment from "moment";
 import InnerHTMLComponent from "@components/InnerHTMLComponent";
 import { isMobile } from "@syncfusion/ej2-react-schedule";
