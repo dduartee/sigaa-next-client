@@ -11,12 +11,17 @@ import { ForbiddenContext } from "@context/forbidden";
 
 function MyApp(props: AppProps): JSX.Element {
   const { Component, pageProps } = props;
-  const [forbiddenVersion, setForbiddenVersion] = React.useState(false);
+  const [forbiddenVersion, setForbiddenVersion] = React.useState(true);
   const forbiddenTheme = createTheme(forbidden);
   const darkTheme = createTheme(dark);
   const [theme, setTheme] = React.useState(darkTheme);
   React.useEffect(() => {
-    const forbiddenVersion = localStorage.getItem("forbiddenVersion");
+    if (localStorage.getItem("versaoProibida") === null) {
+      localStorage.setItem("versaoProibida", "true");
+    }
+  }, [])
+  React.useEffect(() => {
+    const forbiddenVersion = localStorage.getItem("versaoProibida");
     if (forbiddenVersion === "true") {
       setForbiddenVersion(true);
     } else {
@@ -24,7 +29,7 @@ function MyApp(props: AppProps): JSX.Element {
     }
   }, [setForbiddenVersion]);
   React.useEffect(() => {
-    localStorage.setItem("forbiddenVersion", forbiddenVersion.toString());
+    localStorage.setItem("versaoProibida", forbiddenVersion.toString());
     if (forbiddenVersion) {
       setTheme(forbiddenTheme);
     } else {
