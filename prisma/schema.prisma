@@ -7,11 +7,6 @@ generator client {
     provider = "prisma-client-js"
 }
 
-generator erd {
-    provider = "prisma-erd-generator"
-    output   = "./erd.pdf"
-}
-
 model Institution {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String   @unique
