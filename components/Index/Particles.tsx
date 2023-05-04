@@ -1,8 +1,6 @@
 import Particles from "react-tsparticles";
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
-import { useTheme } from "@emotion/react";
-import { Theme } from "@material-ui/system";
 const useStyles = makeStyles({
   particles: {
     "& div": {

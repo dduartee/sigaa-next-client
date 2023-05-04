@@ -42,7 +42,7 @@ function Index(): JSX.Element {
             width={"100vw"}
             height={"100vh"}
           >
-            <Particulas disable={!activeParticles} />
+            <Particulas disable={!activeParticles} colors={undefined as any} />
             <Box
               display={"flex"}
               alignContent={"center"}

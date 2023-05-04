@@ -26,10 +26,11 @@ import { formatFullName } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
 import { BondSelection } from "@components/BondSelection";
 import { BondSelectionButtons } from "@components/BondSelectionButtons";
-import { FormControlLabel, FormGroup, Skeleton, Switch } from "@material-ui/core";
 import { ForbiddenContext } from "@context/forbidden";
 import { useTheme } from "@emotion/react";
+import { Theme } from "@material-ui/system";
 import Logo from "@components/Logo";
+import { Switch } from "@material-ui/core";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -168,7 +169,13 @@ function Index(): JSX.Element {
             width={"100vw"}
             height={"100vh"}>
 
-            <Particulas disable={!activeParticles} colors={theme.palette.primary} />
+            <Particulas disable={!activeParticles} colors={
+              {
+                main: theme.palette.primary.main,
+                "100": theme.palette.primary["100"],
+                "200": theme.palette.primary["200"],
+              }
+            } />
             <Box display={"flex"}
               alignContent={"center"}
               justifyContent={"center"}
