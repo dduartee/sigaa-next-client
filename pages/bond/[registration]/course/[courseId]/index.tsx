@@ -38,12 +38,12 @@ export default function LessonsPage() {
   }, [courseId, registration, socket]);
   useEffect(() => {
     if (user?.fullName && registration && courseId) {
-        socket.on("lessons::list", (course: Course) => {
-          setCourse(course);
-          setLoading(false);
-        });
-        getLessons(true);
-      }
+      socket.on("lessons::list", (course: Course) => {
+        setCourse(course);
+        setLoading(false);
+      });
+      getLessons(true);
+    }
     return () => {
       socket.off("lessons::list");
     };

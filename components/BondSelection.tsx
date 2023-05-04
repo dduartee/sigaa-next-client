@@ -21,7 +21,7 @@ export function BondSelection(props: { registrationSelected: string; setRegistra
     </Typography>
     <Box sx={{
       maxHeight: "310px",
-      overflowInline: "auto"
+      overflowX: "hidden",
     }}>
       <ToggleButtonGroup
         exclusive

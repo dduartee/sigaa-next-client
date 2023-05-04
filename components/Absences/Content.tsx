@@ -75,8 +75,8 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
               Math.round(course.absences.max * 0.8) <= course.absences.total
                 ? "#FFFF00"
                 : course.absences.max == course.absences.total
-                ? "#FF0000"
-                : "#ff"
+                  ? "#FF0000"
+                  : "#ff"
             }
           >
             {course.absences.total}

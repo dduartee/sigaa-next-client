@@ -5,6 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
+import Logo from "@components/Logo";
 
 function ResponsiveDrawer({
   handler,
@@ -34,8 +35,8 @@ function ResponsiveDrawer({
               <MenuIcon fontSize="large" />
             </IconButton>
           </Box>
-          <Box padding={2} width="100%" textAlign={"center"}>
-            <img src="/img/logo.png" height="50rem" />
+          <Box padding={1} width="100%" textAlign={"center"}>
+            <Logo height={"60rem"} />
           </Box>
 
         </Toolbar>
