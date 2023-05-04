@@ -1,5 +1,5 @@
 import { CampusDTO } from "@DTOs/CampusDTO";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 import { CampusService } from "@services/sigaa/Campus";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Sigaa } from "sigaa-api";
@@ -14,7 +14,7 @@ export default async function Campuses(
 ) {
   const { institution: acronym } = request.query as Partial<CampusQuery>;
   if (!acronym) return response.status(400).json({ message: "Acronym required" });
-  const institution = await prismaInstance.institution.findUnique({
+  const institution = await prisma.institution.findUnique({
     where: { acronym },
   });
   if (!institution)
@@ -22,7 +22,7 @@ export default async function Campuses(
   const campuses = await loadCampuses(institution);
   response.status(200).json(campuses);
   for (const campus of campuses) {
-    await prismaInstance.campus.upsert({
+    await prisma.campus.upsert({
       where: { acronym: campus.acronym },
       update: {},
       create: {
@@ -40,7 +40,7 @@ export async function loadCampuses(institution: {
 }) {
   const sigaaInstance = new Sigaa({ url: institution.url });
   const campusService = new CampusService(sigaaInstance);
-  const campusesStored = await prismaInstance.campus.findMany({
+  const campusesStored = await prisma.campus.findMany({
     where: { Institution: { acronym: institution.acronym } },
     include: { Institution: true },
   });

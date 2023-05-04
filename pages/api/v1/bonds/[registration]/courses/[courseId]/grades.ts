@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { AuthenticationParams } from "../../../../auth/login";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 import { AuthService } from "@services/sigaa/Auth";
 import { ICourseDTOProps } from "@DTOs/CourseDTO";
 import { CourseService } from "@services/sigaa/Account/Bond/Course/Course";
 import logger from "@services/logger";
+import { SharedCourse } from "@prisma/client";
 
 interface QueryParams {
   registration: string;
@@ -29,7 +30,7 @@ export default async function Grades(
   if (!courseId)
     return response.status(400).send({ error: "CourseId is required" });
 
-  const storedSession = await prismaInstance.session.findUnique({
+  const storedSession = await prisma.session.findUnique({
     where: { token },
     select: { value: true },
   });
@@ -49,7 +50,7 @@ export default async function Grades(
    * assim como o SigaaRequestStack instanciado dentro dele
    */
   const http = sigaaInstance.httpFactory.createHttp();
-  const bondStored = await prismaInstance.bond.findUnique({
+  const bondStored = await prisma.bond.findUnique({
     where: { registration },
     select: {
       program: true,
@@ -63,9 +64,9 @@ export default async function Grades(
 
   logger.log("Grades", "Bond received", {});
 
-  const sharedCourse = await prismaInstance.sharedCourse.findUnique({
+  const sharedCourse = await prisma.sharedCourse.findUnique({
     where: { courseId },
-  });
+  }) as SharedCourse;
   if (!sharedCourse)
     return response.status(400).send({ error: "Invalid sharedCourse" });
   const courses = bondStored.Courses;

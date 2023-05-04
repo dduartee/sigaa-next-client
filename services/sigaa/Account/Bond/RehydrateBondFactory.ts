@@ -13,14 +13,14 @@ import {
 } from "sigaa-api";
 import { StudentBondWithAdditionalProps } from "./Bond";
 import { CampusDTO } from "@DTOs/CampusDTO";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 
 class RehydrateBondFactory {
   async addAdditionalPropsToBonds(bonds: StudentBond[], active: boolean) {
     logger.log("AccountService", "Adding additional props to bond", {});
     const bondsWithAdditionalProps: StudentBondWithAdditionalProps[] = [];
     for (const bond of bonds) {
-      const bondStored = await prismaInstance.bond.findUnique({
+      const bondStored = await prisma.bond.findUnique({
         where: { registration: bond.registration },
         include: { Campus: { include: { Institution: true } } },
       });
@@ -41,7 +41,7 @@ class RehydrateBondFactory {
         const campus = await bond.getCampus();
         const [name, acronymWithDate] = campus.split(" - ");
         const [acronym] = acronymWithDate.split(" ");
-        const institutionStored = await prismaInstance.campus.findUnique({
+        const institutionStored = await prisma.campus.findUnique({
           where: { acronym },
           include: { Institution: true },
         });

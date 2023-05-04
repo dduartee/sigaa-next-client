@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "next dev",
+    "postinstall": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --ext .ts,.tsx --fix ."

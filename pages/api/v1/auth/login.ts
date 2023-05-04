@@ -5,7 +5,7 @@ import { AuthService } from "@services/sigaa/Auth";
 import { v4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "@services/logger";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 // import { HashService } from "@services/Hash";
 
 export interface AuthenticationParams {
@@ -23,7 +23,7 @@ export default async function Login(
 ) {
   logger.log("Login", "Request received", {});
   const { username, password, sigaaURL, token } =
-   JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
+    JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
 
   if (!username) return response.status(400).send({ error: "Username is required" });
   if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
@@ -34,7 +34,7 @@ export default async function Login(
   const newToken = v4();
   if (token) {
     logger.log("Login", "Token received", token);
-    const storedSession = await prismaInstance.session.findUnique({
+    const storedSession = await prisma.session.findUnique({
       where: { token },
     });
     if (!storedSession)
@@ -48,7 +48,7 @@ export default async function Login(
     logger.log("Login", "Account service rehydrated", {});
     studentDTO = await getStudentDTO(accountService);
     session = storedSession.value;
-    await prismaInstance.session.update({
+    await prisma.session.update({
       where: { id: storedSession.id },
       data: { token: newToken },
     });
@@ -64,12 +64,12 @@ export default async function Login(
       ...studentJSON,
       passwordHash: "asdasdaskdoijoijoijoijehehhehehehehdgotcha"
     };
-    const createOrUpdateStudent = await prismaInstance.student.upsert({
+    const createOrUpdateStudent = await prisma.student.upsert({
       where: { username },
       update: studentInput,
       create: studentInput,
     });
-    await prismaInstance.session.upsert({
+    await prisma.session.upsert({
       where: { studentId: createOrUpdateStudent.id },
       update: { value: session, token: newToken },
       create: {

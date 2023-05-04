@@ -1,4 +1,4 @@
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import { loadCampuses } from "./campuses/[institution]";
 export type InstitutionData = {
@@ -15,7 +15,7 @@ export async function loadInstitutions() {
     },
   ];
   for (const institution of institutions) {
-    await prismaInstance.institution.upsert({
+    await prisma.institution.upsert({
       where: { acronym: institution.acronym },
       update: {},
       create: institution,
@@ -30,7 +30,7 @@ export default async function Institutions(
   const institutions = await loadInstitutions();
   for (const institution of institutions) {
     await loadCampuses(institution);
-    await prismaInstance.institution.upsert({
+    await prisma.institution.upsert({
       where: { acronym: institution.acronym },
       update: {},
       create: institution,

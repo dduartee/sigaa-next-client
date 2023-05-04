@@ -5,7 +5,7 @@ import { AuthenticationParams } from "../../auth/login";
 import { BondService } from "@services/sigaa/Account/Bond/Bond";
 import logger from "@services/logger";
 import RehydrateBondFactory from "@services/sigaa/Account/Bond/RehydrateBondFactory";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 import { ObjectId } from "bson";
 
 interface QueryParams {
@@ -26,7 +26,7 @@ export default async function Courses(
   const { registration } = request.query as Partial<QueryParams>;
   if (!registration) return response.status(400).send({ error: "Registration is required" });
   logger.log("Courses", "Token received", token);
-  const storedSession = await prismaInstance.session.findUnique({
+  const storedSession = await prisma.session.findUnique({
     where: { token },
     select: { value: true },
   });
@@ -42,7 +42,7 @@ export default async function Courses(
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;
   const http = httpFactory.createHttp();
-  const bondStored = await prismaInstance.bond.findUnique({
+  const bondStored = await prisma.bond.findUnique({
     where: { registration },
     select: {
       program: true,
@@ -74,7 +74,7 @@ export default async function Courses(
     .status(200)
     .send({ data: coursesDTOs.map((course) => course.toJSON()) });
   for (const courseDTO of coursesDTOs) {
-    const storedCourse = await prismaInstance.sharedCourse.findUnique({
+    const storedCourse = await prisma.sharedCourse.findUnique({
       where: { courseId: courseDTO.course.id },
     });
     if (storedCourse) {
@@ -83,7 +83,7 @@ export default async function Courses(
         storedCourse.schedule !== courseDTO.course.schedule ||
         storedCourse.numberOfStudents !== courseDTO.course.numberOfStudents
       ) {
-        await prismaInstance.sharedCourse.update({
+        await prisma.sharedCourse.update({
           where: { courseId: courseDTO.course.id },
           data: {
             period: courseDTO.course.period,
@@ -96,8 +96,8 @@ export default async function Courses(
       const sharedCourseId = new ObjectId().toString();
       const courseForm = courseDTO.course.getCourseForm();
       const postValues = JSON.stringify(courseForm.postValues);
-      await prismaInstance.$transaction([
-        prismaInstance.sharedCourse.create({
+      await prisma.$transaction([
+        prisma.sharedCourse.create({
           data: {
             id: sharedCourseId,
             courseId: courseDTO.course.id,
@@ -109,7 +109,7 @@ export default async function Courses(
             postValues
           },
         }),
-        prismaInstance.course.create({
+        prisma.course.create({
           data: {
             Bond: { connect: { registration } },
             SharedCourse: { connect: { id: sharedCourseId } },

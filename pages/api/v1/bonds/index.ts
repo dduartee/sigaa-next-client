@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { AuthenticationParams } from "../auth/login";
 import { BondDTO, IBondDTOProps } from "@DTOs/BondDTO";
 import logger from "@services/logger";
-import { prismaInstance } from "@lib/prisma";
+import { prisma } from "@lib/prisma";
 type RequestBody = AuthenticationParams;
 export default async function Bonds(
   request: NextApiRequest,
@@ -15,7 +15,7 @@ export default async function Bonds(
   if (!token) return response.status(400).send({ error: "Token is required" });
 
   logger.log("Bonds", "Token received", token);
-  const storedSession = await prismaInstance.session.findUnique({
+  const storedSession = await prisma.session.findUnique({
     where: { token },
     select: { value: true },
   });
@@ -42,7 +42,7 @@ export default async function Bonds(
   for (const bondDTO of bondsDTOs) {
     const bondSwitchUrl = bondDTO.bond.bondSwitchUrl || new URL("");
     const sequence = bondSwitchUrl.searchParams.get("vinculo") || ""; // ordem sequencial do vinculo
-    await prismaInstance.bond.upsert({
+    await prisma.bond.upsert({
       where: { registration: bondDTO.bond.registration },
       create: {
         program: bondDTO.bond.program,
