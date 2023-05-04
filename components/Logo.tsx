@@ -9,9 +9,9 @@ export default function Logo(props: { height: string}) {
     useEffect(() => {
         console.log({forbiddenVersion})
         if (forbiddenVersion) {
-            setLogoURL("/img/logoForbidden.png");
+            setLogoURL("/img/logoProibida.png");
         } else {
-            setLogoURL("/img/logo.png");
+            setLogoURL("/img/logoPermitida.png");
         }
     }, [forbiddenVersion]);
 
