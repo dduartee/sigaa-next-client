@@ -4,7 +4,20 @@ import { UserContext } from "@context/user";
 import HomeTemplate from "@templates/Home";
 import { Tab, UserData } from "@types";
 import React from "react";
-import NoSSR from "react-no-ssr";
+
+function NoSSR(props: { children: React.ReactNode }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return <>{props.children}</>;
+}
 
 export default function HomeProvider(props: {
   children: React.ReactNode;
