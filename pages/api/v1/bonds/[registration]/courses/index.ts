@@ -1,7 +1,7 @@
 import { CourseDTO, ICourseDTOProps } from "@DTOs/CourseDTO";
 import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "../../auth/login";
+import { AuthenticationParams } from "../../../auth/login";
 import { BondService } from "@services/sigaa/Account/Bond/Bond";
 import logger from "@services/logger";
 import RehydrateBondFactory from "@services/sigaa/Account/Bond/RehydrateBondFactory";
