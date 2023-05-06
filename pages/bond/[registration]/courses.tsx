@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
@@ -13,6 +12,7 @@ import Courses from "@components/Courses/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
 import { useRouter } from "next/router";
+import { Box } from "@mui/material";
 
 export default function CoursesPage() {
   const router = useRouter();

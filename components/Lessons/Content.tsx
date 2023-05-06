@@ -1,15 +1,5 @@
 import { Attachment } from "@components/Activities/Attachment";
 import { groupBy } from "@components/Grades/Content";
-import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@material-ui/core";
-import { ExpandMore } from "@material-ui/icons";
 import { Course, Lesson } from "@types";
 import moment from "moment";
 import "moment/locale/pt";
@@ -18,6 +8,8 @@ import Loading from "@components/Loading";
 import { useUpdatableResource } from "@hooks/useUpdatableResource";
 import { UpdateButton, UpdateInfo } from "@components/UpdatableResource";
 import FormattedContent from "./FormattedContent";
+import { ExpandMore } from "@mui/icons-material";
+import { Box, Typography, Paper, Button, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 export type LessonsProps = {
   course?: Course;
   loading: boolean;

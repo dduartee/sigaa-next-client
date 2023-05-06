@@ -1,16 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import NoSsr from "@material-ui/core/NoSsr";
-import Paper from "@material-ui/core/Paper";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Collapse from "@material-ui/core/Collapse";
-import Fade from "@material-ui/core/Fade";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import { AccountCircle, Lock, Send, ArrowBack, Info } from "@material-ui/icons";
 import { UserCredentials } from "@types";
 import Particulas from "@components/Index/Particles";
 import { SocketContext } from "@context/socket";
@@ -27,10 +15,10 @@ import { useRouter } from "next/router";
 import { BondSelection } from "@components/BondSelection";
 import { BondSelectionButtons } from "@components/BondSelectionButtons";
 import { ForbiddenContext } from "@context/forbidden";
-import { useTheme } from "@emotion/react";
-import { Theme } from "@material-ui/system";
 import Logo from "@components/Logo";
-import { Switch } from "@material-ui/core";
+import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperText, Grid, NoSsr, Paper, Switch, Typography } from "@mui/material";
+import { ArrowBack, AccountCircle, Info, Send, Lock } from "@mui/icons-material";
+import { useTheme } from "@mui/system";
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -146,7 +134,7 @@ function Index(): JSX.Element {
   const handleChangeForbiddenVersion = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForbiddenVersion(event.target.checked);
   };
-  const theme = useTheme() as Theme;
+  const theme = useTheme();
   return (
     <>
       <Head>
@@ -169,13 +157,7 @@ function Index(): JSX.Element {
             width={"100vw"}
             height={"100vh"}>
 
-            <Particulas disable={!activeParticles} colors={
-              {
-                main: theme.palette.primary.main,
-                "100": theme.palette.primary["100"],
-                "200": theme.palette.primary["200"],
-              }
-            } />
+            <Particulas disable={!activeParticles}/>
             <Box display={"flex"}
               alignContent={"center"}
               justifyContent={"center"}
@@ -195,7 +177,8 @@ function Index(): JSX.Element {
                   width: increaseBoxSize ? "97%" : "20rem",
                   maxWidth: "700px",
                   overflowY: increaseBoxSize ? "scroll" : "visible",
-                  height: "auto"
+                  height: "auto",
+                  zIndex: 1,
                 }}
               >
                 <Fade in={openHelp} timeout={500}>
@@ -255,7 +238,7 @@ function Index(): JSX.Element {
                 </Collapse>
 
 
-                {conditionals.userIsWaiting || openDonate ? ( // usuario esta "esperando" o login ou logout
+                {conditionals.userIsWaiting ? ( // usuario esta "esperando" o login ou logout
                   <CardBottom m={0}>
                     <Box p={2}>
                       <CircularProgress style={{ alignSelf: "center" }} />
@@ -263,14 +246,14 @@ function Index(): JSX.Element {
                   </CardBottom>
                 ) : null}
               </Paper>
-              <Box display="flex" flexDirection="column" alignItems={"center"} position="absolute" bottom="0" p={2}>
+              <Box display="flex" flexDirection="column" alignItems={"center"} position="absolute" bottom="0" p={2} zIndex={0}>
                 <Logo height="60rem" />
                 <Box display="flex" flexDirection={"row"} alignItems="center" >
                   <Switch
                     checked={forbiddenVersion}
                     onChange={handleChangeForbiddenVersion}
                   />
-                  <Typography color={forbiddenVersion ? "#ab1212" : "#fff"} fontSize={"1rem"}>Versão Proibida</Typography>
+                  <Typography color={theme.palette.primary['500']} fontSize={"1rem"}>Versão Proibida</Typography>
                 </Box>
               </Box>
             </Box>

@@ -1,15 +1,10 @@
 import React, { useContext } from "react";
 import { Bond, Course } from "@types";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Typography,
-} from "@material-ui/core";
+
 import { RegistrationContext } from "@context/registration";
 import { useRouter } from "next/router";
-import { ChevronRight } from "@material-ui/icons";
+import { ChevronRight } from "@mui/icons-material";
+import { Box, Typography, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 
 export default function Courses({
   bond,

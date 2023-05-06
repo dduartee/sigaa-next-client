@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Box, styled } from "@material-ui/core";
-import { Paper } from "@material-ui/core";
 import CustomDrawer from "@components/Home/CustomDrawer";
 import CustomNavBar from "@components/Home/CustomNavBar";
-import Toolbar from "@material-ui/core/Toolbar";
+import { styled } from "@mui/material/styles";
+import { Box, Toolbar, Paper } from "@mui/material";
 
 const StyledContent = styled(Box)(({ theme }) => ({
   width: "90%",

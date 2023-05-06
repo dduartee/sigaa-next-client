@@ -11,6 +11,9 @@ export class CourseService {
   course: SigaaCourseStudent | undefined;
   gradeGroupsDTOs: GradeGroupDTO[] | undefined;
   absences: AbsencesDTO | undefined;
+  setCourse(course: SigaaCourseStudent) {
+    this.course = course;
+  }
   /**
    * Parseia os dados da matéria do banco de dados para o tipo CourseStudentData
    * @param SharedCourse dados da matéria recuperados do banco de dados
@@ -50,7 +53,7 @@ export class CourseService {
       sigaa.http,
       sigaa.parser
     );
-    this.course = course;
+    this.setCourse(course);
     return course;
   }
   /**

@@ -1,18 +1,12 @@
 import React, { useEffect } from "react";
 import { Bond, Course } from "@types";
-import TableCell, { tableCellClasses } from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import { styled } from "@material-ui/core/styles";
-import {
-  TableContainer,
-  useMediaQuery,
-} from "@material-ui/core";
 import { DesktopTable } from "./Desktop/DesktopTable";
 import { MobileTable } from "./Mobile/MobileTable";
-
-export const StyledTableCell = styled(TableCell)(({ theme }) => ({
+import { styled, TableCell, tableCellClasses, TableContainer, TableRow, useMediaQuery } from "@mui/material";
+import { Theme } from "@mui/system"
+export const StyledTableCell = styled(TableCell)(({ theme }: {theme: Theme}) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.primary['900'],
     //backgroundColor: theme.palette.grey[900],
     color: theme.palette.common.white,
   },
@@ -23,7 +17,7 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    //backgroundColor: theme.palette.primary.main,
+    // backgroundColor: theme.palette.primary.main,
     backgroundColor: theme.palette.grey[900],
   },
   width: "100%",

@@ -1,15 +1,8 @@
-import React, { useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import NoSsr from "@material-ui/core/NoSsr";
-import Paper from "@material-ui/core/Paper";
-import Fade from "@material-ui/core/Fade";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import Particulas from "@components/Index/Particles";
+import React from "react";
 import Head from "next/head";
-import { Link } from "@material-ui/core";
+import { NoSsr, Fade, Grid, Box, Paper, Typography } from "@mui/material";
+import Link from "next/link";
 function Index(): JSX.Element {
-  const [activeParticles, setActiveParticles] = useState(false);
   return (
     <>
       <Head>
@@ -42,7 +35,6 @@ function Index(): JSX.Element {
             width={"100vw"}
             height={"100vh"}
           >
-            <Particulas disable={!activeParticles} colors={undefined as any} />
             <Box
               display={"flex"}
               alignContent={"center"}

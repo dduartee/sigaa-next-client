@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
-import {
-  Box, Collapse,
-  IconButton, TableBody, Typography
-} from "@material-ui/core";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { GradeGroup, SumOfGrades, WeightedAverage } from "@types";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { Box, IconButton, Collapse, Typography, TableBody } from "@mui/material";
 
 export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: string[]; index: string; }) {
   const { grades, index } = props;

@@ -1,119 +1,110 @@
 import Particles from "react-tsparticles";
-import React from "react";
-import { makeStyles } from "@material-ui/styles";
-const useStyles = makeStyles({
-  particles: {
-    "& div": {
-      height: "100%",
-    },
-  },
-});
+import React, { useEffect } from "react";
+import { useTheme } from "@mui/system";
+import { NoSsr } from "@mui/material";
+
 interface IParticles {
   disable: boolean;
-  colors: {
-    main: string;
-    "100": string;
-    "200": string;
-  };
 }
 export default function Particulas({
   disable,
-  colors
 }: IParticles): JSX.Element {
-  const styles = useStyles();
-  
+  const {palette} = useTheme();
+  const [cpuCores, setCpuCores] = React.useState<number>(1);
+  useEffect(() => {
+    setCpuCores(navigator.hardwareConcurrency || 1);
+  }, []);
   return (
-    <div style={{ width: "100%", height: "100%" }} className={styles.particles}>
-      {disable ? (
-        <></>
-      ) : (
-        <Particles
-          style={{ height: "100%" }}
-          options={{
-            background: {
-              color: {
-                value: "#212121",
-              },
-            },
-            fpsLimit: 45,
-            interactivity: {
-              detectsOn: "window",
-              events: {
-                onClick: {
-                  enable: true,
-                  mode: "repulse",
+    <NoSsr>
+      <div style={{ width: "100%", height: "100%" }}>
+        {disable ? (
+          <></>
+        ) : (
+          <Particles
+            style={{ height: "100%" }}
+            options={{
+              background: {
+                color: {
+                  value: "#212121",
                 },
-                onHover: {
-                  enable: true,
-                  mode: "grab",
-                  parallax: {
+              },
+              fpsLimit: cpuCores < 2 ? 45 : 60,
+              interactivity: {
+                detectsOn: "window",
+                events: {
+                  onHover: {
                     enable: true,
-                    smooth: 100,
+                    mode: "grab",
+                    parallax: {
+                      enable: true,
+                      force: 5,
+                      smooth: 100,
+                    }
+                  },
+                  resize: true,
+                },
+                modes: {
+                  grab: {
+                    distance: 200,
+                    lineLinked: {
+                      blink: true,
+                      color: palette.primary["500"],
+                      consent: true,
+                      opacity: 1,
+                    },
+                  },
+                  repulse: {
+                    distance: 250,
+                    duration: 2,
                   },
                 },
-                resize: true,
               },
-              modes: {
-                grab: {
-                  distance: 200,
-                  lineLinked: {
-                    blink: true,
-                    color: colors["100"],
-                    consent: true,
-                    opacity: 1,
-                  },
+              particles: {
+                color: {
+                  value: palette.primary["300"],
                 },
-                repulse: {
-                  distance: 250,
-                  duration: 2,
-                },
-              },
-            },
-            particles: {
-              color: {
-                value: colors["200"],
-              },
-              links: {
-                color: colors.main,
-                distance: 150,
-                enable: true,
-                opacity: 1,
-                width: 1,
-              },
-              collisions: {
-                enable: true,
-                mode: "bounce",
-              },
-              move: {
-                direction: "none",
-                enable: true,
-                outMode: "bounce",
-                random: false,
-                speed: 3,
-                straight: true,
-              },
-              number: {
-                density: {
+                links: {
+                  color: palette.primary["900"],
+                  distance: 150,
                   enable: true,
-                  value_area: 100,
+                  opacity: 1,
+                  width: 1,
                 },
-                value: 5,
+                collisions: {
+                  enable: true,
+                  mode: "bounce",
+                },
+                move: {
+                  direction: "none",
+                  enable: true,
+                  outMode: "bounce",
+                  random: true,
+                  speed: 4,
+                  straight: true,
+                },
+                number: {
+                  density: {
+                    enable: true,
+                    value_area: 100,
+                  },
+                  value: cpuCores < 2 ? 3 : 6,
+                },
+                opacity: {
+                  value: 1,
+                },
+                shape: {
+                  type: "circle",
+                },
+                size: {
+                  random: true,
+                  value: 7,
+                },
               },
-              opacity: {
-                value: 1,
-              },
-              shape: {
-                type: "circle",
-              },
-              size: {
-                random: true,
-                value: 7,
-              },
-            },
-            detectRetina: true,
-          }}
-        />
-      )}
-    </div>
+              detectRetina: true,
+            }}
+          />
+        )}
+      </div>
+    </NoSsr>
   );
 }

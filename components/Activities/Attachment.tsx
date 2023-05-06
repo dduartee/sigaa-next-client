@@ -1,21 +1,21 @@
-import React from "react";
-import { Attachments } from "@types";
 import {
-  Button, Link,
-  Typography
-} from "@material-ui/core";
-import DescriptionIcon from "@material-ui/icons/Description";
-import LinkIcon from "@material-ui/icons/Link";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import ForumIcon from "@material-ui/icons/Forum";
-import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
-import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
-import { useTheme } from "@emotion/react";
-import { Theme } from "@material-ui/system";
+  Description,
+  Link as LinkIcon,
+  Assignment as AssignmentIcon,
+  Forum as ForumIcon,
+  VideoLibrary as VideoLibraryIcon,
+  FormatListNumbered as FormatListNumberedIcon,
+} from "@mui/icons-material";
+import { Button, Typography } from "@mui/material";
+import { useTheme } from "@mui/system";
+import { Attachments } from "@types";
+import Link from "next/link";
+import React from "react";
+
 
 export function Attachment(props: { attachment: Attachments; }) {
-  const theme = useTheme() as Theme;
   const { attachment } = props;
+  const theme = useTheme();
   const frase = attachment.title.split(" ").length > 1;
   const sigaaURL = "https://sigaa.ifsc.edu.br";
   switch (attachment.type) {
@@ -25,9 +25,9 @@ export function Attachment(props: { attachment: Attachments; }) {
           variant="outlined"
           href={`${sigaaURL}/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
           target="_blank"
-          style={{ color: theme.palette.primary["300"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
         >
-          <DescriptionIcon />
+          <Description />
           <Typography
             gutterBottom={false}
             marginLeft={".3rem"}
@@ -45,13 +45,13 @@ export function Attachment(props: { attachment: Attachments; }) {
         <Typography
           gutterBottom={false}
           marginLeft={".3rem"}
-          style={{ color: theme.palette.primary["300"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
         >
           <LinkIcon />
           <Link
             href={attachment.href}
             target="_blank"
-            style={{ color: theme.palette.primary["300"] }}
+            style={{ color: theme.palette.primary["800"] }}
           >
             <Typography gutterBottom={false} marginLeft={".3rem"}>
               Link: {attachment.title}
@@ -91,7 +91,7 @@ export function Attachment(props: { attachment: Attachments; }) {
           variant="outlined"
           href={attachment.src}
           target="_blank"
-          style={{ color: theme.palette.primary["300"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
         >
           <VideoLibraryIcon />
           <Typography gutterBottom={false} marginLeft={".3rem"}>
@@ -118,7 +118,7 @@ export function Attachment(props: { attachment: Attachments; }) {
           variant="outlined"
           href={attachment.href}
           target="_blank"
-          style={{ color: theme.palette.primary["300"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
         >
           <LinkIcon />
           <Typography gutterBottom={false} marginLeft={".3rem"}>

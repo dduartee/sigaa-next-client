@@ -1,34 +1,22 @@
-import * as React from "react";
-import Box from "@material-ui/core/Box";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import Toolbar from "@material-ui/core/Toolbar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
-import HowToRegIcon from "@material-ui/icons/HowToReg";
-import { Group, Home } from "@material-ui/icons";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Avatar, IconButton, Menu, Typography } from "@material-ui/core";
+import React from "react";
 import { UserContext } from "@context/user";
 import { Tab as TabType } from "@types";
 import { LoadingContext } from "@context/loading";
-import DvrIcon from '@material-ui/icons/Dvr';
-import ImportContactsIcon from '@material-ui/icons/ImportContacts';
+import { Dvr, ImportContacts, ArrowBack, Home, Group, CalendarToday, Equalizer, HowToReg } from "@mui/icons-material";
+import { Box, Toolbar, IconButton, Avatar, Menu, Typography, List, Tabs, Tab, CssBaseline, Drawer } from "@mui/material";
+import { useTheme } from '@mui/system'
 export const courseTabs = [
   {
     label: "Tópicos de aula",
-    icon: <DvrIcon />
+    icon: <Dvr />
   },
   {
     label: "Plano de ensino",
-    icon: <ImportContactsIcon />,
+    icon: <ImportContacts />,
   },
   {
     label: "Voltar",
-    icon: <ArrowBackIcon />,
+    icon: <ArrowBack />,
   }
 ]
 export const bondTabs = [
@@ -38,11 +26,11 @@ export const bondTabs = [
   },
   {
     label: "Notas",
-    icon: <EqualizerIcon />,
+    icon: <Equalizer />,
   },
   {
     label: "Frequência",
-    icon: <HowToRegIcon />,
+    icon: <HowToReg />,
   },
   {
     label: "Turmas",
@@ -50,11 +38,11 @@ export const bondTabs = [
   },
   {
     label: "Horários",
-    icon: <CalendarTodayIcon />,
+    icon: <CalendarToday />,
   },
   {
     label: "Sair",
-    icon: <ArrowBackIcon />,
+    icon: <ArrowBack />,
     bottom: true,
   },
 ];
@@ -84,6 +72,7 @@ function ResponsiveDrawer({
   tabSelected: number;
   tabs: TabType[];
 }) {
+  const {palette} = useTheme();
   const user = React.useContext(UserContext);
   const loading = React.useContext(LoadingContext);
   const [anchorEl, setAnchorEl] = React.useState<
@@ -140,6 +129,9 @@ function ResponsiveDrawer({
                 position: tab.bottom ? "absolute" : "relative",
                 bottom: "0px",
                 width: "99px",
+                '&.Mui-selected': {
+                  backgroundColor: palette.primary['900'],
+                }
               }}
             />
           ))}

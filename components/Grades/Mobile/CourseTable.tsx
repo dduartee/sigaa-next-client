@@ -1,9 +1,9 @@
 import React from "react";
 import { Course } from "@types";
-import { Box, TableBody, TableHead } from "@material-ui/core";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { GradeRowMobile } from "./GradeRowMobile";
+import { Box, TableHead, TableBody } from "@mui/material";
 
 export function CourseTable(props: { course: Course; gradesIndex: string[]; }): JSX.Element {
   const { course, gradesIndex } = props;

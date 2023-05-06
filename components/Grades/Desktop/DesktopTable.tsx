@@ -1,10 +1,9 @@
 import React from "react";
 import { Course } from "@types";
-import TableBody from "@material-ui/core/TableBody";
-import TableHead from "@material-ui/core/TableHead";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { Period } from "./Period";
 import { StyledTableRow, StyledTableCell } from "../Content";
+import { TableHead, TableBody } from "@mui/material";
 
 export function DesktopTable(props: { gradesIndex: string[]; periods: string[] | undefined; coursesByPeriod: Map<string, Course[]>; }) {
   const { gradesIndex, periods, coursesByPeriod } = props;

@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import { Box } from "@material-ui/core";
 import Head from "next/head";
 import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
@@ -11,6 +10,7 @@ import useAbsencesEvents from "@hooks/courses/useAbsencesEvents";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
 import { useRouter } from "next/router";
+import { Box } from "@mui/material";
 
 export default function GradesPage() {
   const router = useRouter();

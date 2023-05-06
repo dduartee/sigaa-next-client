@@ -1,5 +1,5 @@
 import { ForbiddenContext } from "@context/forbidden"
-import { Box } from "@material-ui/core"
+import { Box } from "@mui/material";
 import React, { useState, useContext, useEffect } from "react"
 
 export default function Logo(props: { height: string}) {
@@ -7,7 +7,6 @@ export default function Logo(props: { height: string}) {
     const { forbiddenVersion } = useContext(ForbiddenContext);
     const [logoURL, setLogoURL] = useState("");
     useEffect(() => {
-        console.log({forbiddenVersion})
         if (forbiddenVersion) {
             setLogoURL("/img/logoProibida.png");
         } else {

@@ -1,4 +1,4 @@
-import { Box, Switch, Typography } from "@material-ui/core";
+import { Box, Typography, Switch } from "@mui/material";
 import React, { useEffect } from "react";
 import { PixIcon } from "./Donate";
 export function Ajuda(props: { setActiveParticles: (value: boolean) => void, activeParticles: boolean }) {

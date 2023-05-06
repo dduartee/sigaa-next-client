@@ -21,17 +21,7 @@ export default async function Campuses(
     return response.status(404).json({ message: "Institution not found" });
   const campuses = await loadCampuses(institution);
   response.status(200).json(campuses);
-  for (const campus of campuses) {
-    await prisma.campus.upsert({
-      where: { acronym: campus.acronym },
-      update: {},
-      create: {
-        name: campus.name,
-        acronym: campus.acronym,
-        Institution: { connect: { acronym: institution.acronym } },
-      },
-    });
-  }
+  
 }
 
 export async function loadCampuses(institution: {
@@ -50,5 +40,16 @@ export async function loadCampuses(institution: {
     );
   }
   const campuses = await campusService.getListCampus();
+  for (const campus of campuses) {
+    await prisma.campus.upsert({
+      where: { acronym: campus.acronym },
+      update: {},
+      create: {
+        name: campus.name,
+        acronym: campus.acronym,
+        Institution: { connect: { acronym: institution.acronym } },
+      },
+    });
+  }
   return campuses;
 }

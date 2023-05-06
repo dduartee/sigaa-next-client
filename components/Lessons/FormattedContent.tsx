@@ -1,6 +1,6 @@
-import { Typography } from "@material-ui/core";
 import React from "react";
 import InnerHTMLComponent from "@components/InnerHTMLComponent";
+import { Typography } from "@mui/material";
 
 export default function FormattedContent(props: { children: React.ReactNode }): JSX.Element {
   const urlify = (text: string) => {

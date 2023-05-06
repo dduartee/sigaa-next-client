@@ -2,14 +2,15 @@ import React from "react";
 import Loading from "@components/Loading";
 import { UpdateButton, UpdateInfo } from "@components/UpdatableResource";
 import { useUpdatableResource } from "@hooks/useUpdatableResource";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Collapse, Paper, Typography } from "@material-ui/core";
 import { Course } from "@types";
 import { useEffect, useState } from "react";
-import { AccountTree, MenuBook, Equalizer, Timeline, Language, Help, } from "@material-ui/icons";
 import FormattedContent from "@components/Lessons/FormattedContent";
 import moment from "moment";
 import InnerHTMLComponent from "@components/InnerHTMLComponent";
 import { isMobile } from "@syncfusion/ej2-react-schedule";
+import { AccountTree, Timeline, Help, Equalizer, MenuBook, Language } from "@mui/icons-material";
+import { Box, Typography, Paper, Accordion, AccordionSummary, AccordionDetails, Collapse } from "@mui/material";
+import { useTheme } from '@mui/system'
 
 export type SyllabusDay = {
     description: string;
@@ -78,12 +79,12 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                             <>
                                 <Box mt={1}>
                                     <Paper elevation={2} sx={{ padding: ".5rem", maxWidth: "1000px", margin: ".5rem" }}>
-                                        <AccordionTopicSyllabus title={"Metodologia"} icon={<AccountTree />} defaultExpanded={!isMobile()}>
+                                        <AccordionTopicSyllabus title={"Metodologia"} icon={<AccountTree />} >
                                             <FormattedContent>
                                                 {props.course.syllabus.methods}
                                             </FormattedContent>
                                         </AccordionTopicSyllabus>
-                                        <AccordionTopicSyllabus title={"Procedimentos de avaliação"} icon={<Timeline />}>
+                                            <AccordionTopicSyllabus title={"Procedimentos de avaliação"} icon={<Timeline />} defaultExpanded={!isMobile()}>
                                             <FormattedContent>
                                                 {props.course.syllabus.assessmentProcedures}
                                             </FormattedContent>
@@ -153,8 +154,12 @@ function ReferenceComponent(props: { reference: SyllabusReference }): JSX.Elemen
 }
 
 export function AccordionTopicSyllabus(props: { title: string; children: React.ReactNode; icon: JSX.Element; defaultExpanded?: boolean }) {
+    const theme = useTheme();
     return <Accordion defaultExpanded={props.defaultExpanded}>
-        <AccordionSummary sx={{ flexDirection: "row-reverse" }} expandIcon={props.icon}>
+        <AccordionSummary sx={{
+            flexDirection: "row-reverse",
+            backgroundColor: theme.palette.primary[900],
+        }} expandIcon={props.icon}>
             <Typography m={1}>{props.title}</Typography>
         </AccordionSummary>
         <AccordionDetails>
