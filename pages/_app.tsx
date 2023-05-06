@@ -1,13 +1,11 @@
 import * as React from "react";
 import { AppProps } from "next/app";
-import { ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { createTheme } from "@material-ui/core/styles";
 import { dark, forbidden } from "@styles/themes";
 import "@styles/global.css";
 import "@styles/material-dark.min.css"
 import { SocketContext, socketInstance } from "@context/socket";
 import { ForbiddenContext } from "@context/forbidden";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 function MyApp(props: AppProps): JSX.Element {
   const { Component, pageProps } = props;
@@ -21,8 +19,8 @@ function MyApp(props: AppProps): JSX.Element {
     }
   }, [])
   React.useEffect(() => {
-    const forbiddenVersion = localStorage.getItem("versaoProibida");
-    if (forbiddenVersion === "true") {
+    const storedForbiddenVersion = localStorage.getItem("versaoProibida");
+    if (storedForbiddenVersion === "true") {
       setForbiddenVersion(true);
     } else {
       setForbiddenVersion(false);
@@ -35,7 +33,8 @@ function MyApp(props: AppProps): JSX.Element {
     } else {
       setTheme(darkTheme);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log({forbiddenVersion})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forbiddenVersion]);
   return (
     <ForbiddenContext.Provider value={{ forbiddenVersion, setForbiddenVersion }}>

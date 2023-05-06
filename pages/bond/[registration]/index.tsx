@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "@context/socket";
 import useTokenHandler from "@hooks/useTokenHandler";
-import { Box } from "@material-ui/core";
 import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
@@ -12,6 +11,7 @@ import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
+import { Box } from "@mui/material";
 
 export default function RegistrationPage() {
   const router = useRouter();

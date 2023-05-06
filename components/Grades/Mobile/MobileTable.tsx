@@ -1,9 +1,9 @@
 import React from "react";
 import { Course } from "@types";
-import { TableBody, TableHead } from "@material-ui/core";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { PeriodMobile } from "./PeriodMobile";
+import { TableHead, TableBody } from "@mui/material";
 
 /**
  * Uma tabela para cada matéria, com o index a esquerda e o nome da matéria no head

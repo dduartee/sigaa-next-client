@@ -1,7 +1,7 @@
 import React from "react";
 import { UpdateHook } from "@hooks/useUpdatableResource";
-import { Button, Typography } from "@material-ui/core";
 import { getFriendlyDateString } from "./Lessons/Content";
+import { Button, Typography } from "@mui/material";
 export type UpdateButtonProps = {
     updateHook: UpdateHook,
     update: () => void;

@@ -1,6 +1,5 @@
+import { TextFieldProps, TextField, Grid } from "@mui/material";
 import React from "react";
-import { TextField, TextFieldProps } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
 function Input(props: TextFieldProps) {
   return <TextField {...props} variant="standard" fullWidth />;
 }

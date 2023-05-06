@@ -1,15 +1,10 @@
 import React from "react";
 import { Course } from "@types";
-import TableBody from "@material-ui/core/TableBody";
-import TableHead from "@material-ui/core/TableHead";
-import {
-  Box, Collapse,
-  IconButton, Typography
-} from "@material-ui/core";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { CourseRow } from "./CourseRow";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { IconButton, Typography, Collapse, Box, TableHead, TableBody } from "@mui/material";
 
 export function Period({
   period, coursesByPeriod, gradesIndex,

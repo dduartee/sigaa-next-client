@@ -1,11 +1,7 @@
 import * as React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Box from "@material-ui/core/Box";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import Toolbar from "@material-ui/core/Toolbar";
 import Logo from "@components/Logo";
+import { Box, CssBaseline, AppBar, Toolbar, IconButton } from "@mui/material";
+import { Menu } from "@mui/icons-material";
 
 function ResponsiveDrawer({
   handler,
@@ -25,17 +21,17 @@ function ResponsiveDrawer({
         }}
       >
         <Toolbar sx={{justifyContent: "space-between"}}>
-          <Box >
+          <Box position={"absolute"}>
             <IconButton
               color="inherit"
               edge="start"
               sx={{ mr: 0, display: { sm: "none" } }}
               onClick={handler}
             >
-              <MenuIcon fontSize="large" />
+              <Menu fontSize="large" />
             </IconButton>
           </Box>
-          <Box padding={1} width="100%" textAlign={"center"}>
+          <Box padding={1} pt={2} width="100%" textAlign={"center"}>
             <Logo height={"60rem"} />
           </Box>
 

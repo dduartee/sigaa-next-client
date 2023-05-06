@@ -1,12 +1,7 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import NoSsr from "@material-ui/core/NoSsr";
-import Paper from "@material-ui/core/Paper";
-import Fade from "@material-ui/core/Fade";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import Head from "next/head";
-import { Link } from "@material-ui/core";
+import { NoSsr, Fade, Grid, Box, Paper, Typography } from "@mui/material";
+import Link from "next/link";
 function Index(): JSX.Element {
   return (
     <>

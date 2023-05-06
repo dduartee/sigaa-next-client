@@ -1,31 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Activity, Attachments, Bond, Course, File, Homework } from "@types";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  CircularProgress,
-  Collapse,
-  Link,
-  Typography,
-} from "@material-ui/core";
 import { RegistrationContext } from "@context/registration";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import { SocketContext } from "@context/socket";
-import DescriptionIcon from "@material-ui/icons/Description";
-import LinkIcon from "@material-ui/icons/Link";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import ForumIcon from "@material-ui/icons/Forum";
-import VideoLibraryIcon from "@material-ui/icons/VideoLibrary";
-import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
-import MoreIcon from "@material-ui/icons/More";
 import { formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading";
 import moment from "moment-timezone";
 import FormattedContent from "@components/Lessons/FormattedContent";
+import { SocketContext } from "@context/socket";
+import { ExpandMore,
+  More as MoreIcon,
+  Assignment as AssignmentIcon,
+  Forum as ForumIcon,
+  Link as LinkIcon,
+  Description as DescriptionIcon,
+  VideoLibrary as VideoLibraryIcon,
+  FormatListNumbered as FormatListNumberedIcon,
+ } from "@mui/icons-material";
+import { Box, Typography, Button, Collapse, Accordion, AccordionSummary, AccordionDetails, CircularProgress } from "@mui/material";
+import Link from "next/link";
 
 export default function Activities({
   bond,

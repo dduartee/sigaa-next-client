@@ -1,4 +1,5 @@
-import { Box, Grid, Link, Typography } from "@material-ui/core";
+import { Grid, Box, Typography } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 
 export default function QRCode() {
@@ -27,11 +28,11 @@ export default function QRCode() {
           <Typography variant={"h4"}>
             ou acesse:{" "}
             <Link
-              href={"https://sigaa-next-client.vercel.app/"}
+              href={"https://www.sigaanext.com.br/"}
               target="_blank"
               style={{ color: "#32A041" }}
             >
-              sigaa-next-client.vercel.app/
+            www.sigaanext.com.br
             </Link>
           </Typography>
         </Box>

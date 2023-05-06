@@ -1,4 +1,4 @@
-import { Grid, GridProps } from "@material-ui/core";
+import { GridProps, Grid } from "@mui/material";
 import React from "react";
 
 function CardHeader(props: GridProps) {

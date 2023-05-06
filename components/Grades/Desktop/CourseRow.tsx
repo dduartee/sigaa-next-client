@@ -1,14 +1,8 @@
 import React, { useEffect } from "react";
 import { Course, SumOfGrades, WeightedAverage } from "@types";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableHead from "@material-ui/core/TableHead";
-import {
-  Box, Collapse,
-  IconButton, Typography
-} from "@material-ui/core";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import { StyledTableRow, StyledTableCell } from "../Content";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { IconButton, Collapse, Box, Typography, Table, TableHead, TableBody } from "@mui/material";
 
 export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
   const { course, gradesIndex } = props;

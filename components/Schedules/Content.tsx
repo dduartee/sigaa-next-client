@@ -1,5 +1,5 @@
 import { RegistrationContext } from "@context/registration";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import { Day, Week, Schedule, isMobile } from "@syncfusion/ej2-react-schedule";
 import { Bond, Course } from "@types";
 import moment from "moment";

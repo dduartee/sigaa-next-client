@@ -1,19 +1,12 @@
 import { StyledTableRow, StyledTableCell } from "@components/Grades/Content";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
-import {
-  Box,
-  Collapse,
-  IconButton,
-  TableBody,
-  TableHead,
-  Typography,
-} from "@material-ui/core";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import { Bond, Course } from "@types";
 import React from "react";
 import "moment-timezone";
 import { generateScheduleData } from "@components/Schedules/Content";
 import { formatDate } from "@components/Lessons/Content";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { Box, TableHead, TableBody, IconButton, Typography, Collapse } from "@mui/material";
 export default function Absences(props: { bond: Bond | null }) {
   const courses = props.bond?.courses ?? [];
   return (

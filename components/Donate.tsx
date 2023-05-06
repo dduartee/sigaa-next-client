@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@material-ui/core"
+import { Box, Typography, Button } from "@mui/material";
 import React from "react"
 export function Donate(props: { email: string, fontSize: string, fontSizeEmail: string, iconWidth: string, children?: React.ReactNode }) {
     const frases = [

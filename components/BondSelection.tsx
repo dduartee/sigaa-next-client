@@ -1,9 +1,7 @@
 import React from "react";
-import ToggleButton from "@material-ui/core/ToggleButton";
-import ToggleButtonGroup from "@material-ui/core/ToggleButtonGroup";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import { Bond } from "@types";
+import { Typography, Box, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { useTheme } from "@mui/system";
 
 export function BondSelection(props: { registrationSelected: string; setRegistrationSelected: (registration: string) => void; bonds: Bond[]; }) {
   const { registrationSelected, setRegistrationSelected, bonds } = props;
@@ -15,6 +13,7 @@ export function BondSelection(props: { registrationSelected: string; setRegistra
   };
   const activeBonds = bonds.filter(bond => bond.active);
   const inactiveBonds = bonds.filter(bond => !bond.active);
+  const {palette} = useTheme();
   return (<>
     <Typography textAlign={"center"} margin={2}>
       Escolha um vínculo para acessar
@@ -49,7 +48,7 @@ export function BondSelection(props: { registrationSelected: string; setRegistra
             <ToggleButton
               key={index}
               value={bond.registration}
-              style={{
+              sx={{
                 marginLeft: "1rem",
                 marginRight: "1rem",
                 marginBottom: ".5rem",

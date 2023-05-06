@@ -1,12 +1,9 @@
 import React from "react";
 import { Course } from "@types";
-import {
-  Collapse,
-  IconButton, Typography
-} from "@material-ui/core";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { CourseTable } from "./CourseTable";
+import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { IconButton, Typography, Collapse } from "@mui/material";
 
 export function PeriodMobile(props: {
   period: string;
