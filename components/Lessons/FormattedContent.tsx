@@ -1,14 +1,16 @@
 import React from "react";
 import InnerHTMLComponent from "@components/InnerHTMLComponent";
 import { Typography } from "@mui/material";
+import { useTheme } from "@mui/system";
 
 export default function FormattedContent(props: { children: React.ReactNode }): JSX.Element {
+  const theme = useTheme();
   const urlify = (text: string) => {
     const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\\/%?=~_|!:,.;]*[-A-Z0-9+&@#\\/%=~_|])/gi;
     return (
       <InnerHTMLComponent>
         {text.replace(urlRegex, function (url) {
-          return `<a href="${url}" target="_blank" style="color: #32A041">${url}</a>`;
+          return `<a href="${url}" target="_blank" style="color: ${theme.palette.primary[600]}">${url}</a>`;
         })}
       </InnerHTMLComponent>
     );

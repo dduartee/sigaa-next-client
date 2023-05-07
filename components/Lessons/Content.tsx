@@ -34,6 +34,7 @@ export default function Lessons(props: LessonsProps) {
       setLessonsByMonth(lessonsByMonth);
       const lessonsByMonthKeys = Array.from(lessonsByMonth.keys());
       setMonths(lessonsByMonthKeys);
+      // TODO: se tiver mais que 6 tópicos de aula e se já for mês 6 ou mais pra frente, inverte  a ordem dos meses
     }
   }, [props.course, props.course?.lessons]);
   const updateHook = useUpdatableResource<Course>(props.course);
