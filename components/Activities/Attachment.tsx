@@ -23,9 +23,9 @@ export function Attachment(props: { attachment: Attachments; }) {
       return (
         <Button
           variant="outlined"
-          href={`${sigaaURL}/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`}
+          href={`${new URL(attachment.downloadPath, sigaaURL) }`}
           target="_blank"
-          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["700"], display: "flex", alignItems: "center", height: "100%" }}
         >
           <Description />
           <Typography
@@ -36,7 +36,7 @@ export function Attachment(props: { attachment: Attachments; }) {
               lineBreak: frase ? "auto" : "anywhere",
             }}
           >
-            Anexo: <span>{attachment.title}</span>
+            Anexo: {attachment.title}
           </Typography>
         </Button>
       );
@@ -45,16 +45,16 @@ export function Attachment(props: { attachment: Attachments; }) {
         <Typography
           gutterBottom={false}
           marginLeft={".3rem"}
-          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["600"], display: "flex", alignItems: "center" }}
         >
           <LinkIcon />
           <Link
             href={attachment.href}
             target="_blank"
-            style={{ color: theme.palette.primary["800"] }}
+            style={{ color: theme.palette.primary["600"] }}
           >
             <Typography gutterBottom={false} marginLeft={".3rem"}>
-              Link: {attachment.title}
+              {attachment.title}
             </Typography>
           </Link>
         </Typography>
@@ -63,7 +63,7 @@ export function Attachment(props: { attachment: Attachments; }) {
       return (
         <Button
           variant="contained"
-          href={`#`}
+          onClick={() => alert("Para acessar e submeter essa tarefa, acesse o SIGAA. :)")}
           style={{ color: "#fff", display: "flex", alignItems: "center" }}
         >
           <AssignmentIcon />
@@ -76,7 +76,7 @@ export function Attachment(props: { attachment: Attachments; }) {
       return (
         <Button
           variant="contained"
-          href={`#`}
+          onClick={() => alert("Para acessar esse fórum, acesse o SIGAA. :)")}
           style={{ color: "#fff", display: "flex", alignItems: "center" }}
         >
           <ForumIcon />
@@ -91,7 +91,7 @@ export function Attachment(props: { attachment: Attachments; }) {
           variant="outlined"
           href={attachment.src}
           target="_blank"
-          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["700"], display: "flex", alignItems: "center" }}
         >
           <VideoLibraryIcon />
           <Typography gutterBottom={false} marginLeft={".3rem"}>
@@ -103,7 +103,7 @@ export function Attachment(props: { attachment: Attachments; }) {
       return (
         <Button
           variant="contained"
-          href={``}
+          onClick={() => alert("Para realizar esse questionário, acesse o SIGAA. \nBoa sorte. :)")}
           style={{ color: "#fff", display: "flex", alignItems: "center" }}
         >
           <FormatListNumberedIcon />
@@ -118,11 +118,11 @@ export function Attachment(props: { attachment: Attachments; }) {
           variant="outlined"
           href={attachment.href}
           target="_blank"
-          style={{ color: theme.palette.primary["800"], display: "flex", alignItems: "center" }}
+          style={{ color: theme.palette.primary["500"], display: "flex", alignItems: "center" }}
         >
           <LinkIcon />
           <Typography gutterBottom={false} marginLeft={".3rem"}>
-            {attachment.title}
+            Link: {attachment.title}
           </Typography>
         </Button>
       );

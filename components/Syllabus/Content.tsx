@@ -78,7 +78,7 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                         {props.course.syllabus ? (
                             <>
                                 <Box mt={1}>
-                                    <Paper elevation={2} sx={{ padding: ".5rem", maxWidth: "1000px", margin: ".5rem" }}>
+                                    <Paper elevation={2} sx={{  maxWidth: "1000px", margin: ".5rem" }}>
                                         <AccordionTopicSyllabus title={"Metodologia"} icon={<AccountTree />} >
                                             <FormattedContent>
                                                 {props.course.syllabus.methods}
@@ -92,7 +92,7 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                                     </Paper>
                                 </Box>
                                 <Box mt={1} width={"100%"} display={"flex"} justifyContent="space-evenly" flexWrap={"wrap"} maxWidth={"1500px"}>
-                                    <Paper elevation={2} sx={{ padding: ".5rem", margin: ".5rem", width: "100%", height: "100%", maxWidth: "350px" }}>
+                                    <Paper elevation={2} sx={{  margin: ".5rem", width: "100%", height: "100%", maxWidth: "350px" }}>
                                         <CollapseTopicSyllabus title={"Horário de atendimento"} icon={<Help sx={{ mr: "0.5rem" }} />} defaultExpanded={true}>
                                             <Typography m={1} >
                                                 {props.course.syllabus.attendanceSchedule ? props.course.syllabus.attendanceSchedule.split("\n").map((item, key) => {
@@ -104,7 +104,7 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                                             </Typography>
                                         </CollapseTopicSyllabus>
                                     </Paper>
-                                    <Paper elevation={2} sx={{ padding: ".5rem", margin: ".5rem", width: "100%", height: "100%", maxWidth: "350px" }}>
+                                    <Paper elevation={2} sx={{ margin: ".5rem", width: "100%", height: "100%", maxWidth: "350px" }}>
                                         <CollapseTopicSyllabus title={"Avaliações programadas"} icon={<Equalizer sx={{ mr: "0.5rem" }} />} defaultExpanded={true}>
                                             <Box sx={{ display: "flex", flexDirection: "column", mb: ".5rem", justifyContent: "space-around" }}>
                                                 {props.course?.syllabus?.exams.map((exam, index) => (
@@ -119,13 +119,13 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                                 </Box>
                                 <Box mt={1} display={"flex"} flexWrap={"wrap"} justifyContent={"space-evenly"} width={"100%"} maxWidth={"2500px"}>
                                     <Paper elevation={2} sx={{ padding: ".5rem", width: "130%", maxWidth: "500px", margin: ".5rem" }}>
-                                        <Typography variant="h6" fontWeight="500" mb={".5rem"}>Bibliografia básica</Typography>
+                                        <Typography variant="h6" fontWeight="500" mb={"1rem"} textAlign={"center"}>Bibliografia básica</Typography>
                                         {props.course.syllabus.references.basic.map((reference, index) => (
                                             <ReferenceComponent key={index} reference={reference} />
                                         ))}
                                     </Paper>
                                     <Paper elevation={2} sx={{ padding: ".5rem", width: "130%", maxWidth: "500px", margin: ".5rem" }}>
-                                        <Typography variant="h6" fontWeight="500" mb={".5rem"}>Bibliografia Complementar</Typography>
+                                        <Typography variant="h6" fontWeight="500" mb={"1rem"} textAlign={"center"}>Bibliografia Complementar</Typography>
                                         {props.course.syllabus.references.supplementary.map((reference, index) => (
                                             <ReferenceComponent key={index} reference={reference} />
                                         ))}
@@ -158,7 +158,7 @@ export function AccordionTopicSyllabus(props: { title: string; children: React.R
     return <Accordion defaultExpanded={props.defaultExpanded}>
         <AccordionSummary sx={{
             flexDirection: "row-reverse",
-            backgroundColor: theme.palette.primary[900],
+            backgroundColor: theme.palette.grey[900],
         }} expandIcon={props.icon}>
             <Typography m={1}>{props.title}</Typography>
         </AccordionSummary>
@@ -171,12 +171,12 @@ export function AccordionTopicSyllabus(props: { title: string; children: React.R
 }
 export function CollapseTopicSyllabus(props: { title: string; children: React.ReactNode; icon: JSX.Element; defaultExpanded?: boolean }) {
     const [expanded, setExpanded] = React.useState(props.defaultExpanded);
+    const theme = useTheme();
     return (
         <Box>
             <Box display={"flex"} flexDirection={"row"} alignItems={"center"} height="64px" onClick={() => setExpanded(!expanded)}
-                sx={{ cursor: "pointer", userSelect: "none" }} p={1}
-                component={Paper} elevation={1}
-            >
+                sx={{ cursor: "pointer", userSelect: "none", backgroundColor: theme.palette.primary[800] }} p={1}
+                component={Paper}>
                 {props.icon}
                 <Typography>
                     {props.title}

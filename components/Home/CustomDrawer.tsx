@@ -92,7 +92,7 @@ function ResponsiveDrawer({
             variant="circular"
           />
         </IconButton>
-        <Menu
+        {/* <Menu
           anchorEl={anchorEl}
           keepMounted
           open={!!anchorEl}
@@ -105,7 +105,7 @@ function ResponsiveDrawer({
             </Typography>
             <Typography fontSize={"1rem"}>Email: {user?.emails[0]}</Typography>
           </Box>
-        </Menu>
+        </Menu> */}
       </Toolbar>
       <List sx={{ padding: "0px", height: "calc(100% - 90px)" }}>
         <Tabs

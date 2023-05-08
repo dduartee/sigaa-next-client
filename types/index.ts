@@ -58,6 +58,7 @@ export type File = {
   title: string;
   description: string;
   key: string;
+  downloadPath: string;
   type: "file";
 };
 export type Forum = {
