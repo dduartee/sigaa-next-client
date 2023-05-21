@@ -87,7 +87,7 @@ function Index(): JSX.Element {
                     proteção.
                   </Typography>
                   <Typography mb={1} fontSize={"1.2rem"}>
-                    Desde 2021 a nossa inteção nunca foi confrontar o IFSC ou substituir o
+                    Desde 2021 a nossa intenção nunca foi confrontar o IFSC ou substituir o
                     próprio SIGAA.
                   </Typography>
                   <Typography mb={1} fontSize={"1.2rem"}>
