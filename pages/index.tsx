@@ -1,8 +1,12 @@
 import React from "react";
 import Head from "next/head";
 import { NoSsr, Fade, Grid, Box, Paper, Typography } from "@mui/material";
+import {useTheme} from "@mui/system"
 import Link from "next/link";
+import Logo from "@components/Logo";
+
 function Index(): JSX.Element {
+  const theme = useTheme();
   return (
     <>
       <Head>
@@ -58,7 +62,7 @@ function Index(): JSX.Element {
                 }}
               >
                 <Box textAlign={"center"} width="100%" padding={3}>
-                  <img src="/img/logo.png" height="70rem" />
+                  <Logo height="70rem" />
                 </Box>
                 <Typography
                   fontSize={"1.5rem"}
@@ -118,13 +122,16 @@ function Index(): JSX.Element {
                   </Typography>
                   <Typography mt={2}>
                     Backend:{" "}
-                    <Link href={"https://github.com/dduartee/sigaa-socket-api"}>
+                    <Link href={"https://github.com/dduartee/sigaa-socket-api"}
+                      style={{ color: theme.palette.primary.main }}
+                    >
                       sigaa-socket-api
                     </Link>
                   </Typography>
                   <Typography>
                     Frontend:{" "}
                     <Link
+                      style={{ color: theme.palette.primary.main }}
                       href={"https://github.com/dduartee/sigaa-next-client"}
                     >
                       sigaa-next-client
