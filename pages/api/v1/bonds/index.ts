@@ -10,7 +10,7 @@ export default async function Bonds(
   response: NextApiResponse<{ data: IBondDTOProps[] } | { error: string }>
 ) {
   logger.log("Bonds", "Request received", {});
-  const { username, sigaaURL, token } = JSON.parse(JSON.stringify(request.body)) as RequestBody;
+  const { username, sigaaURL, token } = JSON.parse(request.body) as RequestBody;
   if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
   if (!token) return response.status(400).send({ error: "Token is required" });
 

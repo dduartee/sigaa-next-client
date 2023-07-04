@@ -1,24 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "@context/socket";
-import useTokenHandler from "@hooks/useTokenHandler";
-import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
+import React, { useEffect, useState } from "react";
 import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
-import { Bond } from "@types";
+import { Bond, UserData } from "@types";
 import useTabHandler, { BondTab } from "@hooks/useTabHandler";
-import { emitActivitiesList, emitCourseList } from "@hooks/useBondsEvents";
 import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
 import { Box } from "@mui/material";
+import { fetchCourses, fetchLogin } from "@pages/nuncamais";
 
 export default function RegistrationPage() {
   const router = useRouter();
   const registration = router.query.registration as string | undefined;
-  const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
-  const { user } = useUserHandler();
+  const [user, setUser] = useState<UserData | undefined>(undefined);
   const [bond, setBond] = useState<Bond | undefined>(undefined);
   useEffect(() => {
     const bondCached = JSON.parse(
@@ -34,42 +29,42 @@ export default function RegistrationPage() {
   const { tab, setTab } = useTabHandler({
     order: BondTab.ACTIVITIES,
     registration,
-    valid,
   });
+  const sigaaURL = "https://sigaa.ifsc.edu.br"
+  const getUserInfo = async (username: string, token: string) => {
+    const credentials = { username, token, sigaaURL, session: "" }
+    const res = await fetchLogin(credentials)
+    if (!res.error && res.data) {
+      const { emails, fullName, profilePictureURL, token: newToken } = res.data
+      sessionStorage.setItem("token", newToken)
+      setUser({ username, emails, fullName, profilePictureURL })
+    }
+  }
+  const getCourses = async (username: string, token: string, registration: string) => {
+    const credentials = { username, token, sigaaURL, session: "" }
+    const res = await fetchCourses(credentials, registration);
+    if (!res.error && res.data) {
+      setBond({program: "", registration, active: true, activities: [], courses: res.data, period: "", type: "student"})
+    }
+  }
   useEffect(() => {
-    if (!valid) window.location.href = "/";
-    else {
-      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
+    const username = sessionStorage.getItem("username");
+    const token = sessionStorage.getItem("token");
+    if (username && token) {
+      getUserInfo(username, token)
       setActivitiesLoading(true);
     }
-  }, [registration, setActivitiesLoading, socket, valid]);
+  }, [registration, setActivitiesLoading]);
   useEffect(() => {
-    if (user?.fullName && registration) {
-      emitCourseList(
-        {
-          token: sessionStorage.getItem("token"),
-          registration,
-          inactive: true,
-          allPeriods: false,
-          cache: true,
-          id: "courses",
-        },
-        socket
-      );
-      socket.on("courses::list", () => {
-        emitActivitiesList(
-          {
-          token: sessionStorage.getItem("token"),
-          registration,
-          inactive: true,
-          cache: true,
-          id: "activities",
-          },
-          socket
-        );
+    const username = sessionStorage.getItem("username");
+    const token = sessionStorage.getItem("token");
+    if (user?.fullName && registration && username && token) {
+      getCourses(username, token, registration).then(() => {
+        // getActivities()
       })
-      }
-  }, [registration, socket, user?.fullName]);
+      
+    }
+  }, [registration, user?.fullName]);
   return (
     <>
       <Head>

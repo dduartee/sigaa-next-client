@@ -10,27 +10,27 @@ import { prisma } from "@lib/prisma";
 
 export interface AuthenticationParams {
   username: string;
-  password?: string;
+  session?: string;
   sigaaURL: string;
   token?: string;
 }
-type LoginResponse =
-  | { data: IStudentDTOProps & { token: string } }
-  | { error: string };
+export type LoginResponse =
+  | { data: IStudentDTOProps & { token: string }, error: undefined}
+  | { data: undefined, error: string };
 export default async function Login(
   request: NextApiRequest,
   response: NextApiResponse<LoginResponse>
 ) {
   logger.log("Login", "Request received", {});
-  const { username, password, sigaaURL, token } =
-    JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
+  const body = JSON.parse(request.body) as AuthenticationParams;
 
-  if (!username) return response.status(400).send({ error: "Username is required" });
-  if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
+  const { username, session, sigaaURL, token } = body;
+
+  if (!username) return response.status(400).send({ data:undefined, error: "Username is required" });
+  if (!sigaaURL) return response.status(400).send({ data:undefined, error: "Sigaa URL is required" });
 
   const authService = new AuthService();
   let studentDTO: StudentDTO;
-  let session: string;
   const newToken = v4();
   if (token) {
     logger.log("Login", "Token received", token);
@@ -38,7 +38,7 @@ export default async function Login(
       where: { token },
     });
     if (!storedSession)
-      return response.status(400).send({ error: "Invalid token" });
+      return response.status(400).send({ data:undefined, error: "Invalid token" });
     logger.log("Login", "JSESSIONID received", storedSession.value);
     const accountService = await authService.rehydrate({
       JSESSIONID: storedSession.value,
@@ -47,17 +47,18 @@ export default async function Login(
     });
     logger.log("Login", "Account service rehydrated", {});
     studentDTO = await getStudentDTO(accountService);
-    session = storedSession.value;
     await prisma.session.update({
       where: { id: storedSession.id },
       data: { token: newToken },
     });
-  } else if (password) {
-    logger.log("Login", "only password received", {});
-    const credentials = { username, password };
-    const accountService = await authService.login(credentials, sigaaURL);
+  } else if (session) {
+    logger.log("Login", "only session received", {});
+    const accountService = await authService.rehydrate({
+      JSESSIONID: session,
+      username,
+      url: sigaaURL,
+    });
     studentDTO = await getStudentDTO(accountService);
-    session = accountService.getJSESSIONID();
     const studentJSON = studentDTO.toJSON();
     // const hashService = new HashService();
     const studentInput = {
@@ -80,14 +81,14 @@ export default async function Login(
     });
     logger.log("Login", "Student created or updated", {});
   } else {
-    return response.status(400).send({ error: "Password is required" });
+    return response.status(400).send({ data:undefined, error: "Session is required" });
   }
   authService.closeSession();
 
   logger.log("Login", "Session stored", newToken);
   return response
     .status(200)
-    .send({ data: { ...studentDTO.toJSON(), token: newToken } });
+    .send({ data: { ...studentDTO.toJSON(), token: newToken }, error: undefined });
 }
 
 async function getStudentDTO(accountService: AccountService) {

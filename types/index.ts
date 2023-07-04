@@ -2,8 +2,9 @@ import { Syllabus } from "@components/Syllabus/Content";
 
 export type UserCredentials = {
   username: string;
-  password: string;
+  session: string;
   token?: string;
+  sigaaURL: string
 };
 export type UserData = {
   username: string;
@@ -17,7 +18,7 @@ export type Bond = {
   program: string;
   registration: string;
   period: string;
-  type: "student";
+  type: string;
   active: boolean;
   courses: Course[];
   activities: Activity[];

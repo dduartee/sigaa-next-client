@@ -13,12 +13,10 @@ export enum CourseTab {
 }
 export default function useTabHandler({
   order,
-  valid,
   registration,
   courseId
 }: {
   order: number;
-  valid: boolean;
   registration: string | undefined;
   courseId?: string;
 }) {
@@ -67,6 +65,7 @@ export default function useTabHandler({
         router.push(path);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, registration, courseId])
-  return { tab, setTab, order, valid, registration };
+  return { tab, setTab, order, registration };
 }

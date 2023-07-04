@@ -3,7 +3,6 @@ import { AppProps } from "next/app";
 import { dark, forbidden } from "@styles/themes";
 import "@styles/global.css";
 import "@styles/material-dark.min.css"
-import { SocketContext, socketInstance } from "@context/socket";
 import { ForbiddenContext } from "@context/forbidden";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
@@ -33,16 +32,13 @@ function MyApp(props: AppProps): JSX.Element {
     } else {
       setTheme(darkTheme);
     }
-    console.log({forbiddenVersion})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forbiddenVersion]);
   return (
     <ForbiddenContext.Provider value={{ forbiddenVersion, setForbiddenVersion }}>
       <ThemeProvider theme={theme}>
-        <SocketContext.Provider value={socketInstance}>
           <CssBaseline />
           <Component {...pageProps} />
-        </SocketContext.Provider>
       </ThemeProvider>
     </ForbiddenContext.Provider>
   );

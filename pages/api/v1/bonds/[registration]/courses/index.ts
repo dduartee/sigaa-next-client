@@ -18,7 +18,7 @@ export default async function Courses(
 ) {
   logger.log("Courses", "Request received", {});
   const { username, sigaaURL, token } =
-    JSON.parse(JSON.stringify(request.body)) as RequestBody;
+    JSON.parse(request.body) as RequestBody;
 
   if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
   if (!token) return response.status(400).send({ error: "Token is required" });
