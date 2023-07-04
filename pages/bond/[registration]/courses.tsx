@@ -29,7 +29,7 @@ export default function CoursesPage() {
   const { tab, setTab } = useTabHandler({
     order: BondTab.COURSES,
     registration,
-    valid,
+
   });
   useEffect(() => {
     if (!valid) window.location.href = "/";
@@ -40,18 +40,18 @@ export default function CoursesPage() {
   }, [registration, setCoursesLoading, socket, valid]);
   useEffect(() => {
     if (user?.fullName && registration) {
-        emitCourseList(
-            {
+      emitCourseList(
+        {
           token: sessionStorage.getItem("token"),
           registration,
           inactive: true,
           allPeriods: false,
           cache: true,
           id: "courses",
-            },
-            socket
-          );
-      }
+        },
+        socket
+      );
+    }
   }, [registration, socket, user?.fullName]);
   useEffect(() => {
     if (bond?.courses) {

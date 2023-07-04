@@ -27,7 +27,7 @@ export default function SchedulesPage() {
   const { tab, setTab } = useTabHandler({
     order: BondTab.SCHEDULES,
     registration,
-    valid,
+
   });
   useEffect(() => {
     if (valid && registration) {

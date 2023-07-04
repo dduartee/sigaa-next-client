@@ -30,7 +30,7 @@ export default function SyllabusPage() {
     order: CourseTab.SYLLABUS,
     registration,
     courseId,
-    valid,
+
   });
   const [course, setCourse] = useState<Course>();
 

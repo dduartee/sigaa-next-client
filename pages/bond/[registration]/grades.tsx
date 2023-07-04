@@ -24,7 +24,7 @@ export default function GradesPage() {
   const { tab, setTab } = useTabHandler({
     order: BondTab.GRADES,
     registration,
-    valid,
+
   });
   const { bond, partialLoading, setPartialLoading } = useGradesEvents();
   useEffect(() => {
