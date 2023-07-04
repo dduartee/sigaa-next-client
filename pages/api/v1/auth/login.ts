@@ -21,8 +21,9 @@ export default async function Login(
   request: NextApiRequest,
   response: NextApiResponse<LoginResponse>
 ) {
+
   logger.log("Login", "Request received", {});
-  const body = JSON.parse(request.body) as AuthenticationParams;
+  const body = JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
 
   const { username, session, sigaaURL, token } = body;
 

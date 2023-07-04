@@ -21,6 +21,9 @@ export const fetchLogin = async (credentials: UserCredentials): Promise<LoginRes
   if (credentials.username && (credentials.session || credentials.token)) {
     const response = await fetch("/api/v1/auth/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(credentials),
     });
     const data = await response.json();
@@ -33,6 +36,9 @@ export const fetchBonds = async ({username, token, sigaaURL}: UserCredentials) =
   if (username && token && sigaaURL) {
     const response = await fetch("/api/v1/bonds", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body:  JSON.stringify({username, token, sigaaURL})
     });
     const data = await response.json();
@@ -45,6 +51,9 @@ export const fetchCourses = async (credentials: UserCredentials, registration: s
   if (credentials.username && credentials.token && registration) {
     const response = await fetch(`/api/v1/bonds/${registration}/courses`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(credentials),
     });
     const data = await response.json();
