@@ -12,7 +12,7 @@ import { BondSelection } from "@components/BondSelection";
 import { BondSelectionButtons } from "@components/BondSelectionButtons";
 import { ForbiddenContext } from "@context/forbidden";
 import Logo from "@components/Logo";
-import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperText, Grid, NoSsr, Paper, Switch, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperText, Grid, Link, NoSsr, Paper, Switch, Typography } from "@mui/material";
 import { ArrowBack, AccountCircle, Info, Send, SyncLock } from "@mui/icons-material";
 import { useTheme } from "@mui/system";
 import { LoginResponse } from "./api/v1/auth/login";
@@ -32,17 +32,17 @@ export const fetchLogin = async (credentials: UserCredentials): Promise<LoginRes
     throw new Error("FETCHLOGIN: Parametros inválidos");
   }
 }
-export const fetchBonds = async ({username, token, sigaaURL}: UserCredentials) => {
+export const fetchBonds = async ({ username, token, sigaaURL }: UserCredentials) => {
   if (username && token && sigaaURL) {
     const response = await fetch("/api/v1/bonds", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body:  JSON.stringify({username, token, sigaaURL})
+      body: JSON.stringify({ username, token, sigaaURL })
     });
     const data = await response.json();
-    return data as {data: IBondDTOProps[]}
+    return data as { data: IBondDTOProps[] }
   } else {
     throw new Error("FETCHBONDS: Parametros inválidos");
   }
@@ -64,11 +64,11 @@ export const fetchCourses = async (credentials: UserCredentials, registration: s
 }
 function Index(): JSX.Element {
   const router = useRouter();
-  const [credentials, setCredentials] = useState<UserCredentials & {sigaaURL: string}>({
+  const [credentials, setCredentials] = useState<UserCredentials & { sigaaURL: string }>({
     username: "",
     session: "",
     token: "",
-    sigaaURL: "https://sigaa.ifsc.edu.br"
+    sigaaURL: "https://sigrh.ifsc.edu.br"
   });
   const [registrationSelected, setRegistrationSelected] = useState<string>("");
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -86,7 +86,7 @@ function Index(): JSX.Element {
       sessionStorage.setItem("username", credentials.username)
       setUser({ username: credentials.username, emails, fullName, profilePictureURL })
       setCredentials((prev) => ({ ...prev, username: credentials.username, token: newToken }))
-      const {data: bonds} = await fetchBonds({ ...credentials, token: newToken })
+      const { data: bonds } = await fetchBonds({ ...credentials, token: newToken })
       const bondsWithCourses = bonds.map(bond => ({ ...bond, courses: [], activities: [] }))
       setBonds(bondsWithCourses)
       setStatus("Logado")
@@ -328,7 +328,7 @@ function LoginCard(props: {
     setErrorFeedback("");
   };
   return (
-    <Box height={"230px"}>
+    <Box height={"250px"}>
       <LoginBox onChange={handleCredentialsChange} onKeyPress={handleEnterPress}>
         <InputBox
           icon={<AccountCircle />}
@@ -353,7 +353,7 @@ function LoginCard(props: {
             <FormControl>
               <Input
                 label="Sessão"
-                InputLabelProps={{size: "small"}}
+                InputLabelProps={{ size: "small" }}
                 type="password"
                 name="session"
                 value={credentials.session}
@@ -366,6 +366,9 @@ function LoginCard(props: {
             </FormControl>
           }
         />
+        <Box>
+          <Link sx={{color: "grey", cursor: "pointer", userSelect: "none"}} href="/ajuda-cookie" target={"_blank"}>Como encontrar o cookie de sessão?</Link>
+        </Box>
         <Typography sx={{ fontSize: "1rem" }} color="#ff4336">{errorFeedback}</Typography>
       </LoginBox>
       <CardBottom>

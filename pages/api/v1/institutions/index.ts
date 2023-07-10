@@ -11,7 +11,7 @@ export async function loadInstitutions() {
     {
       name: "Instituto Federal de Santa Catarina",
       acronym: "IFSC",
-      url: new URL("https://sigaa.ifsc.edu.br/").toString(),
+      url: new URL("https://sigrh.ifsc.edu.br/").toString(),
     },
   ];
   for (const institution of institutions) {

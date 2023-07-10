@@ -30,7 +30,7 @@ export default function RegistrationPage() {
     order: BondTab.ACTIVITIES,
     registration,
   });
-  const sigaaURL = "https://sigaa.ifsc.edu.br"
+  const sigaaURL = "https://sigrh.ifsc.edu.br"
   const getUserInfo = async (username: string, token: string) => {
     const credentials = { username, token, sigaaURL, session: "" }
     const res = await fetchLogin(credentials)
