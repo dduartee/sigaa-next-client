@@ -13,62 +13,19 @@ import { BondSelectionButtons } from "@components/BondSelectionButtons";
 import { ForbiddenContext } from "@context/forbidden";
 import Logo from "@components/Logo";
 import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperText, Grid, Link, NoSsr, Paper, Switch, Typography } from "@mui/material";
-import { ArrowBack, AccountCircle, Info, Send, SyncLock } from "@mui/icons-material";
+import { ArrowBack, AccountCircle, Info, Send, SyncLock, Link as LinkIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/system";
-import { LoginResponse } from "./api/v1/auth/login";
-import { IBondDTOProps } from "@DTOs/BondDTO";
-export const fetchLogin = async (credentials: UserCredentials): Promise<LoginResponse> => {
-  if (credentials.username && (credentials.session || credentials.token)) {
-    const response = await fetch("/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-    const data = await response.json();
-    return data as LoginResponse;
-  } else {
-    throw new Error("FETCHLOGIN: Parametros inválidos");
-  }
-}
-export const fetchBonds = async ({ username, token, sigaaURL }: UserCredentials) => {
-  if (username && token && sigaaURL) {
-    const response = await fetch("/api/v1/bonds", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, token, sigaaURL })
-    });
-    const data = await response.json();
-    return data as { data: IBondDTOProps[] }
-  } else {
-    throw new Error("FETCHBONDS: Parametros inválidos");
-  }
-}
-export const fetchCourses = async (credentials: UserCredentials, registration: string) => {
-  if (credentials.username && credentials.token && registration) {
-    const response = await fetch(`/api/v1/bonds/${registration}/courses`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-    const data = await response.json();
-    return data;
-  } else {
-    throw new Error("FETCHCOURSES: Parametros inválidos");
-  }
-}
+import { fetchBonds, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
+
+const sigaaURL = "https://sigrh.ifsc.edu.br";
+
 function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials & { sigaaURL: string }>({
     username: "",
     session: "",
     token: "",
-    sigaaURL: "https://sigrh.ifsc.edu.br"
+    sigaaURL
   });
   const [registrationSelected, setRegistrationSelected] = useState<string>("");
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -78,29 +35,32 @@ function Index(): JSX.Element {
   const [user, setUser] = useState<UserData | undefined>(undefined);
   const [errorFeedback, setErrorFeedback] = useState("");
   const [bonds, setBonds] = useState<Bond[]>([]);
-  const loginProcess = useCallback(async (credentials: UserCredentials) => {
+  const loginProcess = useCallback(async () => {
     const response = await fetchLogin(credentials)
     if (!response.error && response.data) {
       const { emails, fullName, profilePictureURL, token: newToken } = response.data
       sessionStorage.setItem("token", newToken)
       sessionStorage.setItem("username", credentials.username)
       setUser({ username: credentials.username, emails, fullName, profilePictureURL })
-      setCredentials((prev) => ({ ...prev, username: credentials.username, token: newToken }))
-      const { data: bonds } = await fetchBonds({ ...credentials, token: newToken })
-      const bondsWithCourses = bonds.map(bond => ({ ...bond, courses: [], activities: [] }))
-      setBonds(bondsWithCourses)
-      setStatus("Logado")
+      return newToken as string;
+    } else {
+      throw new Error("Erro ao logar")
     }
-  }, [setStatus, setUser])
-  useEffect(() => {
-    const username = sessionStorage.getItem("username");
-    const token = sessionStorage.getItem("token");
-    if (username && token) {
+  }, [credentials])
+  // TO-DO: LOGIN POR TOKEN SALVO NO SESSION STORAGE
+  const handleLogin = () => {
+    if (credentials.username && credentials.session) {
       setStatus("Logando");
-      loginProcess({ username, token, session: "", sigaaURL: credentials.sigaaURL })
+      loginProcess().then(async (token) => {
+        const { data: bonds } = await fetchBonds({ username: credentials.username, token })
+        const bondsWithCourses = bonds.map(bond => ({ ...bond, courses: [], activities: [] }))
+        setBonds(bondsWithCourses)
+        setStatus("Logado")
+      })
+    } else {
+      setErrorFeedback("");
     }
-  }, [credentials.sigaaURL, loginProcess, setStatus]);
-
+  };
   useEffect(() => {
     if (bonds.length != 0) {
       setRegistrationSelected(bonds[0].registration);
@@ -128,30 +88,18 @@ function Index(): JSX.Element {
   useEffect(() => {
     if (!registrationSelected && bonds.length != 0) setRegistrationSelected(bonds[0].registration);
   }, [bonds, registrationSelected]);
-  const handleLogin = () => {
-    if (credentials.username && credentials.session) {
-      setStatus("Logando");
-      loginProcess(credentials)
-    } else {
-      setErrorFeedback("");
-    }
-  };
+
   const handleAccess = async () => {
     setStatus("Logando");
     setErrorFeedback("");
-    const courses = await fetchCourses(credentials, registrationSelected)
-    setBonds(bonds.map(bond => {
-      if (bond.registration === registrationSelected) {
-        return { ...bond, courses }
-      } else {
-        return bond
-      }
-    }))
+    const token = sessionStorage.getItem("token") as string;
+    const username = user?.username as string
+    await fetchCourses({ username, token }, registrationSelected)
     router.push(`/bond/${encodeURIComponent(registrationSelected)}`);
   };
   const handleLogout = () => {
     setErrorFeedback("");
-    setCredentials({ username: "", session: "", token: "", sigaaURL: "https://sigaa.ifsc.edu.br" });
+    setCredentials({ username: "", session: "", token: "", sigaaURL: "https://sigrh.ifsc.edu.br" });
     sessionStorage.clear();
   };
 
@@ -191,7 +139,7 @@ function Index(): JSX.Element {
         <meta property="og:title" content="sigaa-next" />
         <meta property="og:description" content="SIGAA de forma rápida e prática" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sigaa-next-client.vercel.app/" />
+        <meta property="og:url" content="https://sigaanext.com.br/" />
         <meta property="og:image" itemProp="image" content="/og-image.png" />
         <meta name="google-site-verification" content="l3dA98khZkgdacKAYSDoYNF1SJy1qhZAvoVqHI3KrYE" />
         <link rel="icon" href="/favicon.ico" />
@@ -221,7 +169,8 @@ function Index(): JSX.Element {
                   display: "flex",
                   flexDirection: "column",
                   alignContent: "center",
-                  width: increaseBoxSize ? "97%" : "20rem",
+                  width: increaseBoxSize ? "97%" : "80%",
+                  minWidth: "320px",
                   maxWidth: "700px",
                   overflowY: increaseBoxSize ? "scroll" : "visible",
                   height: "auto",
@@ -327,8 +276,9 @@ function LoginCard(props: {
     if (event.key === "Enter") handleLogin();
     setErrorFeedback("");
   };
+  const [showCookieMenu, setShowCookieMenu] = useState(false)
   return (
-    <Box height={"250px"}>
+    <Box>
       <LoginBox onChange={handleCredentialsChange} onKeyPress={handleEnterPress}>
         <InputBox
           icon={<AccountCircle />}
@@ -347,6 +297,12 @@ function LoginCard(props: {
             </FormControl>
           }
         />
+        {
+          showCookieMenu ?
+            (<CookieMenu handleSessionChange={(JSESSIONID) => {
+              setCredentials({ ...credentials, session: JSESSIONID })
+            }} />)
+            : null}
         <InputBox
           icon={<SyncLock />}
           input={
@@ -359,6 +315,7 @@ function LoginCard(props: {
                 value={credentials.session}
                 error={errorFeedback ? true : false}
                 autoComplete="new-password"
+                disabled={showCookieMenu}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
                 Seu cookie JSESSIONID do SIGAA
@@ -366,9 +323,11 @@ function LoginCard(props: {
             </FormControl>
           }
         />
-        <Box>
-          <Link sx={{color: "grey", cursor: "pointer", userSelect: "none"}} href="/ajuda-cookie" target={"_blank"}>Como encontrar o cookie de sessão?</Link>
-        </Box>
+        {
+          !showCookieMenu ?
+            <Button variant="text" onClick={() => setShowCookieMenu(true)}>Obter cookie</Button>
+            : null
+        }
         <Typography sx={{ fontSize: "1rem" }} color="#ff4336">{errorFeedback}</Typography>
       </LoginBox>
       <CardBottom>
@@ -391,4 +350,64 @@ function LoginCard(props: {
       </CardBottom>
     </Box>
   )
+}
+
+function CookieMenu(props: {
+  handleSessionChange: (JSESSIONID: string) => void
+}) {
+  const theme = useTheme();
+  const [url, setURL] = React.useState("");
+  useEffect(() => {
+    if (url) {
+      const sigaaURL = new URL(url);
+      if (!sigaaURL) return alert("URL inválida");
+      const part1 = url.split(";")[1]
+      if (!part1) {
+        return alert("https://sigrh.ifsc.edu.br");
+      }
+      const part2 = part1.split("=")[1]
+
+      const cookie = `JSESSIONID=${part2}`;
+
+      props.handleSessionChange(cookie)
+    }
+  }, [props, url])
+  return (
+    <Box width="320px" display="flex" textAlign="center" alignItems="center" flexDirection="column" mt={2}>
+      <Typography>Entre no SIGAA pelo link abaixo: </Typography>
+      <Link
+        href="https://sigrh.ifsc.edu.br/sigaa"
+        onClick={(event) => {
+          event.preventDefault()
+          window.open("https://sigrh.ifsc.edu.br/sigaa", "SIGAAWindow", "popup");
+        }}
+        style={{ color: theme.palette.primary.main }}
+      >
+        sigaa.ifsc.edu.br
+      </Link>
+      <Typography>
+        Antes de fazer o login, copie a URL do navegador e FAÇA o login normalmente no SIGAA
+      </Typography>
+
+      <Typography mt={2}>
+        Após o login, cole a URL no campo abaixo e logue por aqui
+      </Typography>
+      <form
+        autoComplete="off"
+      >
+        <InputBox
+          icon={<LinkIcon />}
+          input={<Input
+            label="URL"
+            type="password"
+            name="url"
+            autoComplete="new-password"
+            value={url}
+            onChange={(e) => {
+              setURL(e.target.value)
+            }
+            } />} />
+      </form>
+    </Box>
+  );
 }

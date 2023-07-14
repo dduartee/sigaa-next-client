@@ -8,22 +8,22 @@ import {
 } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
-import { Attachments } from "@types";
+import { AttachmentsTypes } from "@types";
 import Link from "next/link";
 import React from "react";
 
 
-export function Attachment(props: { attachment: Attachments; }) {
+export function Attachment(props: { attachment: AttachmentsTypes }) {
   const { attachment } = props;
   const theme = useTheme();
   const frase = attachment.title.split(" ").length > 1;
-  const sigaaURL = "https://sigaa.ifsc.edu.br";
+  const sigaaURL = "https://sigrh.ifsc.edu.br";
   switch (attachment.type) {
     case "file":
       return (
         <Button
           variant="outlined"
-          href={`${new URL(attachment.downloadPath, sigaaURL) }`}
+          href={`${new URL(`/sigaa/verFoto?idArquivo=${attachment.id}&key=${attachment.key}`, sigaaURL).toString() }`}
           target="_blank"
           style={{ color: theme.palette.primary["700"], display: "flex", alignItems: "center", height: "100%" }}
         >

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Activity, Bond, Course, File, Homework } from "@types";
+import { Activity, Course, FileAttachment, Homework } from "@types";
 import { RegistrationContext } from "@context/registration";
 import { formatDate, formatTime } from "@components/Lessons/Content";
 import { useRouter } from "next/router";
@@ -12,12 +12,13 @@ import { ExpandMore,
  } from "@mui/icons-material";
 import { Box, Typography, Button, Collapse, Accordion, AccordionSummary, AccordionDetails, CircularProgress } from "@mui/material";
 import { Attachment } from "./Attachment";
+import { IBondDTOProps } from "@DTOs/BondDTO";
 
 export default function Activities({
   bond,
   loading,
 }: {
-  bond: Bond | undefined;
+  bond: IBondDTOProps | undefined;
   loading: boolean;
 }) {
   const router = useRouter();
@@ -119,7 +120,7 @@ function ActivityCollapse({
 }) {
   const [courseId, setCourseId] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const socket = useContext(SocketContext);
   const registration = useContext(RegistrationContext);
   const loadContent = (activity: Activity) => {
@@ -138,14 +139,16 @@ function ActivityCollapse({
     }
   };
   useEffect(() => {
-    socket.on("homework::content", (course: Course) => {
+    socket.on("homework::content", (course: Course & {
+      homeworks: Homework;
+    }) => {
       const homework = course.homeworks?.find(
-        (h: Homework) => h.title === activity.title
+        (h) => h.title === activity.title
       );
       if (homework) {
         setContent(homework.content ?? "");
         setCourseId(course.id);
-        if (homework.attachment) setAttachment(homework.attachment);
+        if (homework.attachment) setAttachment(homework.attachment as FileAttachment);
       }
     });
   }, [activity.title, socket]);

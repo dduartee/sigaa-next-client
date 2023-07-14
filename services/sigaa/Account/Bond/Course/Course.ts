@@ -6,11 +6,14 @@ import { GradeGroupDTO } from "@DTOs/GradeGroup/GradeGroup.DTO";
 import { CourseDTO } from "@DTOs/CourseDTO";
 import { AbsencesService } from "./Absences";
 import { AbsencesDTO } from "@DTOs/AbsencesDTO";
+import { LessonsService } from "./Lessons";
+import { LessonDTO } from "@DTOs/LessonsDTO";
 
 export class CourseService {
   course: SigaaCourseStudent | undefined;
   gradeGroupsDTOs: GradeGroupDTO[] | undefined;
-  absences: AbsencesDTO | undefined;
+  absencesDTO: AbsencesDTO | undefined;
+  lessonsDTOs: LessonDTO[] = [];
   setCourse(course: SigaaCourseStudent) {
     this.course = course;
   }
@@ -22,7 +25,7 @@ export class CourseService {
   private parseCourseData(SharedCourse: SharedCourse): CourseStudentData {
     const form = {
       action: new URL(
-        "https://sigaa.ifsc.edu.br/sigaa/portais/discente/turmas.jsf" // a url de ação do formulário de matérias é fixa (eu acho)
+        "https://sigrh.ifsc.edu.br/sigaa/portais/discente/turmas.jsf" // a url de ação do formulário de matérias é fixa (eu acho)
       ),
       postValues: JSON.parse(SharedCourse.postValues), // os dados do formulário são salvos como string no banco de dados
     };
@@ -66,14 +69,21 @@ export class CourseService {
     const gradesService = new GradesService();
     const gradeGroupsDTOs = gradesService.getGradesGroupDTOs(gradeGroups);
     this.gradeGroupsDTOs = gradeGroupsDTOs;
-    return gradeGroupsDTOs;
   }
   public async getAbsences() {
     if (!this.course) throw new Error("Course not rehydrated");
     const absences = await this.course.getAbsence();
     const absencesService = new AbsencesService();
-    this.absences = absencesService.getAbsencesDTOs(absences);
-    return absences;
+    this.absencesDTO = absencesService.getAbsencesDTOs(absences);
+  }
+  public async getLessons() {
+    if (!this.course) throw new Error("Course not rehydrated");
+    const lessons = await this.course.getLessons();
+    const lessonsService = new LessonsService();
+    for (const lesson of lessons) {
+      const dto = await lessonsService.getLessonDTO(lesson);
+      this.lessonsDTOs.push(dto);
+    }
   }
   /**
    * Conforme o retorno dos métodos, como getGrades, getNews, getHomeworks, getLessons, getAbsences,
@@ -81,8 +91,8 @@ export class CourseService {
    * @returns CourseDTO
    */
   public getDTO() {
-    const { course, gradeGroupsDTOs } = this;
+    const { course, gradeGroupsDTOs, absencesDTO, lessonsDTOs } = this;
     if (!course) throw new Error("Course not rehydrated");
-    return new CourseDTO(course, { gradeGroupsDTOs });
+    return new CourseDTO(course, { gradeGroupsDTOs, absencesDTO, lessonsDTOs });
   }
 }

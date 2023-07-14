@@ -40,7 +40,7 @@ export default async function Login(
     });
     if (!storedSession)
       return response.status(400).send({ data:undefined, error: "Invalid token" });
-    logger.log("Login", "JSESSIONID received", storedSession.value);
+    logger.log("Login", "JSESSIONID received", {});
     const accountService = await authService.rehydrate({
       JSESSIONID: storedSession.value,
       username,

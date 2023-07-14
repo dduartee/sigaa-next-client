@@ -1,4 +1,4 @@
-import { TextFieldProps, TextField, Grid } from "@mui/material";
+import { TextFieldProps, TextField, Box } from "@mui/material";
 import React from "react";
 function Input(props: TextFieldProps) {
   return <TextField {...props} variant="standard" fullWidth />;
@@ -6,21 +6,20 @@ function Input(props: TextFieldProps) {
 
 function InputBox(props: InputBoxProps) {
   return (
-    <Grid
-      container
+    <Box
+      display="flex"
       alignItems="center"
       width="90%"
       justifyContent="center"
-      spacing={1}
       mb={1}
     >
-      <Grid item marginTop="8px">
+      <Box marginRight={1} marginTop="8px">
         {props.icon}
-      </Grid>
-      <Grid item width="85%">
+      </Box>
+      <Box width="85%">
         {props.input}
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 type InputBoxProps = {

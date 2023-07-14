@@ -72,7 +72,7 @@ class RehydrateBondFactory {
   ): StudentBond {
     const { program, registration, sequence } = bondData;
     const bondSwitchUrl = new URL(
-      `https://sigaa.ifsc.edu.br/sigaa/escolhaVinculo.do?dispatch=escolher&vinculo=${sequence}`
+      `https://sigrh.ifsc.edu.br/sigaa/escolhaVinculo.do?dispatch=escolher&vinculo=${sequence}`
     );
     const courseResourcesFactory = new SigaaCourseResourcesFactory(parser);
     const courseResourcesManagerFactory = new SigaaCourseResourceManagerFactory(

@@ -5,9 +5,10 @@ import { BondDTO, IBondDTOProps } from "@DTOs/BondDTO";
 import logger from "@services/logger";
 import { prisma } from "@lib/prisma";
 type RequestBody = AuthenticationParams;
+export type BondsResponse = { data: IBondDTOProps[] };
 export default async function Bonds(
   request: NextApiRequest,
-  response: NextApiResponse<{ data: IBondDTOProps[] } | { error: string }>
+  response: NextApiResponse< BondsResponse| { error: string }>
 ) {
   logger.log("Bonds", "Request received", {});
   const { username, sigaaURL, token } = JSON.parse(JSON.stringify(request.body)) as RequestBody;

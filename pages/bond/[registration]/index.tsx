@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
-import useCourseEvents from "@hooks/courses/useCourseEvents";
 import Head from "next/head";
-import { Bond, UserData } from "@types";
+import { UserData } from "@types";
 import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import Activities from "@components/Activities/Content";
 import HomeProvider from "@components/HomeProvider";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import { useRouter } from "next/router";
 import { Box } from "@mui/material";
-import { fetchCourses, fetchLogin } from "@pages/nuncamais";
+import { fetchActivities, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
+import { IBondDTOProps } from "@DTOs/BondDTO";
+
+const sigaaURL = "https://sigrh.ifsc.edu.br"
 
 export default function RegistrationPage() {
   const router = useRouter();
   const registration = router.query.registration as string | undefined;
   const [user, setUser] = useState<UserData | undefined>(undefined);
-  const [bond, setBond] = useState<Bond | undefined>(undefined);
+  const [bond, setBond] = useState<IBondDTOProps | undefined>(undefined);
+  const [token, setToken] = useState<string | undefined>(undefined);
   useEffect(() => {
     const bondCached = JSON.parse(
       sessionStorage.getItem(`bond@${registration}`) || "{}"
@@ -25,46 +28,56 @@ export default function RegistrationPage() {
       sessionStorage.removeItem(`bond@${registration}`);
     }
   }, [registration]);
-  const { activitiesLoading, setActivitiesLoading } = useCourseEvents(setBond);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
   const { tab, setTab } = useTabHandler({
     order: BondTab.ACTIVITIES,
     registration,
   });
-  const sigaaURL = "https://sigrh.ifsc.edu.br"
-  const getUserInfo = async (username: string, token: string) => {
-    const credentials = { username, token, sigaaURL, session: "" }
-    const res = await fetchLogin(credentials)
-    if (!res.error && res.data) {
-      const { emails, fullName, profilePictureURL, token: newToken } = res.data
-      sessionStorage.setItem("token", newToken)
-      setUser({ username, emails, fullName, profilePictureURL })
-    }
-  }
-  const getCourses = async (username: string, token: string, registration: string) => {
-    const credentials = { username, token, sigaaURL, session: "" }
-    const res = await fetchCourses(credentials, registration);
-    if (!res.error && res.data) {
-      setBond({program: "", registration, active: true, activities: [], courses: res.data, period: "", type: "student"})
-    }
-  }
+
   useEffect(() => {
     const username = sessionStorage.getItem("username");
     const token = sessionStorage.getItem("token");
     if (username && token) {
-      getUserInfo(username, token)
+      const credentials = { username, token, session: "", sigaaURL }
       setActivitiesLoading(true);
+      fetchLogin(credentials).then((res) => {
+        if (!res.error && res.data) {
+          const { emails, fullName, profilePictureURL, token: newToken } = res.data;
+          sessionStorage.setItem("token", newToken);
+          setToken(newToken);
+          setUser({ username, emails, fullName, profilePictureURL });
+        }
+      })
     }
   }, [registration, setActivitiesLoading]);
   useEffect(() => {
     const username = sessionStorage.getItem("username");
-    const token = sessionStorage.getItem("token");
     if (user?.fullName && registration && username && token) {
-      getCourses(username, token, registration).then(() => {
-        // getActivities()
+      const credentials = { username, token, session: "", sigaaURL }
+      fetchCourses(credentials, registration).then(async ({ data: courses }) => {
+        const { data: activities } = await fetchActivities(credentials, registration)
+        setActivitiesLoading(false);
+        setBond(() => {
+          const newBond: IBondDTOProps = {
+            courses, // terá que refatorar as tipagens de resposta dos endpoints
+            activities,
+            program: "",
+            registration,
+            type: "student",
+            period: "",
+            active: true,
+            campus: {
+              name: "IFSC",
+              institution: "IFSC",
+              acronym: "IFSC",
+            }
+          }
+          sessionStorage.setItem(`bond@${registration}`, JSON.stringify(newBond));
+          return newBond;
+        })
       })
-      
     }
-  }, [registration, user?.fullName]);
+  }, [registration, token, user?.fullName]);
   return (
     <>
       <Head>

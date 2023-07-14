@@ -1,3 +1,17 @@
+import { IActivityDTOProps } from "@DTOs/ActivityDTO";
+import { IFileDTOProps } from "@DTOs/Attachments/File.DTO";
+import { IForumDTOProps } from "@DTOs/Attachments/Forum.DTO";
+import { IHyperLinkDTOProps } from "@DTOs/Attachments/Hyperlink.DTO";
+import { ILinkDTOProps } from "@DTOs/Attachments/Link.DTO";
+import { IQuizDTOProps } from "@DTOs/Attachments/Quiz.DTO";
+import { ISurveyDTOProps } from "@DTOs/Attachments/Survey.DTO";
+import { IVideoDTOProps } from "@DTOs/Attachments/Video.DTO";
+import { IWebContentDTOProps } from "@DTOs/Attachments/WebContent.DTO";
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
+import { IHomeworkDTOProps } from "@DTOs/HomeworkDTO";
+import { ILessonDTOProps } from "@DTOs/LessonsDTO";
+import { IStudentDTOProps } from "@DTOs/StudentDTO";
 import { Syllabus } from "@components/Syllabus/Content";
 
 export type UserCredentials = {
@@ -6,31 +20,14 @@ export type UserCredentials = {
   token?: string;
   sigaaURL: string
 };
-export type UserData = {
-  username: string;
-  fullName: string;
-  profilePictureURL: string;
-  emails: string[];
-};
+export type UserData = IStudentDTOProps
 export type UserStatus = "Logado" | "Deslogado" | "Logando" | "Deslogando";
 
-export type Bond = {
-  program: string;
-  registration: string;
-  period: string;
-  type: string;
-  active: boolean;
+export type Bond = IBondDTOProps & {
   courses: Course[];
   activities: Activity[];
-};
-export type Activity = {
-  type: "homework" | "exam" | "quiz";
-  id: string;
-  title: string;
-  date: string;
-  done: boolean;
-  course: { title: string };
-};
+}
+export type Activity = IActivityDTOProps & { type: string };
 
 export type News = {
   id: string;
@@ -38,95 +35,51 @@ export type News = {
   date: string;
   content?: string;
 };
-export type Course = {
-  id: string;
-  title: string;
-  code: string;
-  schedule?: string;
-  period: string;
-  numberOfStudents: number;
-  grades?: GradeGroup[];
-  news?: News[];
-  homeworks?: Homework[];
-  lessons?: Lesson[];
-  absences?: Absences;
-  members?: Members;
-  syllabus?: Syllabus;
-  timestamp?: string; // sharedResponse ISOSTRING
+export type Course = ICourseDTOProps & {
+  news: News[];
+  syllabus: Syllabus;
+  lessons: Lesson[];
+  absences: Absences;
+  members: Members;
+  homeworks: Homework[];
+  grades: GradeGroup[];
+  
 };
-export type File = {
-  id: string;
-  title: string;
-  description: string;
-  key: string;
-  downloadPath: string;
-  type: "file";
-};
-export type Forum = {
-  id: string;
-  title: string;
-  author: string;
-  creationDate: string;
-  numOfTopics: number;
-  flagMonitorReading: boolean;
-  file: File;
-  forumType: string;
-  description: string;
+export type FileAttachment = IFileDTOProps & { type: "file" };
+export type ForumAttachment = IForumDTOProps & {
   type: "forum";
 };
-export type Link = {
-  title: string;
-  href: string;
-  description: string;
+export type LinkAttachment = ILinkDTOProps & {
   type: "link";
 };
-export type Hyperlink = {
-  title: string;
-  href: string;
+export type HyperlinkAttachment = IHyperLinkDTOProps & {
   type: "hyperlink";
 };
-export type Quiz = {
-  id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
+export type QuizAttachment = IQuizDTOProps & {
   type: "quiz";
 };
-export type Survey = {
-  id: string;
-  title: string;
+export type SurveyAttachment = ISurveyDTOProps & {
   type: "survey";
 };
-export type Video = {
-  title: string;
-  src: string;
-  description: string;
+export type VideoAttachment = IVideoDTOProps & {
   type: "video";
 };
-export type WebContent = {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
+export type WebContentAttachment = IWebContentDTOProps & {
   type: "webcontent";
 };
-export type Attachments =
-  | File
-  | Forum
-  | Link
-  | Quiz
-  | Survey
-  | Video
-  | WebContent
-  | Homework
-  | Hyperlink;
-export type Lesson = {
-  id: string;
-  title: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-  attachments: Attachments[];
+export type AttachmentsTypes =
+  | FileAttachment
+  | ForumAttachment
+  | LinkAttachment
+  | QuizAttachment
+  | SurveyAttachment
+  | VideoAttachment
+  | WebContentAttachment
+  | HomeworkAttachment
+  | HyperlinkAttachment;
+export type LessonAttachments = AttachmentsTypes[]
+export type Lesson = ILessonDTOProps & {
+  attachments: LessonAttachments;
 };
 export type Absences = {
   list: {
@@ -147,18 +100,8 @@ export type Members = {
   teachers: Teacher[];
   students: Student[];
 };
-export type Homework = {
-  id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  haveGrade?: boolean;
-  isGroup?: boolean;
-  content?: string;
-  attachment?: File;
-  type: "homework";
-};
-
+export type Homework = IHomeworkDTOProps;
+export type HomeworkAttachment = IHomeworkDTOProps & { type: "homework" };
 export type GradeGroup = {
   type:
   | "sum-of-grades"

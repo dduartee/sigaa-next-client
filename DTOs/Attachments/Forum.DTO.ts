@@ -1,5 +1,5 @@
 import { SigaaCourseForum } from "sigaa-api";
-import { FileDTO } from "./File.DTO";
+import { FileDTO, IFileDTOProps } from "./File.DTO";
 
 export type FullForum = {
     id: string,
@@ -20,7 +20,7 @@ export interface IForumDTOProps {
     creationDate: string;
     numOfTopics: number;
     flagMonitorReading: boolean;
-    file: FileDTO;
+    file: IFileDTOProps | null;
     forumType: string;
     description: string;
 }
@@ -38,7 +38,7 @@ export class ForumDTO implements IForumDTO {
         public creationDate: Date,
         public numOfTopics: number,
         public flagMonitorReading: boolean,
-        public file: FileDTO
+        public file: FileDTO | null
 	) { }
 
 	toJSON(): IForumDTOProps {
@@ -51,7 +51,7 @@ export class ForumDTO implements IForumDTO {
 			creationDate: this.creationDate.toISOString(),
 			numOfTopics: this.numOfTopics,
 			flagMonitorReading: this.flagMonitorReading,
-			file: this.file
+			file: this.file ? this.file.toJSON() : null,
 		};
 	}
 }

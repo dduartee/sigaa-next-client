@@ -28,7 +28,7 @@ export interface IHomeworkDTO {
 export class HomeworkDTO implements IHomeworkDTO {
 	constructor(
         private homework: SigaaHomework,
-        private fileDTO: FileDTO,
+        private fileDTO: FileDTO | null,
         private content: string,
         private haveGrade: boolean,
         private isGroup: boolean

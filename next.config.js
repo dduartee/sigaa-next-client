@@ -1,5 +1,5 @@
 module.exports = {
   images: {
-    domains: ['sigaa.ifsc.edu.br'],
+    domains: ['sigrh.ifsc.edu.br'],
   },
 }

@@ -12,9 +12,13 @@ interface QueryParams {
   registration: string;
 }
 type RequestBody = AuthenticationParams;
+export type CoursesResponse = {
+  data: ICourseDTOProps[];
+};
+
 export default async function Courses(
   request: NextApiRequest,
-  response: NextApiResponse<{ data: ICourseDTOProps[] } | { error: string }>
+  response: NextApiResponse<CoursesResponse | { error: string }>
 ) {
   logger.log("Courses", "Request received", {});
   const { username, sigaaURL, token } =
@@ -30,8 +34,7 @@ export default async function Courses(
     where: { token },
     select: { value: true },
   });
-  if (!storedSession)
-    return response.status(400).send({ error: "Invalid token" });
+  if (!storedSession) return response.status(400).send({ error: "Invalid token" });
   logger.log("Courses", "JSESSIONID received", {});
   const authService = new AuthService();
   const sigaaInstance = authService.prepareSigaaInstance({
@@ -83,6 +86,7 @@ export default async function Courses(
         storedCourse.schedule !== courseDTO.course.schedule ||
         storedCourse.numberOfStudents !== courseDTO.course.numberOfStudents
       ) {
+        logger.log("Courses", "Updating course", courseDTO.course.code);
         await prisma.sharedCourse.update({
           where: { courseId: courseDTO.course.id },
           data: {
