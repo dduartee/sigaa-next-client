@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { Box } from "@mui/material";
 import { fetchActivities, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
 import { IBondDTOProps } from "@DTOs/BondDTO";
+import { fetchCachedBond, storeBond } from "@hooks/useCachedBond";
 
 const sigaaURL = "https://sigrh.ifsc.edu.br"
 
@@ -18,21 +19,18 @@ export default function RegistrationPage() {
   const [user, setUser] = useState<UserData | undefined>(undefined);
   const [bond, setBond] = useState<IBondDTOProps | undefined>(undefined);
   const [token, setToken] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    const bondCached = JSON.parse(
-      sessionStorage.getItem(`bond@${registration}`) || "{}"
-    );
-    if (bondCached) {
-      setBond(bondCached);
-    } else {
-      sessionStorage.removeItem(`bond@${registration}`);
-    }
-  }, [registration]);
+  
   const [activitiesLoading, setActivitiesLoading] = useState(false);
   const { tab, setTab } = useTabHandler({
     order: BondTab.ACTIVITIES,
     registration,
   });
+  useEffect(() => {
+    if(registration) {
+      const cachedBond = fetchCachedBond(registration);
+      if(cachedBond) setBond(cachedBond)
+    }
+  }, [registration])
 
   useEffect(() => {
     const username = sessionStorage.getItem("username");
@@ -72,7 +70,7 @@ export default function RegistrationPage() {
               acronym: "IFSC",
             }
           }
-          sessionStorage.setItem(`bond@${registration}`, JSON.stringify(newBond));
+          storeBond(newBond);
           return newBond;
         })
       })

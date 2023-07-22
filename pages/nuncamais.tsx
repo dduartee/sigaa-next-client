@@ -16,6 +16,7 @@ import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperT
 import { ArrowBack, AccountCircle, Info, Send, SyncLock, Link as LinkIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/system";
 import { fetchBonds, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
+import { storeBond } from "@hooks/useCachedBond";
 
 const sigaaURL = "https://sigrh.ifsc.edu.br";
 
@@ -55,6 +56,7 @@ function Index(): JSX.Element {
         const { data: bonds } = await fetchBonds({ username: credentials.username, token })
         const bondsWithCourses = bonds.map(bond => ({ ...bond, courses: [], activities: [] }))
         setBonds(bondsWithCourses)
+        bondsWithCourses.map(storeBond)
         setStatus("Logado")
       })
     } else {
@@ -325,7 +327,7 @@ function LoginCard(props: {
         />
         {
           !showCookieMenu ?
-            <Button variant="text" onClick={() => setShowCookieMenu(true)}>Obter cookie</Button>
+            <Button variant="text" onClick={() => setShowCookieMenu(true)}>Obter cookie pela URL</Button>
             : null
         }
         <Typography sx={{ fontSize: "1rem" }} color="#ff4336">{errorFeedback}</Typography>
@@ -362,9 +364,8 @@ function CookieMenu(props: {
       const sigaaURL = new URL(url);
       if (!sigaaURL) return alert("URL inválida");
       const part1 = url.split(";")[1]
-      if (!part1) {
-        return alert("https://sigrh.ifsc.edu.br");
-      }
+      if (!part1) return alert("Tente reiniciar seu navegador ou abrir em uma aba anônima");
+      
       const part2 = part1.split("=")[1]
 
       const cookie = `JSESSIONID=${part2}`;

@@ -1,22 +1,22 @@
 import React, { useContext } from "react";
-import { Bond, Course } from "@types";
-
 import { RegistrationContext } from "@context/registration";
 import { useRouter } from "next/router";
 import { ChevronRight } from "@mui/icons-material";
 import { Box, Typography, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
 export default function Courses({
   bond,
 }: {
-  bond: Bond | undefined;
+  bond: IBondDTOProps | undefined;
 }) {
   const router = useRouter();
   const accessCourse = (registration: string, courseId: string) => {
     router.push(`/bond/${registration}/course/${courseId}/`);
   };
   const registration = useContext(RegistrationContext);
-  const [courses, setCourses] = React.useState<Course[] | null>(null);
+  const [courses, setCourses] = React.useState<ICourseDTOProps[] | null>(null);
   React.useEffect(() => {
     if (bond?.courses) {
       setCourses(bond.courses);
@@ -64,8 +64,8 @@ export default function Courses({
 }
 
 function CourseContent(props: {
-  course: Course;
-  accessCourse: (course: Course) => void;
+  course: ICourseDTOProps;
+  accessCourse: (course: ICourseDTOProps) => void;
 }) {
   return (
     <Accordion
