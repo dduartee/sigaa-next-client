@@ -1,17 +1,21 @@
 import { CourseDTO, ICourseDTOProps } from "@DTOs/CourseDTO";
 import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "../../../auth/login";
 import { BondService } from "@services/sigaa/Account/Bond/Bond";
 import logger from "@services/logger";
 import RehydrateBondFactory from "@services/sigaa/Account/Bond/RehydrateBondFactory";
 import { prisma } from "@lib/prisma";
 import { ObjectId } from "bson";
+import { compatibleInstitutions } from "@pages/api/v1/institutions";
 
 interface QueryParams {
   registration: string;
 }
-type RequestBody = AuthenticationParams;
+type RequestBody = {
+  username: string;
+  token: string;
+  institution: string;
+};
 export type CoursesResponse = {
   data: ICourseDTOProps[];
 };
@@ -21,11 +25,17 @@ export default async function Courses(
   response: NextApiResponse<CoursesResponse | { error: string }>
 ) {
   logger.log("Courses", "Request received", {});
-  const { username, sigaaURL, token } =
+  const { username, institution, token } =
     JSON.parse(JSON.stringify(request.body)) as RequestBody;
 
-  if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
+
   if (!token) return response.status(400).send({ error: "Token is required" });
+  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
+
+  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
+  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+
+  const sigaaURL = compatibleInstitution.url;
 
   const { registration } = request.query as Partial<QueryParams>;
   if (!registration) return response.status(400).send({ error: "Registration is required" });
@@ -41,6 +51,7 @@ export default async function Courses(
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
+    institution: compatibleInstitution.acronym
   });
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;
@@ -60,7 +71,9 @@ export default async function Courses(
       registration,
       program: bondStored.program,
       sequence: bondStored.sequence,
+      institution: compatibleInstitution.acronym
     },
+    sigaaURL,
     httpFactory,
     http,
     parser

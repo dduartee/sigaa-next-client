@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
-    "@prisma/client": "^4.9.0",
+    "@prisma/client": "^5.1.0",
     "@prisma/generator-helper": "^4.13.0",
     "@syncfusion/ej2-react-schedule": "^19.2.47",
     "bson": "^4.7.1",
@@ -39,7 +39,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-tsparticles": "^1.29.2",
-    "sigaa-api": "https://github.com/dduartee/sigaa-api.git#courseForm",
+    "sigaa-api": "https://github.com/dduartee/sigaa-api.git#uffs-support",
     "socket.io-client": "latest",
     "uuid": "^9.0.0"
   },
@@ -57,7 +57,7 @@
     "eslint-config-next": "^13.2.1",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prisma": "^4.9.0",
+    "prisma": "^5.1.0",
     "typescript": "^4.9.5"
   }
 }

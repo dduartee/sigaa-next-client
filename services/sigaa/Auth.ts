@@ -1,4 +1,5 @@
 import {
+  InstitutionType,
   Sigaa,
   SigaaCookiesController,
 } from "sigaa-api";
@@ -10,6 +11,7 @@ export class AuthService {
   async login(
     credentials: { username: string; password: string },
     url: string,
+    institution: InstitutionType,
     retry = true
   ): Promise<AccountService> {
     try {
@@ -21,7 +23,7 @@ export class AuthService {
         `${credentials.username}-requestStackController`,
         requestStackController
       );*/
-      this.sigaaInstance = new Sigaa({ url });
+      this.sigaaInstance = new Sigaa({ url, institution  });
 
       const { account, JSESSIONID } = await this.attemptLogin(
         credentials,
@@ -34,7 +36,7 @@ export class AuthService {
       );
       return accountService;
     } catch (error) {
-      if (retry) return this.login(credentials, url, false);
+      if (retry) return this.login(credentials, url, institution, false);
       else throw error;
     }
   }
@@ -61,8 +63,9 @@ export class AuthService {
     JSESSIONID: string;
     username: string;
     url: string;
+    institution: InstitutionType
   }) {
-    const { JSESSIONID, url } = params;
+    const { JSESSIONID, url, institution } = params;
     const { hostname } = new URL(url);
     const cookiesController = new SigaaCookiesController();
     cookiesController.storeCookies(hostname, [JSESSIONID]);
@@ -73,6 +76,7 @@ export class AuthService {
       throw new Error("RequestStackController not found");*/
     return new Sigaa({
       url,
+      institution,
       cookiesController,
     });
   }
@@ -80,6 +84,7 @@ export class AuthService {
     JSESSIONID: string;
     username: string;
     url: string;
+    institution: InstitutionType
   }) {
     logger.log("AuthService:rehydrate", "Rehydrating session", {
       username: params.username,

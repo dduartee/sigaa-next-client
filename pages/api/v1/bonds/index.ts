@@ -1,19 +1,28 @@
 import { AuthService } from "@services/sigaa/Auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { AuthenticationParams } from "../auth/login";
 import { BondDTO, IBondDTOProps } from "@DTOs/BondDTO";
 import logger from "@services/logger";
 import { prisma } from "@lib/prisma";
-type RequestBody = AuthenticationParams;
+import { compatibleInstitutions } from "../institutions";
+type RequestBody = {
+  username: string;
+  token: string;
+  institution: string;
+};
 export type BondsResponse = { data: IBondDTOProps[] };
 export default async function Bonds(
   request: NextApiRequest,
   response: NextApiResponse< BondsResponse| { error: string }>
 ) {
   logger.log("Bonds", "Request received", {});
-  const { username, sigaaURL, token } = JSON.parse(JSON.stringify(request.body)) as RequestBody;
-  if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
+  const { username, institution, token } = JSON.parse(JSON.stringify(request.body)) as RequestBody;
   if (!token) return response.status(400).send({ error: "Token is required" });
+  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
+
+  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
+  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+
+  const sigaaURL = compatibleInstitution.url;
 
   logger.log("Bonds", "Token received", token);
   const storedSession = await prisma.session.findUnique({
@@ -28,6 +37,7 @@ export default async function Bonds(
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
+    institution: compatibleInstitution.acronym
   });
   logger.log("Bonds", "Account service rehydrated", {});
   const activeBonds = await accountService.getActiveBonds();
@@ -49,10 +59,10 @@ export default async function Bonds(
         program: bondDTO.bond.program,
         registration: bondDTO.bond.registration,
         period: bondDTO.bond.period,
+        campus: bondDTO.bond.campus,
         sequence: parseInt(sequence),
         active: bondDTO.bond.active,
         Student: { connect: { username } },
-        Campus: { connect: { acronym: bondDTO.bond.campus.acronym } },
       },
       update: { period: bondDTO.bond.period },
     });

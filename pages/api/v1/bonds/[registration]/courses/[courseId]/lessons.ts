@@ -1,8 +1,6 @@
-// lessons api endpoint of the same course
-
 import { ICourseDTOProps } from "@DTOs/CourseDTO";
 import { prisma } from "@lib/prisma";
-import { AuthenticationParams } from "@pages/api/v1/auth/login";
+import { compatibleInstitutions } from "@pages/api/v1/institutions";
 import { SharedCourse } from "@prisma/client";
 import logger from "@services/logger";
 import { CourseService } from "@services/sigaa/Account/Bond/Course/Course";
@@ -14,7 +12,11 @@ interface QueryParams {
   courseId: string;
 }
 
-type RequestBody = AuthenticationParams;
+type RequestBody = {
+  username: string;
+  token: string;
+  institution: string;
+};
 
 type LessonsResponse = {
   data: ICourseDTOProps;
@@ -24,12 +26,19 @@ export default async function Lessons(
   request: NextApiRequest,
   response: NextApiResponse<LessonsResponse | { error: string }>
 ) {
-  const { username, sigaaURL, token } = JSON.parse(
+  const { username, institution, token } = JSON.parse(
     JSON.stringify(request.body)
   ) as RequestBody;
-  if (!sigaaURL)
-    return response.status(400).send({ error: "Sigaa URL is required" });
+
   if (!token) return response.status(400).send({ error: "Token is required" });
+  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
+  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
+  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+  
+  if(compatibleInstitution.acronym === "UFFS") return response.status(400).send({ data:undefined, error: "Institution is not compatible to this endpoint" });
+
+  const sigaaURL = compatibleInstitution.url;
+
   const { registration, courseId } = request.query as Partial<QueryParams>;
   if (!registration)
     return response.status(400).send({ error: "Registration is required" });
@@ -46,6 +55,7 @@ export default async function Lessons(
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
+    institution: compatibleInstitution.acronym
   });
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;

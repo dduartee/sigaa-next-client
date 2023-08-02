@@ -6,29 +6,32 @@ import { v4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "@services/logger";
 import { prisma } from "@lib/prisma";
-// import { HashService } from "@services/Hash";
+import { compatibleInstitutions } from "../../institutions";
 
-export interface AuthenticationParams {
+export interface IFSCAuthenticationParams {
   username: string;
   session?: string;
-  sigaaURL: string;
   token?: string;
 }
 export type LoginResponse =
   | { data: IStudentDTOProps & { token: string }, error: undefined}
   | { data: undefined, error: string };
-export default async function Login(
+export default async function LoginIFSC(
   request: NextApiRequest,
   response: NextApiResponse<LoginResponse>
 ) {
 
   logger.log("Login", "Request received", {});
-  const body = JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
+  const body = JSON.parse(JSON.stringify(request.body)) as IFSCAuthenticationParams;
 
-  const { username, session, sigaaURL, token } = body;
+  const { username, session, token } = body;
 
   if (!username) return response.status(400).send({ data:undefined, error: "Username is required" });
-  if (!sigaaURL) return response.status(400).send({ data:undefined, error: "Sigaa URL is required" });
+  
+  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === "IFSC");
+  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+
+  const sigaaURL = compatibleInstitution.url;
 
   const authService = new AuthService();
   let studentDTO: StudentDTO;
@@ -45,6 +48,7 @@ export default async function Login(
       JSESSIONID: storedSession.value,
       username,
       url: sigaaURL,
+      institution: compatibleInstitution.acronym
     });
     logger.log("Login", "Account service rehydrated", {});
     studentDTO = await getStudentDTO(accountService);
@@ -58,10 +62,10 @@ export default async function Login(
       JSESSIONID: session,
       username,
       url: sigaaURL,
+      institution: compatibleInstitution.acronym
     });
     studentDTO = await getStudentDTO(accountService);
     const studentJSON = studentDTO.toJSON();
-    // const hashService = new HashService();
     const studentInput = {
       ...studentJSON,
       passwordHash: "asdasdaskdoijoijoijoijehehhehehehehdgotcha"

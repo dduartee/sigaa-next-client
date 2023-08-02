@@ -1,4 +1,4 @@
-import { LoginResponse } from "@pages/api/v1/auth/login";
+import { LoginResponse } from "@pages/api/v1/auth/IFSC/login";
 import { BondsResponse } from "@pages/api/v1/bonds";
 import { ActivitiesResponse } from "@pages/api/v1/bonds/[registration]/activities";
 import { CoursesResponse } from "@pages/api/v1/bonds/[registration]/courses";

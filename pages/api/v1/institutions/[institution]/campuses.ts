@@ -1,11 +1,12 @@
-import { CampusDTO } from "@DTOs/CampusDTO";
 import { prisma } from "@lib/prisma";
 import { CampusService } from "@services/sigaa/Campus";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Sigaa } from "sigaa-api";
+import { InstitutionType, Sigaa } from "sigaa-api";
+import { CompatibleInstitutionAcronyms } from "..";
+import logger from "@services/logger";
 
 type CampusQuery = {
-  institution: string;
+  institution: CompatibleInstitutionAcronyms;
 };
 
 export default async function Campuses(
@@ -13,7 +14,8 @@ export default async function Campuses(
   response: NextApiResponse
 ) {
   const { institution: acronym } = request.query as Partial<CampusQuery>;
-  if (!acronym) return response.status(400).json({ message: "Acronym required" });
+  if (!acronym)
+    return response.status(400).json({ message: "Acronym required" });
   const institution = await prisma.institution.findUnique({
     where: { acronym },
   });
@@ -21,32 +23,38 @@ export default async function Campuses(
     return response.status(404).json({ message: "Institution not found" });
   const campuses = await loadCampuses(institution);
   response.status(200).json(campuses);
-  
 }
 
 export async function loadCampuses(institution: {
   url: string;
   acronym: string;
 }) {
-  const sigaaInstance = new Sigaa({ url: institution.url });
+  logger.log("Campuses", `Loading campuses from `, {
+    acronym: institution.acronym,
+  });
+  const sigaaInstance = new Sigaa({
+    url: institution.url,
+    institution: institution.acronym as InstitutionType,
+  });
   const campusService = new CampusService(sigaaInstance);
   const campusesStored = await prisma.campus.findMany({
     where: { Institution: { acronym: institution.acronym } },
     include: { Institution: true },
   });
   if (campusesStored.length != 0) {
-    return campusesStored.map((campus) =>
-      new CampusDTO(campus.name, campus.acronym, institution.acronym).toJSON()
-    );
+    logger.log("Campuses", `Loaded ${campusesStored.length} campuses from `, {
+      acronym: institution.acronym,
+    });
+    return campusesStored.map((campus) => campus.name);
   }
   const campuses = await campusService.getListCampus();
+  logger.log("Campuses", `Loaded ${campuses.length} campuses from `, {
+    acronym: institution.acronym,
+  });
   for (const campus of campuses) {
-    await prisma.campus.upsert({
-      where: { acronym: campus.acronym },
-      update: {},
-      create: {
-        name: campus.name,
-        acronym: campus.acronym,
+    await prisma.campus.create({
+      data: {
+        name: campus,
         Institution: { connect: { acronym: institution.acronym } },
       },
     });

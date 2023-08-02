@@ -18,7 +18,7 @@ export type UserCredentials = {
   username: string;
   session: string;
   token?: string;
-  sigaaURL: string
+  institution: string
 };
 export type UserData = IStudentDTOProps
 export type UserStatus = "Logado" | "Deslogado" | "Logando" | "Deslogando";

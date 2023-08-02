@@ -10,9 +10,9 @@ import {
   HTTPFactory,
   Parser,
   StudentBond,
+  InstitutionType,
 } from "sigaa-api";
 import { StudentBondWithAdditionalProps } from "./Bond";
-import { CampusDTO } from "@DTOs/CampusDTO";
 import { prisma } from "@lib/prisma";
 
 class RehydrateBondFactory {
@@ -22,40 +22,22 @@ class RehydrateBondFactory {
     for (const bond of bonds) {
       const bondStored = await prisma.bond.findUnique({
         where: { registration: bond.registration },
-        include: { Campus: { include: { Institution: true } } },
+        select: { period: true, campus: true },
       });
       let period: string;
-      let campusDTO: CampusDTO;
+      let campus: string;
       if (bondStored) {
         logger.log("AccountService", "got period and campus from cache", {});
         period = bondStored.period;
-        const campus = bondStored.Campus;
-        campusDTO = new CampusDTO(
-          campus.name,
-          campus.acronym,
-          campus.Institution.acronym
-        );
+        campus = bondStored.campus;
       } else {
         period = await bond.getCurrentPeriod();
         logger.log("AccountService", "got period", {});
-        const campus = await bond.getCampus();
-        const [name, acronymWithDate] = campus.split(" - ");
-        const [acronym] = acronymWithDate.split(" ");
-        const institutionStored = await prisma.campus.findUnique({
-          where: { acronym },
-          include: { Institution: true },
-        });
-        if (!institutionStored) throw new Error("Institution not found");
-        campusDTO = new CampusDTO(
-          name,
-          acronym,
-          institutionStored.Institution.acronym
-        );
-
-        logger.log("AccountService", "got campus", {});
+        campus = await bond.getCampus();
+        logger.log("AccountService", "got campus", {campus});
       }
       bondsWithAdditionalProps.push(
-        Object.assign(bond, { period, campus: campusDTO.toJSON(), active })
+        Object.assign(bond, { period, campus, active })
       );
     }
     return bondsWithAdditionalProps;
@@ -65,14 +47,17 @@ class RehydrateBondFactory {
       program: string;
       registration: string;
       sequence: number;
+      institution: InstitutionType;
     },
+    sigaaURL: string,
     httpFactory: HTTPFactory,
     http: HTTP,
     parser: Parser
   ): StudentBond {
-    const { program, registration, sequence } = bondData;
+    const { program, registration, institution, sequence } = bondData;
     const bondSwitchUrl = new URL(
-      `https://sigrh.ifsc.edu.br/sigaa/escolhaVinculo.do?dispatch=escolher&vinculo=${sequence}`
+      `/sigaa/escolhaVinculo.do?dispatch=escolher&vinculo=${sequence}`,
+      sigaaURL
     );
     const courseResourcesFactory = new SigaaCourseResourcesFactory(parser);
     const courseResourcesManagerFactory = new SigaaCourseResourceManagerFactory(
@@ -93,8 +78,10 @@ class RehydrateBondFactory {
       activityFactory
     );
     const bond = bondFactory.createStudentBond(
+      institution,
       registration,
       program,
+      "",
       bondSwitchUrl
     );
     return bond;
