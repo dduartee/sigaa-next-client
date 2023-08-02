@@ -11,8 +11,6 @@ import { fetchActivities, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
 import { IBondDTOProps } from "@DTOs/BondDTO";
 import { fetchCachedBond, storeBond } from "@hooks/useCachedBond";
 
-const sigaaURL = "https://sigrh.ifsc.edu.br"
-
 export default function RegistrationPage() {
   const router = useRouter();
   const registration = router.query.registration as string | undefined;
@@ -36,7 +34,7 @@ export default function RegistrationPage() {
     const username = sessionStorage.getItem("username");
     const token = sessionStorage.getItem("token");
     if (username && token) {
-      const credentials = { username, token, session: "", sigaaURL }
+      const credentials = { username, token, session: "", institution: "IFSC" }
       setActivitiesLoading(true);
       fetchLogin(credentials).then((res) => {
         if (!res.error && res.data) {
@@ -51,7 +49,7 @@ export default function RegistrationPage() {
   useEffect(() => {
     const username = sessionStorage.getItem("username");
     if (user?.fullName && registration && username && token) {
-      const credentials = { username, token, session: "", sigaaURL }
+      const credentials = { username, token, session: "", institution: "IFSC" }
       fetchCourses(credentials, registration).then(async ({ data: courses }) => {
         const { data: activities } = await fetchActivities(credentials, registration)
         setActivitiesLoading(false);
@@ -64,11 +62,7 @@ export default function RegistrationPage() {
             type: "student",
             period: "",
             active: true,
-            campus: {
-              name: "IFSC",
-              institution: "IFSC",
-              acronym: "IFSC",
-            }
+            campus: ""
           }
           storeBond(newBond);
           return newBond;

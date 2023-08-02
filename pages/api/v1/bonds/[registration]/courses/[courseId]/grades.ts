@@ -91,7 +91,7 @@ export default async function Grades(
   */
   const courseService = new CourseService();
   logger.log("Grades", "Rehydrating course", {});
-  courseService.rehydrateCourse(sharedCourse, {
+  courseService.rehydrateCourse(sharedCourse, compatibleInstitution.acronym, {
     parser,
     http,
   });

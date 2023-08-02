@@ -1,8 +1,6 @@
 datasource db {
-    provider          = "postgresql"
-    url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-    directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-    shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -10,7 +8,7 @@ generator client {
 }
 
 model Institution {
-    id        String   @id @default(uuid())
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String   @unique
     acronym   String   @unique
     url       String   @unique
@@ -22,10 +20,10 @@ model Institution {
 }
 
 model Campus {
-    id            String      @id @default(uuid())
+    id            String      @id @default(auto()) @map("_id") @db.ObjectId
     name          String      @unique
     Institution   Institution @relation(fields: [institutionId], references: [id])
-    institutionId String
+    institutionId String      @db.ObjectId
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @updatedAt
 
@@ -33,20 +31,20 @@ model Campus {
 }
 
 model Session {
-    id        String   @id @default(uuid())
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
     value     String   @unique
     token     String   @unique
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     Student   Student  @relation(fields: [studentId], references: [id])
-    studentId String   @unique
+    studentId String   @unique @db.ObjectId
 
     // em algum momento futuro, a sessão será referenciada pelo vinculo.
     @@map("sessions")
 }
 
 model Bond {
-    id           String   @id @default(uuid())
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
     program      String
     registration String   @unique
     period       String
@@ -54,7 +52,7 @@ model Bond {
     sequence     Int
     active       Boolean  @default(true)
     Student      Student  @relation(fields: [studentId], references: [id])
-    studentId    String
+    studentId    String   @db.ObjectId
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
     Courses      Course[]
@@ -65,7 +63,7 @@ model Bond {
 // model compartilhado para alunos do mesmo periodo que há a mesma matéria, ou seja, com o title, id, code, schedule... compartilhados
 // informações comuns são compartilhadas entre alunos do mesmo periodo
 model SharedCourse {
-    id               String   @id @default(uuid())
+    id               String   @id @default(auto()) @map("_id") @db.ObjectId
     courseId         String   @unique
     title            String
     code             String
@@ -83,20 +81,20 @@ model SharedCourse {
 
 // model para cada aluno, com suas informações particulares, notas, frequencia...
 model Course {
-    id             String        @id @default(uuid())
+    id             String        @id @default(auto()) @map("_id") @db.ObjectId
     // homeworks   Homework[]   // {done}
     grades         GradesGroup[]
     // absences    Absence[]
     Bond           Bond          @relation(fields: [bondId], references: [id])
-    bondId         String
+    bondId         String        @db.ObjectId
     SharedCourse   SharedCourse  @relation(fields: [sharedCourseId], references: [id])
-    sharedCourseId String
+    sharedCourseId String        @db.ObjectId
 
     @@map("courses")
 }
 
 model Student {
-    id                String   @id @default(uuid())
+    id                String   @id @default(auto()) @map("_id") @db.ObjectId
     username          String   @unique
     fullName          String
     passwordHash      String
@@ -111,25 +109,25 @@ model Student {
 }
 
 model GradesGroup {
-    id        String     @id @default(uuid())
+    id        String     @id @default(auto()) @map("_id") @db.ObjectId
     type      String
     value     Float
     subGrades SubGrade[]
     Course    Course?    @relation(fields: [courseId], references: [id])
-    courseId  String?
+    courseId  String?    @db.ObjectId
 
     @@map("grades_groups")
 }
 
 model SubGrade {
-    id            String      @id @default(uuid())
+    id            String      @id @default(auto()) @map("_id") @db.ObjectId
     name          String
     code          String
     value         Float?
     maxValue      Float?
     weight        Float?
     GradesGroup   GradesGroup @relation(fields: [gradesGroupId], references: [id])
-    gradesGroupId String
+    gradesGroupId String      @db.ObjectId
 
     @@map("sub_grades")
 }

@@ -13,7 +13,6 @@ type LoggedUserCredentials = {
   username: string;
   token: string;
 };
-const sigaaURL = "https://sigrh.ifsc.edu.br/";
 
 const fetchAPI = async (
   endpoint: string,
@@ -41,9 +40,9 @@ const fetchLogin = async ({
   token,
 }: UserCredentials): Promise<LoginResponse> => {
   if (username && (session || token)) {
-    const body = { username, token, session, sigaaURL };
+    const body = { username, token, session, institution: "IFSC" };
     return fetchAPI(
-      "/api/v1/auth/login",
+      "/api/v1/auth/IFSC/login",
       body,
       "FETCHLOGIN: Parametros inválidos"
     ) as Promise<LoginResponse>;
@@ -54,7 +53,7 @@ const fetchLogin = async ({
 
 const fetchBonds = async ({ username, token }: LoggedUserCredentials) => {
   if (username && token) {
-    const body = { username, token, sigaaURL };
+    const body = { username, token, institution: "IFSC" };
     return fetchAPI(
       "/api/v1/bonds",
       body,
@@ -70,7 +69,7 @@ const fetchCourses = async (
   registration: string
 ) => {
   if (username && token && registration) {
-    const body = { username, token, sigaaURL };
+    const body = { username, token, institution: "IFSC" };
     return (await fetchAPI(
       `/api/v1/bonds/${registration}/courses`,
       body,
@@ -85,7 +84,7 @@ const fetchActivities = async (
   registration: string
 ) => {
   if (username && token && registration) {
-    const body = { username, token, sigaaURL };
+    const body = { username, token, institution: "IFSC" };
     return (await fetchAPI(
       `/api/v1/bonds/${registration}/activities`,
       body,

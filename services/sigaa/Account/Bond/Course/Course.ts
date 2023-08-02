@@ -1,4 +1,4 @@
-import { CourseStudentData, HTTP, Parser, SigaaCourseStudent } from "sigaa-api";
+import { CourseStudentData, HTTP, InstitutionType, Parser, SigaaCourseStudent } from "sigaa-api";
 import RehydrateCourseFactory from "./RehydrateCourseFactory";
 import { SharedCourse } from "@prisma/client";
 import { GradesService } from "./Grades";
@@ -48,11 +48,13 @@ export class CourseService {
    */
   public rehydrateCourse(
     sharedCourse: SharedCourse,
+    institution: InstitutionType,
     sigaa: { parser: Parser; http: HTTP }
   ) {
     const courseData = this.parseCourseData(sharedCourse);
     const course = RehydrateCourseFactory.create(
       courseData,
+      institution,
       sigaa.http,
       sigaa.parser
     );

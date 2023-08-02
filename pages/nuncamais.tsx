@@ -18,15 +18,13 @@ import { useTheme } from "@mui/system";
 import { fetchBonds, fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
 import { storeBond } from "@hooks/useCachedBond";
 
-const sigaaURL = "https://sigrh.ifsc.edu.br";
-
 function Index(): JSX.Element {
   const router = useRouter();
-  const [credentials, setCredentials] = useState<UserCredentials & { sigaaURL: string }>({
+  const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
     session: "",
     token: "",
-    sigaaURL
+    institution: "IFSC"
   });
   const [registrationSelected, setRegistrationSelected] = useState<string>("");
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -101,7 +99,7 @@ function Index(): JSX.Element {
   };
   const handleLogout = () => {
     setErrorFeedback("");
-    setCredentials({ username: "", session: "", token: "", sigaaURL: "https://sigrh.ifsc.edu.br" });
+    setCredentials({ username: "", session: "", token: "", institution: "IFSC" });
     sessionStorage.clear();
   };
 
