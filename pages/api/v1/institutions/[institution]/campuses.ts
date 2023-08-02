@@ -29,7 +29,7 @@ export async function loadCampuses(institution: {
   url: string;
   acronym: string;
 }) {
-  logger.log("Campuses", `Loading campuses from `, {
+  logger.log("Campuses", `Loading campuses `, {
     acronym: institution.acronym,
   });
   const sigaaInstance = new Sigaa({
@@ -42,13 +42,13 @@ export async function loadCampuses(institution: {
     include: { Institution: true },
   });
   if (campusesStored.length != 0) {
-    logger.log("Campuses", `Loaded ${campusesStored.length} campuses from `, {
+    logger.log("Campuses", `got ${campusesStored.length} campuses from cache`, {
       acronym: institution.acronym,
     });
     return campusesStored.map((campus) => campus.name);
   }
   const campuses = await campusService.getListCampus();
-  logger.log("Campuses", `Loaded ${campuses.length} campuses from `, {
+  logger.log("Campuses", `got ${campuses.length} campuses from `, {
     acronym: institution.acronym,
   });
   for (const campus of campuses) {
@@ -57,6 +57,9 @@ export async function loadCampuses(institution: {
         name: campus,
         Institution: { connect: { acronym: institution.acronym } },
       },
+    });
+    logger.log("Campuses", "Campus created", {
+      campus,
     });
   }
   return campuses;

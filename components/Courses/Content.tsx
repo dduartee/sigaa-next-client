@@ -88,7 +88,7 @@ function CourseContent(props: {
       }}
     >
       <AccordionSummary color="primary" expandIcon={<ChevronRight />}>
-        <Typography>{props.course.title}</Typography>
+        <Typography>{props.course.title} - {props.course.code}</Typography>
       </AccordionSummary>
       <AccordionDetails></AccordionDetails>
     </Accordion>

@@ -8,7 +8,7 @@ import logger from "@services/logger";
 
 export class AuthService {
   sigaaInstance?: Sigaa;
-  async login(
+  public async login(
     credentials: { username: string; password: string },
     url: string,
     institution: InstitutionType,
@@ -29,9 +29,12 @@ export class AuthService {
         credentials,
         this.sigaaInstance
       );
+      const accountUsername = await account.getUsername();
+      if(accountUsername !== credentials.username) throw new Error("Username mismatch");
+      
       const accountService = new AccountService(
         account,
-        credentials.username,
+        accountUsername,
         JSESSIONID
       );
       return accountService;
@@ -80,7 +83,7 @@ export class AuthService {
       cookiesController,
     });
   }
-  async rehydrate(params: {
+  public async rehydrate(params: {
     JSESSIONID: string;
     username: string;
     url: string;
@@ -94,10 +97,13 @@ export class AuthService {
     const page = await http.get("/sigaa/vinculos.jsf");
     logger.log("AuthService:rehydrate", "Rehydrated page", page.url.pathname);
     const account = await this.sigaaInstance.accountFactory.getAccount(page);
+    const accountUsername = await account.getUsername();
+    if(accountUsername !== params.username) throw new Error("Username mismatch");
+
     logger.log("AuthService:rehydrate", "Rehydrated account", {});
     const accountService = new AccountService(
       account,
-      params.username,
+      accountUsername,
       params.JSESSIONID
     );
     return accountService;

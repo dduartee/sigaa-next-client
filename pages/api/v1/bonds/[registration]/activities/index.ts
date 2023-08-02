@@ -29,37 +29,57 @@ export default async function Activities(
   ) as RequestBody;
 
   if (!token) return response.status(400).send({ error: "Token is required" });
-  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
+  if (!institution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is required" });
 
-  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
-  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+  const compatibleInstitution = compatibleInstitutions.find(
+    (i) => i.acronym === institution
+  );
+  if (!compatibleInstitution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is not compatible" });
 
   const sigaaURL = compatibleInstitution.url;
-  
+
   const { registration } = request.query as Partial<QueryParams>;
   if (!registration)
     return response.status(400).send({ error: "Registration is required" });
 
   const storedSession = await prisma.session.findUnique({
-    where: { token },
+    where: {
+      token,
+      Student: {
+        username,
+      },
+    },
     select: { value: true },
   });
   if (!storedSession)
-    return response.status(400).send({ error: "Invalid token" });
+    return response.status(400).send({ error: "Invalid token or username" });
 
   const authService = new AuthService();
   const sigaaInstance = authService.prepareSigaaInstance({
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
-    institution: compatibleInstitution.acronym
+    institution: compatibleInstitution.acronym,
   });
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;
   const http = httpFactory.createHttp();
 
   const bondStored = await prisma.bond.findUnique({
-    where: { registration },
+    where: {
+      registration,
+      Student: {
+        Session: {
+          token,
+        },
+      },
+    },
     select: {
       program: true,
       sequence: true,
@@ -74,7 +94,7 @@ export default async function Activities(
       registration,
       program: bondStored.program,
       sequence: bondStored.sequence,
-      institution: compatibleInstitution.acronym
+      institution: compatibleInstitution.acronym,
     },
     sigaaURL,
     httpFactory,

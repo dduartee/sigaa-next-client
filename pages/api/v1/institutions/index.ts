@@ -1,4 +1,5 @@
 import { prisma } from "@lib/prisma";
+import logger from "@services/logger";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type CompatibleInstitutionAcronyms = "IFSC" | "UFFS";
@@ -25,6 +26,9 @@ export async function loadInstitutions() {
       where: { acronym: institution.acronym },
       update: {},
       create: institution,
+    });
+    logger.log("Institutions", "Institution upserted", {
+      institution: institution.acronym,
     });
   }
   return compatibleInstitutions;

@@ -31,11 +31,23 @@ export default async function Lessons(
   ) as RequestBody;
 
   if (!token) return response.status(400).send({ error: "Token is required" });
-  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
-  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
-  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
-  
-  if(compatibleInstitution.acronym === "UFFS") return response.status(400).send({ data:undefined, error: "Institution is not compatible to this endpoint" });
+  if (!institution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is required" });
+  const compatibleInstitution = compatibleInstitutions.find(
+    (i) => i.acronym === institution
+  );
+  if (!compatibleInstitution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is not compatible" });
+
+  if (compatibleInstitution.acronym === "UFFS")
+    return response.status(400).send({
+      data: undefined,
+      error: "Institution is not compatible to this endpoint",
+    });
 
   const sigaaURL = compatibleInstitution.url;
 
@@ -45,23 +57,35 @@ export default async function Lessons(
   if (!courseId)
     return response.status(400).send({ error: "Course ID is required" });
   const storedSession = await prisma.session.findUnique({
-    where: { token },
+    where: {
+      token,
+      Student: {
+        username,
+      },
+    },
     select: { value: true },
   });
   if (!storedSession)
-    return response.status(400).send({ error: "Invalid token" });
+    return response.status(400).send({ error: "Invalid token or username" });
   const authService = new AuthService();
   const sigaaInstance = authService.prepareSigaaInstance({
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
-    institution: compatibleInstitution.acronym
+    institution: compatibleInstitution.acronym,
   });
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;
   const http = httpFactory.createHttp();
   const bondStored = await prisma.bond.findUnique({
-    where: { registration },
+    where: {
+      registration,
+      Student: {
+        Session: {
+          token,
+        },
+      },
+    },
     select: {
       program: true,
       sequence: true,

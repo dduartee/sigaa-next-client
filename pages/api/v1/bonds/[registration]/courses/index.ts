@@ -25,39 +25,61 @@ export default async function Courses(
   response: NextApiResponse<CoursesResponse | { error: string }>
 ) {
   logger.log("Courses", "Request received", {});
-  const { username, institution, token } =
-    JSON.parse(JSON.stringify(request.body)) as RequestBody;
-
+  const { username, institution, token } = JSON.parse(
+    JSON.stringify(request.body)
+  ) as RequestBody;
 
   if (!token) return response.status(400).send({ error: "Token is required" });
-  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
+  if (!institution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is required" });
 
-  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
-  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+  const compatibleInstitution = compatibleInstitutions.find(
+    (i) => i.acronym === institution
+  );
+  if (!compatibleInstitution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is not compatible" });
 
   const sigaaURL = compatibleInstitution.url;
 
   const { registration } = request.query as Partial<QueryParams>;
-  if (!registration) return response.status(400).send({ error: "Registration is required" });
+  if (!registration)
+    return response.status(400).send({ error: "Registration is required" });
   logger.log("Courses", "Token received", token);
   const storedSession = await prisma.session.findUnique({
-    where: { token },
+    where: {
+      token,
+      Student: {
+        username,
+      },
+    },
     select: { value: true },
   });
-  if (!storedSession) return response.status(400).send({ error: "Invalid token" });
+  if (!storedSession)
+    return response.status(400).send({ error: "Invalid token or username" });
   logger.log("Courses", "JSESSIONID received", {});
   const authService = new AuthService();
   const sigaaInstance = authService.prepareSigaaInstance({
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
-    institution: compatibleInstitution.acronym
+    institution: compatibleInstitution.acronym,
   });
   const parser = sigaaInstance.parser;
   const httpFactory = sigaaInstance.httpFactory;
   const http = httpFactory.createHttp();
   const bondStored = await prisma.bond.findUnique({
-    where: { registration },
+    where: {
+      registration,
+      Student: {
+        Session: {
+          token,
+        },
+      },
+    },
     select: {
       program: true,
       sequence: true,
@@ -71,7 +93,7 @@ export default async function Courses(
       registration,
       program: bondStored.program,
       sequence: bondStored.sequence,
-      institution: compatibleInstitution.acronym
+      institution: compatibleInstitution.acronym,
     },
     sigaaURL,
     httpFactory,
@@ -123,7 +145,7 @@ export default async function Courses(
             period: courseDTO.course.period,
             schedule: courseDTO.course.schedule,
             title: courseDTO.course.title,
-            postValues
+            postValues,
           },
         }),
         prisma.course.create({

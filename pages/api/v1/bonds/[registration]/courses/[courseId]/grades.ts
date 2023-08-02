@@ -25,18 +25,31 @@ export default async function Grades(
   request: NextApiRequest,
   response: NextApiResponse<GradesResponse | { error: string }>
 ) {
-  const { username, institution, token } =
-    JSON.parse(JSON.stringify(request.body)) as RequestBody;
+  const { username, institution, token } = JSON.parse(
+    JSON.stringify(request.body)
+  ) as RequestBody;
   logger.log("Grades", "Request received", {});
   if (!token) return response.status(400).send({ error: "Token is required" });
-  if (!institution) return response.status(400).send({ data:undefined, error: "Institution is required" });
-  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === institution);
-  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
-  
-  if(compatibleInstitution.acronym === "UFFS") return response.status(400).send({ data:undefined, error: "Institution is not compatible to this endpoint" });
+  if (!institution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is required" });
+  const compatibleInstitution = compatibleInstitutions.find(
+    (i) => i.acronym === institution
+  );
+  if (!compatibleInstitution)
+    return response
+      .status(400)
+      .send({ data: undefined, error: "Institution is not compatible" });
+
+  if (compatibleInstitution.acronym === "UFFS")
+    return response.status(400).send({
+      data: undefined,
+      error: "Institution is not compatible to this endpoint",
+    });
 
   const sigaaURL = compatibleInstitution.url;
-  
+
   const { registration, courseId } = request.query as Partial<QueryParams>;
   if (!registration)
     return response.status(400).send({ error: "Registration is required" });
@@ -44,11 +57,16 @@ export default async function Grades(
     return response.status(400).send({ error: "CourseId is required" });
 
   const storedSession = await prisma.session.findUnique({
-    where: { token },
+    where: {
+      token,
+      Student: {
+        username,
+      },
+    },
     select: { value: true },
   });
   if (!storedSession)
-    return response.status(400).send({ error: "Invalid token" });
+    return response.status(400).send({ error: "Invalid token or username" });
 
   logger.log("Grades", "JSESSIONID received", {});
   const authService = new AuthService();
@@ -56,7 +74,7 @@ export default async function Grades(
     JSESSIONID: storedSession.value,
     username,
     url: sigaaURL,
-    institution: compatibleInstitution.acronym
+    institution: compatibleInstitution.acronym,
   });
   const parser = sigaaInstance.parser;
   /**
@@ -65,7 +83,14 @@ export default async function Grades(
    */
   const http = sigaaInstance.httpFactory.createHttp();
   const bondStored = await prisma.bond.findUnique({
-    where: { registration },
+    where: {
+      registration,
+      Student: {
+        Session: {
+          token,
+        },
+      },
+    },
     select: {
       program: true,
       sequence: true,
@@ -78,17 +103,19 @@ export default async function Grades(
 
   logger.log("Grades", "Bond received", {});
 
-  const sharedCourse = await prisma.sharedCourse.findUnique({
+  const sharedCourse = (await prisma.sharedCourse.findUnique({
     where: { courseId },
-  }) as SharedCourse;
+  })) as SharedCourse;
   if (!sharedCourse)
     return response.status(400).send({ error: "Invalid sharedCourse" });
   const courses = bondStored.Courses;
-  const course = courses.find((course) => course.sharedCourseId === sharedCourse.id);
+  const course = courses.find(
+    (course) => course.sharedCourseId === sharedCourse.id
+  );
   if (!course) return response.status(400).send({ error: "Invalid course" });
   /**
    * Rehidratar o course apartir dos dados salvos no banco
-  */
+   */
   const courseService = new CourseService();
   logger.log("Grades", "Rehydrating course", {});
   courseService.rehydrateCourse(sharedCourse, compatibleInstitution.acronym, {
