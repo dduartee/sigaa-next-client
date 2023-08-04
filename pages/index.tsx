@@ -292,7 +292,7 @@ function LoginCard(props: {
                 error={errorFeedback ? true : false}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
-                Seu usuário do SIGAA
+                Seu usuário do SIGAA UFFS
               </FormHelperText>
             </FormControl>
           }
@@ -318,7 +318,7 @@ function LoginCard(props: {
                 disabled={showCookieMenu}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
-                Sua senha do SIGAA
+                Sua senha do SIGAA UFFS
               </FormHelperText>
             </FormControl>
           }
