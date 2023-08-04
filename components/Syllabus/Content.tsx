@@ -74,7 +74,7 @@ export default function Syllabus(props: { course?: Course; loading: boolean; upd
                     <Loading value={isLoading} />
                 ) : (
                     <>
-                        <UpdateInfo updateHook={updateHook} timestamp={props.course.timestamp} />
+                        <UpdateInfo updateHook={updateHook} timestamp={"0"} />
                         {props.course.syllabus ? (
                             <>
                                 <Box mt={1}>

@@ -1,6 +1,6 @@
 import { Attachment } from "@components/Activities/Attachment";
 import { groupBy } from "@components/Grades/Content";
-import { Course, Lesson } from "@types";
+import { AttachmentsTypes, Course, Lesson } from "@types";
 import moment from "moment";
 import "moment/locale/pt";
 import React, { useEffect, useState } from "react";
@@ -74,7 +74,7 @@ export default function Lessons(props: LessonsProps) {
           <Loading value={isLoading} />
         ) : (
           <>
-            <UpdateInfo updateHook={updateHook} timestamp={props.course.timestamp} />
+            <UpdateInfo updateHook={updateHook} timestamp={"0"} />
             {props.course.lessons?.length !== 0 ? (
               <Paper elevation={2} sx={{ padding: ".2rem", maxWidth: "1500px" }}>
                 <Box textAlign={"right"}>
@@ -196,7 +196,7 @@ function LessonContent(props: { lesson: Lesson }) {
           width="100%"
           justifyContent={"start"}
         >
-          {props.lesson.attachments.map((attachment, key) => {
+          {props.lesson.attachments.map((attachment: AttachmentsTypes, key) => {
             return (
               <Box m={0.5} key={key} width="100%" maxWidth={"400px"}>
                 <Attachment attachment={attachment} />

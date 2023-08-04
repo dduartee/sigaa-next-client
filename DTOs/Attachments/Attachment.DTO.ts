@@ -11,13 +11,17 @@ import { IWebContentDTOProps, WebContentDTO } from "./WebContent.DTO";
 
 export type Attachments = FileDTO | ForumDTO | LinkDTO | QuizDTO | SurveyDTO | VideoDTO | WebContentDTO | HomeworkDTO | HyperLinkDTO;
 export type AttachmentProps = IFileDTOProps | IForumDTOProps | ILinkDTOProps | IQuizDTOProps | ISurveyDTOProps | IVideoDTOProps | IWebContentDTOProps | IHomeworkDTOProps | IHyperLinkDTOProps;
+export type UnifiedAttachmentsTypes = AttachmentProps & {
+	type: string;
+};
+
 export interface IAttachmentDTO {
-    unify(): AttachmentProps & { type: string }
+    unify(): UnifiedAttachmentsTypes
 }
 
 export class AttachmentDTO implements IAttachmentDTO {
 	constructor(public attachment: Attachments, public type: Attachment["type"]) { }
-	unify(): AttachmentProps & { type: string } {
+	unify(): UnifiedAttachmentsTypes {
 		return { ...this.attachment.toJSON(), type: this.type };
 	}
 }

@@ -1,34 +1,33 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@lib/prisma";
-import { AuthService } from "@services/sigaa/Auth";
 import { ICourseDTOProps } from "@DTOs/CourseDTO";
-import { CourseService } from "@services/sigaa/Account/Bond/Course/Course";
-import logger from "@services/logger";
-import { SharedCourse } from "@prisma/client";
+import { prisma } from "@lib/prisma";
 import { compatibleInstitutions } from "@pages/api/v1/institutions";
+import { SharedCourse } from "@prisma/client";
+import logger from "@services/logger";
+import { CourseService } from "@services/sigaa/Account/Bond/Course/Course";
+import { AuthService } from "@services/sigaa/Auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
 interface QueryParams {
   registration: string;
   courseId: string;
 }
+
 type RequestBody = {
   username: string;
   token: string;
   institution: string;
 };
 
-type GradesResponse = {
+type AbsencesResponse = {
   data: ICourseDTOProps;
 };
-
-export default async function Grades(
+export default async function Absences(
   request: NextApiRequest,
-  response: NextApiResponse<GradesResponse | { error: string }>
+  response: NextApiResponse<AbsencesResponse | { error: string }>
 ) {
   const { username, institution, token } = JSON.parse(
     JSON.stringify(request.body)
   ) as RequestBody;
-  logger.log("Grades", "Request received", {});
   if (!token) return response.status(400).send({ error: "Token is required" });
   if (!institution)
     return response
@@ -49,13 +48,11 @@ export default async function Grades(
     });
 
   const sigaaURL = compatibleInstitution.url;
-
   const { registration, courseId } = request.query as Partial<QueryParams>;
   if (!registration)
     return response.status(400).send({ error: "Registration is required" });
   if (!courseId)
-    return response.status(400).send({ error: "CourseId is required" });
-
+    return response.status(400).send({ error: "Course ID is required" });
   const storedSession = await prisma.session.findUnique({
     where: {
       token,
@@ -67,8 +64,6 @@ export default async function Grades(
   });
   if (!storedSession)
     return response.status(400).send({ error: "Invalid token or username" });
-
-  logger.log("Grades", "JSESSIONID received", {});
   const authService = new AuthService();
   const sigaaInstance = authService.prepareSigaaInstance({
     JSESSIONID: storedSession.value,
@@ -77,11 +72,8 @@ export default async function Grades(
     institution: compatibleInstitution.acronym,
   });
   const parser = sigaaInstance.parser;
-  /**
-   * O http deve ser instanciado apenas uma vez,
-   * assim como o SigaaRequestStack instanciado dentro dele
-   */
-  const http = sigaaInstance.httpFactory.createHttp();
+  const httpFactory = sigaaInstance.httpFactory;
+  const http = httpFactory.createHttp();
   const bondStored = await prisma.bond.findUnique({
     where: {
       registration,
@@ -122,9 +114,7 @@ export default async function Grades(
     parser,
     http,
   });
-  logger.log("Grades", "getting grades", {});
-  await courseService.getGrades();
-  logger.log("Grades", "Sending response", {});
+  await courseService.getAbsences();
   const courseDTO = courseService.getDTO();
   return response.status(200).send({ data: courseDTO.toJSON() });
 }

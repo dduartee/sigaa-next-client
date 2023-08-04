@@ -22,7 +22,6 @@ export default function GradesPage() {
   const { tab, setTab } = useTabHandler({
     order: BondTab.ABSENCES,
     registration,
-    valid,
   });
   const { bond, partialLoading, setPartialLoading } = useAbsencesEvents();
   useEffect(() => {

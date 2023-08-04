@@ -1,5 +1,4 @@
 import { ActivityDTO, IActivityDTOProps } from "./ActivityDTO";
-import { ICampusDTOProps } from "./CampusDTO";
 import { CourseDTO, ICourseDTOProps } from "./CourseDTO";
 import { StudentBondWithAdditionalProps } from "@services/sigaa/Account/Bond/Bond";
 
@@ -9,7 +8,7 @@ export interface IBondDTOProps {
   type: string;
   active: boolean;
   period: string;
-  campus: ICampusDTOProps;
+  campus: string;
   activities?: IActivityDTOProps[];
   courses?: ICourseDTOProps[];
 }

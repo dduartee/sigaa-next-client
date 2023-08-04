@@ -17,7 +17,7 @@ export class AccountService {
 
   async getProfilePictureURL() {
     const noPictureURL = new URL(
-      "https://sigaa.ifsc.edu.br/sigaa/img/no_picture.png"
+      "https://sigrh.ifsc.edu.br/sigaa/img/no_picture.png"
     );
     const profilePictureURL =
       (await this.account.getProfilePictureURL()) ?? noPictureURL;

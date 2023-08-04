@@ -1,69 +1,74 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "@context/socket";
-import useTokenHandler from "@hooks/useTokenHandler";
-import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
-import useCourseEvents from "@hooks/courses/useCourseEvents";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Bond } from "@types";
+import { UserData } from "@types";
 import useTabHandler, { BondTab } from "@hooks/useTabHandler";
-import { emitCourseList } from "@hooks/useBondsEvents";
 import HomeProvider from "@components/HomeProvider";
 import Courses from "@components/Courses/Content";
 import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
 import { useRouter } from "next/router";
 import { Box } from "@mui/material";
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { fetchCourses, fetchLogin } from "@hooks/useHomeFetch";
+import { fetchCachedBond, storeBond } from "@hooks/useCachedBond";
 
 export default function CoursesPage() {
   const router = useRouter();
   const registration = router.query.registration as string | undefined;
 
-  const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
-  const { user } = useUserHandler();
-  const [bond, setBond] = useState<Bond | undefined>(undefined);
-  const {
-    coursesLoading,
-    setCoursesLoading,
-  } = useCourseEvents(setBond);
+  const [user, setUser] = useState<UserData | undefined>(undefined);
+  const [bond, setBond] = useState<IBondDTOProps | undefined>(undefined);
+  const [token, setToken] = useState<string | undefined>(undefined);
+  const [coursesLoading, setCoursesLoading] = useState(false);
   const { tab, setTab } = useTabHandler({
     order: BondTab.COURSES,
     registration,
-    valid,
   });
   useEffect(() => {
-    if (!valid) window.location.href = "/";
-    else {
-      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
+    if(registration) {
+      const cachedBond = fetchCachedBond(registration);
+      if(cachedBond) setBond(cachedBond)
+    }
+  }, [registration])
+
+  useEffect(() => {
+    const username = sessionStorage.getItem("username");
+    const token = sessionStorage.getItem("token");
+    if (username && token) {
+      const credentials = { username, token, session: "", institution: "IFSC" }
       setCoursesLoading(true);
+      fetchLogin(credentials).then((res) => {
+        if (!res.error && res.data) {
+          const { emails, fullName, profilePictureURL, token: newToken } = res.data;
+          sessionStorage.setItem("token", newToken);
+          setToken(newToken);
+          setUser({ username, emails, fullName, profilePictureURL });
+        }
+      })
     }
-  }, [registration, setCoursesLoading, socket, valid]);
+  }, [registration, setCoursesLoading]);
   useEffect(() => {
-    if (user?.fullName && registration) {
-        emitCourseList(
-            {
-          token: sessionStorage.getItem("token"),
-          registration,
-          inactive: true,
-          allPeriods: false,
-          cache: true,
-          id: "courses",
-            },
-            socket
-          );
-      }
-  }, [registration, socket, user?.fullName]);
-  useEffect(() => {
-    if (bond?.courses) {
-      setCoursesLoading(false);
+    const username = sessionStorage.getItem("username");
+    if (user?.fullName && registration && username && token) {
+      const credentials = { username, token, session: "", institution: "IFSC" }
+      fetchCourses(credentials, registration).then(async ({ data: courses }) => {
+        setCoursesLoading(false);
+        setBond(() => {
+          const newBond: IBondDTOProps = {
+            courses, // terá que refatorar as tipagens de resposta dos endpoints,
+            program: "",
+            registration,
+            type: "student",
+            period: "",
+            active: true,
+            campus: ""
+          }
+          storeBond(newBond)
+          return newBond;
+        })
+      })
     }
-  }, [
-    bond?.activities,
-    bond?.courses,
-    registration,
-    setCoursesLoading,
-    socket,
-  ]);
+  }, [registration, token, user?.fullName]);
   return (
     <>
       <Head>
