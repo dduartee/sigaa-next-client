@@ -36,13 +36,13 @@ const fetchAPI = async (
 
 const fetchLogin = async ({
   username,
-  session,
+  password,
   token,
 }: UserCredentials): Promise<LoginResponse> => {
-  if (username && (session || token)) {
-    const body = { username, token, session, institution: "IFSC" };
+  if (username && (password || token)) {
+    const body = { username, token, password, institution: "UFFS" };
     return fetchAPI(
-      "/api/v1/auth/IFSC/login",
+      "/api/v1/auth/UFFS/login",
       body,
       "FETCHLOGIN: Parametros inválidos"
     ) as Promise<LoginResponse>;
@@ -53,7 +53,7 @@ const fetchLogin = async ({
 
 const fetchBonds = async ({ username, token }: LoggedUserCredentials) => {
   if (username && token) {
-    const body = { username, token, institution: "IFSC" };
+    const body = { username, token, institution: "UFFS" };
     return fetchAPI(
       "/api/v1/bonds",
       body,
@@ -69,7 +69,7 @@ const fetchCourses = async (
   registration: string
 ) => {
   if (username && token && registration) {
-    const body = { username, token, institution: "IFSC" };
+    const body = { username, token, institution: "UFFS" };
     return (await fetchAPI(
       `/api/v1/bonds/${registration}/courses`,
       body,
@@ -84,7 +84,7 @@ const fetchActivities = async (
   registration: string
 ) => {
   if (username && token && registration) {
-    const body = { username, token, institution: "IFSC" };
+    const body = { username, token, institution: "UFFS" };
     return (await fetchAPI(
       `/api/v1/bonds/${registration}/activities`,
       body,

@@ -7,6 +7,7 @@ import RehydrateBondFactory from "@services/sigaa/Account/Bond/RehydrateBondFact
 import { prisma } from "@lib/prisma";
 import { ObjectId } from "bson";
 import { compatibleInstitutions } from "@pages/api/v1/institutions";
+import { CourseService } from "@services/sigaa/Account/Bond/Course/Course";
 
 interface QueryParams {
   registration: string;
@@ -84,10 +85,44 @@ export default async function Courses(
       program: true,
       sequence: true,
       active: true,
+      id: true,
     },
   });
   if (!bondStored)
     return response.status(400).send({ error: "Invalid registration" });
+
+  const coursesStored = await prisma.course.findMany({
+    where: {
+      bondId: bondStored.id,
+    },
+    include: {
+      SharedCourse: true,
+    },
+  });
+  if (coursesStored.length > 0) {
+    const updatedAt = coursesStored[0].SharedCourse.updatedAt;
+    const now = new Date();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+    const difference = now.getTime() - updatedAt.getTime();
+    if (difference < sevenDays) {
+      const coursesDTOs = coursesStored.map((courseStored) => {
+        const courseService = new CourseService();
+        courseService.rehydrateCourse(
+          courseStored.SharedCourse,
+          compatibleInstitution.acronym,
+          {
+            http,
+            parser,
+          }
+        );
+        const courseDTO = courseService.getDTO();
+        return courseDTO;
+      });
+      return response
+        .status(200)
+        .send({ data: coursesDTOs.map((course) => course.toJSON()) });
+    }
+  }
   const rehydratedBond = RehydrateBondFactory.create(
     {
       registration,

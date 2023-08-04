@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
-    "@prisma/client": "^5.1.0",
+    "@prisma/client": "^5.1.1",
     "@prisma/generator-helper": "^4.13.0",
     "@syncfusion/ej2-react-schedule": "^19.2.47",
     "bson": "^4.7.1",
@@ -57,7 +57,7 @@
     "eslint-config-next": "^13.2.1",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prisma": "^5.1.0",
+    "prisma": "^5.1.1",
     "typescript": "^4.9.5"
   }
 }

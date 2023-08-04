@@ -22,9 +22,9 @@ function Index(): JSX.Element {
   const router = useRouter();
   const [credentials, setCredentials] = useState<UserCredentials>({
     username: "",
-    session: "",
+    password: "",
     token: "",
-    institution: "IFSC"
+    institution: "UFFS"
   });
   const [registrationSelected, setRegistrationSelected] = useState<string>("");
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -48,7 +48,7 @@ function Index(): JSX.Element {
   }, [credentials])
   // TO-DO: LOGIN POR TOKEN SALVO NO SESSION STORAGE
   const handleLogin = () => {
-    if (credentials.username && credentials.session) {
+    if (credentials.username && credentials.password) {
       setStatus("Logando");
       loginProcess().then(async (token) => {
         const { data: bonds } = await fetchBonds({ username: credentials.username, token })
@@ -99,7 +99,7 @@ function Index(): JSX.Element {
   };
   const handleLogout = () => {
     setErrorFeedback("");
-    setCredentials({ username: "", session: "", token: "", institution: "IFSC" });
+    setCredentials({ username: "", password: "", token: "", institution: "IFSC" });
     sessionStorage.clear();
   };
 
@@ -297,37 +297,37 @@ function LoginCard(props: {
             </FormControl>
           }
         />
-        {
+        {/* {
           showCookieMenu ?
             (<CookieMenu handleSessionChange={(JSESSIONID) => {
               setCredentials({ ...credentials, session: JSESSIONID })
             }} />)
-            : null}
+            : null} */}
         <InputBox
           icon={<SyncLock />}
           input={
             <FormControl>
               <Input
-                label="Sessão"
+                label="Senha"
                 InputLabelProps={{ size: "small" }}
                 type="password"
-                name="session"
-                value={credentials.session}
+                name="password"
+                value={credentials.password}
                 error={errorFeedback ? true : false}
                 autoComplete="new-password"
                 disabled={showCookieMenu}
               />
               <FormHelperText sx={{ marginLeft: 0, opacity: "0.8" }}>
-                Seu cookie JSESSIONID do SIGAA
+                Sua senha do SIGAA
               </FormHelperText>
             </FormControl>
           }
         />
-        {
+        {/* {
           !showCookieMenu ?
             <Button variant="text" onClick={() => setShowCookieMenu(true)}>Obter cookie pela URL</Button>
             : null
-        }
+        } */}
         <Typography sx={{ fontSize: "1rem" }} color="#ff4336">{errorFeedback}</Typography>
       </LoginBox>
       <CardBottom>

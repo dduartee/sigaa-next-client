@@ -14,7 +14,7 @@ function MyApp(props: AppProps): JSX.Element {
   const [theme, setTheme] = React.useState(darkTheme);
   React.useEffect(() => {
     if (localStorage.getItem("versaoProibida") === null) {
-      localStorage.setItem("versaoProibida", "true");
+      localStorage.setItem("versaoProibida", "false");
     }
   }, [])
   React.useEffect(() => {

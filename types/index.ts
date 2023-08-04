@@ -16,7 +16,7 @@ import { Syllabus } from "@components/Syllabus/Content";
 
 export type UserCredentials = {
   username: string;
-  session: string;
+  password: string;
   token?: string;
   institution: string
 };

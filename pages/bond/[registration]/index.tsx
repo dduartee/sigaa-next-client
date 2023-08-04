@@ -34,7 +34,7 @@ export default function RegistrationPage() {
     const username = sessionStorage.getItem("username");
     const token = sessionStorage.getItem("token");
     if (username && token) {
-      const credentials = { username, token, session: "", institution: "IFSC" }
+      const credentials = { username, token, password: "", institution: "IFSC" }
       setActivitiesLoading(true);
       fetchLogin(credentials).then((res) => {
         if (!res.error && res.data) {
