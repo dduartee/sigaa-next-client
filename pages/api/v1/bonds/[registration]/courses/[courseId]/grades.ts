@@ -17,7 +17,7 @@ type RequestBody = {
   institution: string;
 };
 
-type GradesResponse = {
+export type GradesResponse = {
   data: ICourseDTOProps;
 };
 

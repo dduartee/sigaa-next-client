@@ -18,7 +18,7 @@ type RequestBody = {
   institution: string;
 };
 
-type AbsencesResponse = {
+export type AbsencesResponse = {
   data: ICourseDTOProps;
 };
 export default async function Absences(

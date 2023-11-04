@@ -5,12 +5,13 @@ import { StyledTableRow, StyledTableCell } from "../Content";
 import { CourseRow } from "./CourseRow";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { IconButton, Typography, Collapse, Box, TableHead, TableBody } from "@mui/material";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
 export function Period({
   period, coursesByPeriod, gradesIndex,
 }: {
   period: string;
-  coursesByPeriod: Map<string, Course[]>;
+  coursesByPeriod: Map<string, ICourseDTOProps[]>;
   gradesIndex: string[];
 }) {
   const courses = coursesByPeriod.get(period) ?? [];

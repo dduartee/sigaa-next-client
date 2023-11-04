@@ -1,11 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { SocketContext } from "@context/socket";
-import useTokenHandler from "@hooks/useTokenHandler";
-import useUserHandler, { emitUserInfo } from "@hooks/useUserHandler";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import useGradesEvents, {
-  emitGradesList,
-} from "@hooks/courses/useGradesEvents";
 import useTabHandler, { BondTab } from "@hooks/useTabHandler";
 import HomeProvider from "@components/HomeProvider";
 import Grades from "@components/Grades/Content";
@@ -13,36 +7,71 @@ import { bondTabs } from "@components/Home/CustomDrawer";
 import Loading from "@components/Loading";
 import { useRouter } from "next/router";
 import { Box } from "@mui/material";
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { fetchCachedBond, storeBond } from "@hooks/useCachedBond";
+import { fetchLogin, fetchCourses, fetchCourseGrades } from "@hooks/useHomeFetch";
+import { UserData } from "@types";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
 export default function GradesPage() {
   const router = useRouter();
   const registration = router.query.registration as string | undefined;
 
-  const socket = useContext(SocketContext);
-  const valid = useTokenHandler();
-  const { user } = useUserHandler();
+  const [user, setUser] = useState<UserData | undefined>(undefined);
+  const [bond, setBond] = useState<IBondDTOProps | undefined>(undefined);
+  const [token, setToken] = useState<string | undefined>(undefined);
+  const [partialLoading, setPartialLoading] = useState(false);
   const { tab, setTab } = useTabHandler({
     order: BondTab.GRADES,
     registration,
-
   });
-  const { bond, partialLoading, setPartialLoading } = useGradesEvents();
+
   useEffect(() => {
-    if (valid && registration) {
-      emitUserInfo({ token: sessionStorage.getItem("token") }, socket);
-      emitGradesList(
-        {
-          registration,
-          id: "grades",
-          cache: true,
-          inactive: true,
-          token: sessionStorage.getItem("token"),
-        },
-        socket
-      );
+    const username = sessionStorage.getItem("username");
+    const token = sessionStorage.getItem("token");
+    if (username && token) {
+      const credentials = { username, token, session: "", institution: "IFSC" }
       setPartialLoading(true);
-    } else window.location.href = "/";
-  }, [registration, setPartialLoading, socket, valid]);
+      fetchLogin(credentials).then((res) => {
+        if (!res.error && res.data) {
+          const { emails, fullName, profilePictureURL, token: newToken } = res.data;
+          sessionStorage.setItem("token", newToken);
+          setToken(newToken);
+          setUser({ username, emails, fullName, profilePictureURL });
+          if (registration) {
+            fetchData(newToken);
+          }
+        }
+      })
+    }
+  }, [registration, setPartialLoading]);
+  const fetchData = (newToken: string) => {
+    const username = sessionStorage.getItem("username");
+    if (registration && username) {
+      const credentials = { username, token: newToken, session: "", institution: "IFSC" }
+      fetchCourses(credentials, registration).then(async ({ data: coursesList }) => {
+        const courses: ICourseDTOProps[] = [];
+        for (const course of coursesList) {
+          await fetchCourseGrades(credentials, registration, course.id).then(({ data: courseWithGrades }) => {
+            courses.push(courseWithGrades);
+            const newBond: IBondDTOProps = {
+              courses,
+              program: "",
+              registration,
+              type: "student",
+              period: "",
+              active: true,
+              campus: ""
+            }
+            storeBond(newBond);
+            setBond(newBond);
+            return newBond;
+          })
+        }
+      })
+      setPartialLoading(false);
+    }
+  };
   return (
     <>
       <Head>

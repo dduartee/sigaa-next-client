@@ -1,7 +1,8 @@
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 import { RegistrationContext } from "@context/registration";
 import { Box } from "@mui/material";
 import { Day, Week, Schedule, isMobile } from "@syncfusion/ej2-react-schedule";
-import { Bond, Course } from "@types";
 import moment from "moment";
 import React, { useContext, useEffect } from "react";
 export type SchedulerData = {
@@ -10,9 +11,9 @@ export type SchedulerData = {
   StartTime: Date;
   EndTime: Date;
 };
-export default function Schedules(props: { bond: Bond | undefined }) {
+export default function Schedules(props: { bond: IBondDTOProps | undefined }) {
   const registration = useContext(RegistrationContext)
-  const [courses, setCourses] = React.useState<Course[]>([]);
+  const [courses, setCourses] = React.useState<ICourseDTOProps[]>([]);
   React.useEffect(() => {
     if (props.bond && props.bond.courses) {
       setCourses(props.bond.courses);

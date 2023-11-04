@@ -1,7 +1,7 @@
 import { IBondDTOProps } from "@DTOs/BondDTO";
 function fetchCachedBond(registration: string): IBondDTOProps | undefined {
   const bondCached = JSON.parse(
-    sessionStorage.getItem(`bond@${registration}`) || "{}"
+    sessionStorage.getItem(`bond@${registration}`) || "null"
   );
   if (bondCached) {
     return bondCached as IBondDTOProps;

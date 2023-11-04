@@ -4,8 +4,9 @@ import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { GradeRowMobile } from "./GradeRowMobile";
 import { Box, TableHead, TableBody } from "@mui/material";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
-export function CourseTable(props: { course: Course; gradesIndex: string[]; }): JSX.Element {
+export function CourseTable(props: { course: ICourseDTOProps; gradesIndex: string[]; }): JSX.Element {
   const { course, gradesIndex } = props;
   return <Box m={1} width="100%" mb={3}>
     <CollapsibleTable>

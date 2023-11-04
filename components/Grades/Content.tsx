@@ -4,6 +4,8 @@ import { DesktopTable } from "./Desktop/DesktopTable";
 import { MobileTable } from "./Mobile/MobileTable";
 import { styled, TableCell, tableCellClasses, TableContainer, TableRow, useMediaQuery } from "@mui/material";
 import { Theme } from "@mui/system"
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 export const StyledTableCell = styled(TableCell)(({ theme }: {theme: Theme}) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.primary['900'],
@@ -38,7 +40,7 @@ export function groupBy<K, V>(array: V[], grouper: (item: V) => K) {
     return store;
   }, new Map<K, V[]>());
 }
-function getIndex(courses: Course[]) {
+function getIndex(courses: ICourseDTOProps[]) {
   const gradesIndex: string[] = [];
   courses.map((course) =>
     course.grades?.map((gradeGroup) => {
@@ -48,14 +50,14 @@ function getIndex(courses: Course[]) {
   );
   return gradesIndex;
 }
-export default function Grades(props: { bond: Bond|undefined }) {
+export default function Grades(props: { bond: IBondDTOProps|undefined }) {
   const [index, setIndex] = React.useState<string[]>([]);
   const [coursesByPeriod, setCoursesByPeriod] = React.useState<
-    Map<string, Course[]>
-  >(new Map<string, Course[]>());
+    Map<string, ICourseDTOProps[]>
+  >(new Map<string, ICourseDTOProps[]>());
   const [periods, setPeriods] = React.useState<string[]>([]);
   useEffect(() => {
-    if (props.bond && props.bond.courses.length > 0) {
+    if (props.bond && props.bond.courses && props.bond.courses.length > 0) {
       setIndex(getIndex(props.bond.courses));
       setCoursesByPeriod(groupBy(props.bond.courses, (course) => course.period));
     }
@@ -66,7 +68,7 @@ export default function Grades(props: { bond: Bond|undefined }) {
   const isMobileDevice = useMediaQuery("(max-width:900px)");
   return (
     <React.Fragment>
-      {props.bond && props.bond.courses.length > 0 ? (
+      {props.bond && props.bond.courses && props.bond.courses.length > 0 ? (
         <TableContainer>
           {isMobileDevice ? (
             <MobileTable gradesIndex={index} periods={periods} coursesByPeriod={coursesByPeriod} />
