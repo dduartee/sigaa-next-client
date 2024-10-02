@@ -13,7 +13,6 @@ import { ExpandMore,
 import { Box, Typography, Button, Collapse, Accordion, AccordionSummary, AccordionDetails, CircularProgress } from "@mui/material";
 import { Attachment } from "./Attachment";
 import { IBondDTOProps } from "@DTOs/BondDTO";
-
 export default function Activities({
   bond,
   loading,

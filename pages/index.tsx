@@ -5,12 +5,9 @@ import { Input, InputBox } from "@components/Index/Input";
 import LoginBox from "@components/Index/LoginBox";
 import { CardBottom, CardHeader } from "@components/Index/Card";
 import Head from "next/head";
-import { Ajuda } from "@components/Ajuda";
-import { formatFullName } from "@components/Home/CustomDrawer";
-import { useRouter } from "next/router";
-import { BondSelection } from "@components/BondSelection";
-import { BondSelectionButtons } from "@components/BondSelectionButtons";
-import { ForbiddenContext } from "@context/forbidden";
+import { NoSsr, Fade, Grid, Box, Paper, Typography } from "@mui/material";
+import {useTheme} from "@mui/system"
+import Link from "next/link";
 import Logo from "@components/Logo";
 import { Box, Button, CircularProgress, Collapse, Fade, FormControl, FormHelperText, Grid, Link, NoSsr, Paper, Switch, Typography } from "@mui/material";
 import { ArrowBack, AccountCircle, Info, Send, SyncLock, Link as LinkIcon } from "@mui/icons-material";
@@ -103,55 +100,29 @@ function Index(): JSX.Element {
     sessionStorage.clear();
   };
 
-  const conditionals = {
-    willLogout: status === "Deslogando",
-    willLogin: status === "Logando",
-    isLoggedIn: status === "Logado",
-    isLoggedOut: status === "Deslogado" && !openHelp,
-    hasFullName: user?.fullName ? true : false,
-    hasBond: bonds.length != 0 ? true : false,
-    hasFullNameAndIsLoggedIn:
-      (user?.fullName ? true : false) && (status === "Logado" ? true : false),
-    hasBondAndIsLoggedIn: bonds.length != 0 && status === "Logado" ? true : false,
-    userIsWaiting: status === "Logando" || status === "Deslogando" || (status === "Logado" && !(user?.fullName || bonds.length != 0)) ? true : false,
-  };
-
-  const [activeParticles, setActiveParticles] = useState(true);
-  useEffect(() => {
-    sessionStorage.getItem("particles")?.toString() === "false" ? setActiveParticles(false) : setActiveParticles(true);
-  }, [])
-  const [increaseBoxSize, setIncreaseBoxSize] = useState(openHelp || openDonate);
-  useEffect(() => setIncreaseBoxSize(openHelp || openDonate), [openHelp, openDonate])
-  const [openCardBody, setOpenCardBody] = useState(!openHelp && !openDonate);
-  useEffect(() => setOpenCardBody(!openHelp && !openDonate), [openHelp, openDonate])
-  const { forbiddenVersion, setForbiddenVersion } = useContext(ForbiddenContext)
-
-  const handleChangeForbiddenVersion = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setForbiddenVersion(event.target.checked);
-  };
+function Index(): JSX.Element {
   const theme = useTheme();
   return (
     <>
       <Head>
-        <title>Login | sigaa-next</title>
+        <title>Fim | sigaa-next</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name='description' content="SIGAA de forma rápida e prática" />
         <meta property="og:title" content="SIGAA Next" />
         <meta property="og:description" content="SIGAA de forma rápida e prática" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sigaanext.com.br/" />
+        <meta property="og:url" content="https://sigaa.gaabe.space/" />
         <meta property="og:image" itemProp="image" content="/og-image.png" />
-        <meta name="google-site-verification" content="l3dA98khZkgdacKAYSDoYNF1SJy1qhZAvoVqHI3KrYE" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NoSsr>
         <Fade in={true} timeout={500}>
-          <Grid display={"flex"}
+          <Grid
+            display={"flex"}
             alignContent={"center"}
             justifyContent={"center"}
             width={"100vw"}
             height={"100vh"}>
-
             <Particulas disable={!activeParticles} />
             <Box display={"flex"}
               alignContent={"center"}
@@ -160,7 +131,8 @@ function Index(): JSX.Element {
               flexDirection={"column"}
               height={"100%"}
               maxWidth={"100vw"}
-              position={"absolute"}>
+              position={"absolute"}
+            >
               <Paper
                 elevation={4}
                 sx={{
@@ -172,90 +144,91 @@ function Index(): JSX.Element {
                   width: increaseBoxSize ? "97%" : "80%",
                   minWidth: "320px",
                   maxWidth: "700px",
-                  overflowY: increaseBoxSize ? "scroll" : "visible",
                   height: "auto",
-                  zIndex: 1,
                 }}
               >
-                <Fade in={openHelp} timeout={500}>
-                  {openHelp ?
-                    <Box maxHeight={"600px"}>
-                      <Ajuda activeParticles={activeParticles} setActiveParticles={setActiveParticles} />
-                      <CardBottom>
-                        <Button
-                          variant="outlined"
-                          startIcon={<ArrowBack />}
-                          onClick={() => setOpenHelp(false)}
-                        >
-                          Voltar
-                        </Button>
-                      </CardBottom>
-                    </Box>
-                    : <div></div>}
-                </Fade>
-                <Collapse in={conditionals.hasFullNameAndIsLoggedIn && openCardBody} sx={{ overflow: 'visible' }} /* Collapse especifico para o CardHeader por causa do overflow visible*/>
-                  {
-                    (user?.profilePictureURL && user?.fullName) ? (
-                      <CardHeader>
-                        <img
-                          src={user.profilePictureURL}
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            borderRadius: "50%",
-                            marginTop: "-50px",
-                            userSelect: "none",
-                          }}
-                        />
-                        <Typography fontSize="1.3rem" marginTop={2}>{formatFullName(user.fullName)}</Typography>
-                      </CardHeader>
-                    ) : null
-                  }
-                </Collapse>
-                <Collapse /** Collapse para a tela de vinculos e botoes */
-                  in={conditionals.hasFullNameAndIsLoggedIn && openCardBody}
-                  unmountOnExit
-                >
-                  <>
-                    <BondSelection registrationSelected={registrationSelected} setRegistrationSelected={setRegistrationSelected} bonds={bonds} />
-                    <BondSelectionButtons handleAccess={handleAccess} handleLogout={handleLogout} />
-                  </>
-                </Collapse>
-                <Collapse in={conditionals.isLoggedOut}>
-                  {conditionals.isLoggedOut ? (
-                    <LoginCard handleLogin={handleLogin}
-                      setOpenHelp={setOpenHelp}
-                      credentials={credentials}
-                      setCredentials={setCredentials}
-                      errorFeedback={errorFeedback}
-                      setErrorFeedback={setErrorFeedback} />
-                  ) : null}
-                </Collapse>
-
-
-                {conditionals.userIsWaiting ? ( // usuario esta "esperando" o login ou logout
-                  <CardBottom m={0}>
-                    <Box p={2}>
-                      <CircularProgress style={{ alignSelf: "center" }} />
-                    </Box>
-                  </CardBottom>
-                ) : null}
-              </Paper>
-              <Box display="flex" flexDirection="column" alignItems={"center"} position="absolute" bottom="0" p={2} zIndex={0}>
-                <Logo height="60rem" />
-                <Box display="flex" flexDirection={"row"} alignItems="center" >
-                  <Switch
-                    checked={forbiddenVersion}
-                    onChange={handleChangeForbiddenVersion}
-                  />
-                  <Typography color={theme.palette.primary['500']} fontSize={"1rem"}>Versão Proibida</Typography>
+                <Box textAlign={"center"} width="100%" padding={3}>
+                  <Logo height="70rem" />
                 </Box>
-              </Box>
+                <Typography
+                  fontSize={"1.5rem"}
+                  m={1}
+                  mb={3}
+                  textAlign={"center"}
+                >
+                  <b>Não funcionamos mais com SIGAA provido pelo IFSC.</b>
+                </Typography>
+                <Box
+                  m={1}
+                  sx={{
+                    textIndent: "1.3rem",
+                  }}
+                >
+                  <Typography fontSize={"1.2rem"} mb={1}>
+                      Desde o dia 16 de março de 2023, todas as páginas de login
+                      utilizadas foram protegidas pelo reCAPTCHA do Google.
+                  </Typography>
+                  <Typography mb={1} fontSize={"1.2rem"}>
+                    A ação já era prevista, visto que é comum esse tipo de
+                    proteção.
+                  </Typography>
+                  <Typography mb={1} fontSize={"1.2rem"}>
+                    Desde 2021 a nossa intenção nunca foi confrontar o IFSC ou substituir o
+                    próprio SIGAA.
+                  </Typography>
+                  <Typography mb={1} fontSize={"1.2rem"}>
+                    Acredito que atingimos o nosso objetivo de chamar atenção
+                    para nosso lado discente.
+                  </Typography>
+                  <Typography mb={1} fontSize={"1.2rem"}>
+                    Entendemos que não é simples tal mudança. Porém, se não
+                    demonstrado ninguém sentiria a necessidade.
+                  </Typography>
+                  <Typography mt={1} mb={1} fontSize={"1.5rem"}>
+                    Obrigado a todos que participaram e divulgaram deste
+                    &quot;movimento&quot;.
+                  </Typography>
+                  <Typography
+                    mb={1}
+                    fontSize={"1rem"}
+                    variant={"caption"}
+                    color={"gray"}
+                  >
+                    1. Reforço que não houve lucro com isso e nem que era o
+                    nosso objetivo.
+                  </Typography>
+                  <br />
+                  <Typography
+                    fontSize={"1rem"}
+                    variant={"caption"}
+                    color={"gray"}
+                  >
+                    2. Todo o código desenvolvido ficará disponível para acesso
+                    pelo github.
+                  </Typography>
+                  <Typography mt={2}>
+                    Backend:{" "}
+                    <Link href={"https://github.com/dduartee/sigaa-socket-api"}
+                      style={{ color: theme.palette.primary.main }}
+                    >
+                      sigaa-socket-api
+                    </Link>
+                  </Typography>
+                  <Typography>
+                    Frontend:{" "}
+                    <Link
+                      style={{ color: theme.palette.primary.main }}
+                      href={"https://github.com/dduartee/sigaa-next-client"}
+                    >
+                      sigaa-next-client
+                    </Link>
+                  </Typography>
+                </Box>
+              </Paper>
             </Box>
           </Grid>
         </Fade>
-      </NoSsr >
+      </NoSsr>
     </>
   );
 }

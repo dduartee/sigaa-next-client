@@ -47,7 +47,6 @@ export type Course = ICourseDTOProps & {
 };
 export type FileAttachment = IFileDTOProps & { type: "file" };
 export type ForumAttachment = IForumDTOProps & {
-  type: "forum";
 };
 export type LinkAttachment = ILinkDTOProps & {
   type: "link";
