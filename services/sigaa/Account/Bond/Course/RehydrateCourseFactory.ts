@@ -7,12 +7,14 @@ import {
   HTTP,
   Parser,
   SigaaCourseStudent,
+  InstitutionType,
 } from "sigaa-api";
 
 class RehydrateCourseFactory {
     
     create(
     courseData: CourseStudentData,
+    institution: InstitutionType,
     http: HTTP,
     parser: Parser
   ): SigaaCourseStudent {
@@ -27,7 +29,7 @@ class RehydrateCourseFactory {
       courseResourcesManagerFactory,
       lessonParserFactory
     );
-    return courseFactory.createCourseStudent(courseData);
+    return courseFactory.createCourseStudent(courseData, institution);
   }
 }
 

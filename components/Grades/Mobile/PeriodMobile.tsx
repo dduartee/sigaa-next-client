@@ -4,10 +4,11 @@ import { StyledTableRow, StyledTableCell } from "../Content";
 import { CourseTable } from "./CourseTable";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { IconButton, Typography, Collapse } from "@mui/material";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
 export function PeriodMobile(props: {
   period: string;
-  coursesByPeriod: Map<string, Course[]>;
+  coursesByPeriod: Map<string, ICourseDTOProps[]>;
   gradesIndex: string[];
 }) {
   const { period, coursesByPeriod, gradesIndex } = props;

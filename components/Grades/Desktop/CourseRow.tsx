@@ -3,8 +3,9 @@ import { Course, SumOfGrades, WeightedAverage } from "@types";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { IconButton, Collapse, Box, Typography, Table, TableHead, TableBody } from "@mui/material";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
-export function CourseRow(props: { course: Course; gradesIndex: string[]; }) {
+export function CourseRow(props: { course: ICourseDTOProps; gradesIndex: string[]; }) {
   const { course, gradesIndex } = props;
   const [subGrade, setSubGrade] = React.useState(false);
   const [open, setOpen] = React.useState(false);

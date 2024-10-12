@@ -6,31 +6,35 @@ import { v4 } from "uuid";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "@services/logger";
 import { prisma } from "@lib/prisma";
-// import { HashService } from "@services/Hash";
+import { compatibleInstitutions } from "../../institutions";
 
-export interface AuthenticationParams {
+export interface IFSCAuthenticationParams {
   username: string;
-  password?: string;
-  sigaaURL: string;
+  session?: string;
   token?: string;
 }
-type LoginResponse =
-  | { data: IStudentDTOProps & { token: string } }
-  | { error: string };
-export default async function Login(
+export type LoginResponse =
+  | { data: IStudentDTOProps & { token: string }, error: undefined}
+  | { data: undefined, error: string };
+export default async function LoginIFSC(
   request: NextApiRequest,
   response: NextApiResponse<LoginResponse>
 ) {
-  logger.log("Login", "Request received", {});
-  const { username, password, sigaaURL, token } =
-    JSON.parse(JSON.stringify(request.body)) as AuthenticationParams;
 
-  if (!username) return response.status(400).send({ error: "Username is required" });
-  if (!sigaaURL) return response.status(400).send({ error: "Sigaa URL is required" });
+  logger.log("Login", "Request received", {});
+  const body = JSON.parse(JSON.stringify(request.body)) as IFSCAuthenticationParams;
+
+  const { username, session, token } = body;
+
+  if (!username) return response.status(400).send({ data:undefined, error: "Username is required" });
+  
+  const compatibleInstitution = compatibleInstitutions.find(i => i.acronym === "IFSC");
+  if (!compatibleInstitution) return response.status(400).send({ data:undefined, error: "Institution is not compatible" });
+
+  const sigaaURL = compatibleInstitution.url;
 
   const authService = new AuthService();
   let studentDTO: StudentDTO;
-  let session: string;
   const newToken = v4();
   if (token) {
     logger.log("Login", "Token received", token);
@@ -38,28 +42,30 @@ export default async function Login(
       where: { token },
     });
     if (!storedSession)
-      return response.status(400).send({ error: "Invalid token" });
-    logger.log("Login", "JSESSIONID received", storedSession.value);
+      return response.status(400).send({ data:undefined, error: "Invalid token" });
+    logger.log("Login", "JSESSIONID received", {});
     const accountService = await authService.rehydrate({
       JSESSIONID: storedSession.value,
       username,
       url: sigaaURL,
+      institution: compatibleInstitution.acronym
     });
     logger.log("Login", "Account service rehydrated", {});
     studentDTO = await getStudentDTO(accountService);
-    session = storedSession.value;
     await prisma.session.update({
       where: { id: storedSession.id },
       data: { token: newToken },
     });
-  } else if (password) {
-    logger.log("Login", "only password received", {});
-    const credentials = { username, password };
-    const accountService = await authService.login(credentials, sigaaURL);
+  } else if (session) {
+    logger.log("Login", "only session received", {});
+    const accountService = await authService.rehydrate({
+      JSESSIONID: session,
+      username,
+      url: sigaaURL,
+      institution: compatibleInstitution.acronym
+    });
     studentDTO = await getStudentDTO(accountService);
-    session = accountService.getJSESSIONID();
     const studentJSON = studentDTO.toJSON();
-    // const hashService = new HashService();
     const studentInput = {
       ...studentJSON,
       passwordHash: "asdasdaskdoijoijoijoijehehhehehehehdgotcha"
@@ -80,14 +86,14 @@ export default async function Login(
     });
     logger.log("Login", "Student created or updated", {});
   } else {
-    return response.status(400).send({ error: "Password is required" });
+    return response.status(400).send({ data:undefined, error: "Session is required" });
   }
   authService.closeSession();
 
   logger.log("Login", "Session stored", newToken);
   return response
     .status(200)
-    .send({ data: { ...studentDTO.toJSON(), token: newToken } });
+    .send({ data: { ...studentDTO.toJSON(), token: newToken }, error: undefined });
 }
 
 async function getStudentDTO(accountService: AccountService) {

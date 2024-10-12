@@ -4,8 +4,9 @@ import CollapsibleTable from "@components/Home/CollapsibleTable";
 import { Period } from "./Period";
 import { StyledTableRow, StyledTableCell } from "../Content";
 import { TableHead, TableBody } from "@mui/material";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
 
-export function DesktopTable(props: { gradesIndex: string[]; periods: string[] | undefined; coursesByPeriod: Map<string, Course[]>; }) {
+export function DesktopTable(props: { gradesIndex: string[]; periods: string[] | undefined; coursesByPeriod: Map<string, ICourseDTOProps[]>; }) {
   const { gradesIndex, periods, coursesByPeriod } = props;
   const [reordenateGradesIndex, setReordenateGradesIndex] = React.useState<string[]>([]);
   useEffect(() => {

@@ -1,13 +1,14 @@
 import { StyledTableRow, StyledTableCell } from "@components/Grades/Content";
 import CollapsibleTable from "@components/Home/CollapsibleTable";
-import { Bond, Course } from "@types";
 import React from "react";
 import "moment-timezone";
 import { generateScheduleData } from "@components/Schedules/Content";
 import { formatDate } from "@components/Lessons/Content";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { Box, TableHead, TableBody, IconButton, Typography, Collapse } from "@mui/material";
-export default function Absences(props: { bond: Bond | null }) {
+import { IBondDTOProps } from "@DTOs/BondDTO";
+import { ICourseDTOProps } from "@DTOs/CourseDTO";
+export default function Absences(props: { bond: IBondDTOProps | undefined }) {
   const courses = props.bond?.courses ?? [];
   return (
     <Box display="flex" flexWrap={"wrap"} justifyContent={"center"}>
@@ -16,7 +17,7 @@ export default function Absences(props: { bond: Bond | null }) {
   );
 }
 
-function CourseTableDesktop(props: { courses: Course[] }): JSX.Element {
+function CourseTableDesktop(props: { courses: ICourseDTOProps[] }): JSX.Element {
   return (
     <Box m={1} mb={3}>
       <CollapsibleTable>
@@ -38,7 +39,7 @@ function CourseTableDesktop(props: { courses: Course[] }): JSX.Element {
   );
 }
 
-function CourseRowDesktop(props: { course: Course }): JSX.Element {
+function CourseRowDesktop(props: { course: ICourseDTOProps }): JSX.Element {
   const { course } = props;
   const [open, setOpen] = React.useState(false);
   if (!course.absences) return <></>;
@@ -65,11 +66,11 @@ function CourseRowDesktop(props: { course: Course }): JSX.Element {
             fontSize={"1rem"}
             textAlign={"center"}
             color={
-              Math.round(course.absences.max * 0.8) <= course.absences.total
-                ? "#FFFF00"
-                : course.absences.max == course.absences.total
-                  ? "#FF0000"
-                  : "#ff"
+              Math.round(course.absences.max * 0.8) <= course.absences.total // se 80% das faltas forem maiores que o limite
+                ? course.absences.total > course.absences.max // se o número de faltas for maior que o limite
+                  ? "#FF0000" // vermelho
+                  : "#FFFF00" 
+                : "#FF"
             }
           >
             {course.absences.total}

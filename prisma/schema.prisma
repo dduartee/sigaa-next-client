@@ -1,6 +1,6 @@
 datasource db {
     provider = "mongodb"
-    url      = env("DATABASE_URL")
+    url      = env("MONGODB_URI")
 }
 
 generator client {
@@ -22,12 +22,10 @@ model Institution {
 model Campus {
     id            String      @id @default(auto()) @map("_id") @db.ObjectId
     name          String      @unique
-    acronym       String      @unique
     Institution   Institution @relation(fields: [institutionId], references: [id])
     institutionId String      @db.ObjectId
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @updatedAt
-    Bonds         Bond[]
 
     @@map("campuses")
 }
@@ -50,12 +48,11 @@ model Bond {
     program      String
     registration String   @unique
     period       String
+    campus       String
     sequence     Int
     active       Boolean  @default(true)
     Student      Student  @relation(fields: [studentId], references: [id])
     studentId    String   @db.ObjectId
-    Campus       Campus   @relation(fields: [campusId], references: [id])
-    campusId     String   @db.ObjectId
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
     Courses      Course[]
@@ -118,6 +115,8 @@ model GradesGroup {
     subGrades SubGrade[]
     Course    Course?    @relation(fields: [courseId], references: [id])
     courseId  String?    @db.ObjectId
+
+    @@map("grades_groups")
 }
 
 model SubGrade {
@@ -129,4 +128,6 @@ model SubGrade {
     weight        Float?
     GradesGroup   GradesGroup @relation(fields: [gradesGroupId], references: [id])
     gradesGroupId String      @db.ObjectId
+
+    @@map("sub_grades")
 }

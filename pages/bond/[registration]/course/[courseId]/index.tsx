@@ -52,7 +52,7 @@ export default function LessonsPage() {
     order: CourseTab.LESSONS,
     registration,
     courseId,
-    valid,
+
   });
   return (
     <>

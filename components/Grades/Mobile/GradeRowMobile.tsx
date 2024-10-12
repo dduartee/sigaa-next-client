@@ -4,8 +4,9 @@ import { StyledTableRow, StyledTableCell } from "../Content";
 import { GradeGroup, SumOfGrades, WeightedAverage } from "@types";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { Box, IconButton, Collapse, Typography, TableBody } from "@mui/material";
+import { IGradeGroupDTOProps } from "@DTOs/GradeGroup/GradeGroup.DTO";
 
-export function GradeRowMobile(props: { grades: GradeGroup[]; gradesIndex: string[]; index: string; }) {
+export function GradeRowMobile(props: { grades: IGradeGroupDTOProps[]; gradesIndex: string[]; index: string; }) {
   const { grades, index } = props;
   const [subGrade, setSubGrade] = React.useState(false);
   const [open, setOpen] = React.useState<boolean>();

@@ -1,19 +1,14 @@
-import { CampusDTO, ICampusDTOProps } from "@DTOs/CampusDTO";
 import { Sigaa } from "sigaa-api";
 
 export class CampusService {
   constructor(private sigaaInstance: Sigaa) {}
-  async getListCampus(): Promise<ICampusDTOProps[]> {
-    const campuses = await this.sigaaInstance.search.teacher().getCampusList();
-    const campusesDTOs: CampusDTO[] = [];
+  async getListCampus(): Promise<string[]> {
+    const campuses = await this.sigaaInstance.search.subject().getCampusList();
+    campuses.shift(); // remove o primeiro elemento, que é o "-- SELECIONE --"
+    const campusesDTOs: string[] = [];
     for (const campus of campuses) {
-      const [name, acronymWithDate] = campus.name.split(" - "); // Campus seila - SLA (12.23.12)
-      if (!acronymWithDate) continue; // If the campus doesn't have - SLA (12.23.12)
-      const [acronym] = acronymWithDate.split(" "); // SLA
-      const institution = this.sigaaInstance.session.institution;
-      const campusDTO = new CampusDTO(name, acronym, institution);
-      campusesDTOs.push(campusDTO);
+      campusesDTOs.push(campus.name);
     }
-    return campusesDTOs.map((campusDTO) => campusDTO.toJSON());
+    return campusesDTOs;
   }
 }
